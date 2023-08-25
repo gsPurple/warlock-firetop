@@ -1,0 +1,19 @@
+.text-content {
+    text-align: justify;
+}
+
+
+.navigation-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+#button-next {
+    float: right;
+}
+
+#button-back {
+    float: left;
+}
