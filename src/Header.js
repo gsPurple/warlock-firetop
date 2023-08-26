@@ -44,7 +44,7 @@ const Header = ( {playerData}) => {
                         <ul id='primary-nav' data-visible='false' className='header-nav-bttns primary-nav'>
                             <li className='active'>
                                 
-                                <span className='hBttn'>cv()</span>
+                                <span className='hBttn'>nada()</span>
                                 
                             </li>
                             <li>
