@@ -12,12 +12,14 @@ function PageContainer() {
   const [currentMode, setCurrentMode] = useState(null);
 
   const [playerState, setPlayerState] = useState({
-    initSta: 0,
-    currentSta: 0,
-    initSkill: 0,
-    currentSkill: 0,
-    initLuck: 0,
-    currentLuck: 0,
+    initSta: '00',
+    currentSta: '00',
+    initSkill: '00',
+    currentSkill: '00',
+    initLuck: '00',
+    currentLuck: '00',
+    gold: '0000',
+    provisions: '00',
     inventory: ['Sword', 'Shield', 'Leather Armour'],
   });
 
@@ -54,8 +56,8 @@ function PageContainer() {
     case ADVENTUREMODE:
       
       return (
-        <div>
-          <Header playerData={playerState} />
+        <div className='ui-container'>
+          <Header playerData={playerState} className='left-col'/>
           <div className="page-container border">
             <h1 className='title'>{currentPage.title}</h1>
             {pageContentParagraphs.map((paragraph, index) => (

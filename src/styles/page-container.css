@@ -10,10 +10,48 @@
     margin-top: 2rem;
 }
 
+.title {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+
 #button-next {
     float: right;
 }
 
 #button-back {
     float: left;
+}
+
+.border {
+    border: 2px solid var(--border);
+    padding: 0.3rem;
+    overflow: auto;
+    height: 38rem;
+}
+
+@media screen and (min-width: 768px) {
+
+    .ui-container {
+        display: grid;
+        grid-template-areas: 'page stats . ';
+    }
+
+    .left-col {
+        grid-area: 'stats';
+    }
+
+    .page-container {
+        grid-area: 'page';
+    }
+
+    .border {
+        width: 38rem;
+        height: 42rem;
+        margin: auto;
+    }
+
+    
 }

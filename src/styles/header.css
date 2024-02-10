@@ -1,12 +1,37 @@
+.header-container {
+  display: flex;
+  margin-bottom: 0.2rem;
+}
+
+.parent {
+  display: flex;
+  flex-direction: column;
+}
+
 .stats {
     display: flex;
     align-items: center; /* Vertically center align items */
 }
 
 .stat-container {
-    padding: 0.5rem;
+  padding-right: 0.3rem;
+  padding-bottom: 0.4rem;
 }
 
+.stat-content {
+  display: flex;
+  align-items: center;
+}
+
+.stat-content > object {
+  margin-right: 0.2rem;
+}
+
+
+.icon {
+  width: 1.3rem; /* Set the desired width */
+  height: 1.3rem; /* Set the desired height */
+}
 
 .primary-nav {
     list-style: none;
@@ -16,7 +41,6 @@
   
 .header-nav-bttns {
     display: flex;
-    gap: 1rem;
     align-items: center;
 }
   
@@ -28,48 +52,108 @@
 .mobile-nav-toggle {
     display: none;
 }
+
+.primary-nav {
+  position: fixed;
+  flex-direction: column;
+  inset: 0 0 0 0%;
+  background: hsla(0, 0%, 0%, 0.8);
+  padding: 1.3rem 1rem;
+
+  transform: translateX(100%);
+  transition: transform 350ms ease-in-out;
+}
+
+.primary-nav[data-visible='true'] {
+  transform: translateX(0%);
+}
+
+.header-nav-bttns {
   
-@media (max-width: 35em) {
-    .primary-nav {
-      position: fixed;
-      flex-direction: column;
-      inset: 0 0 0 0%;
-      background: hsla(0, 0%, 0%, 0.8);
-      padding: 1.3rem 1rem;
+  padding: 0 1rem 4rem;
+}
+
+.mobile-nav-toggle {
+  display: block;
+  position: absolute;
+  z-index: 9999;
+  background-color: transparent;
+  background-image: url("../images/backpackIcon.svg");
+  background-repeat: no-repeat;
+  border: 0;
+  width: 2rem;
+  aspect-ratio: 1;
+  right: 0.5rem;
+}
+
+.mobile-nav-toggle[aria-expanded='true'] {
+  background-image: url("../images/close-icon.svg");
+  background-color: transparent;
+}
+
+.social-icon {
+  padding-right: 0rem;
+}
+
+.equipment-border > .label {
+  font-weight: bold;
+}
   
-      transform: translateX(100%);
-      transition: transform 350ms ease-in-out;
-    }
+@media screen and (min-width: 768px) {
+
+  .parent {
+    margin: auto;
+  }
+
+  .header-container {
+    flex-direction: column; /* Header and content side by side */
+  }
+
+  .stats {
+    flex-direction: column; /* Display stats vertically on larger screens */
+    align-items: flex-start;
+  }
+
+  .mobile-nav-toggle {
+    display: none;
+  }
+
+  .primary-nav {
+    position: static;
+    flex-direction: column;
+    inset: 0 0 0 0%;
+    background: transparent;
+    padding: 0;
   
-    .primary-nav[data-visible='true'] {
-      transform: translateX(0%);
-    }
-    
-    .header-nav-bttns {
-      align-items: flex-end;
-      justify-content: flex-end;
-      padding: 0 1rem 4rem;
-    }
+    transform: translateX(0%);
+    transition: none;
+  }
   
-    .mobile-nav-toggle {
-      display: block;
-      position: absolute;
-      z-index: 9999;
-      background-color: transparent;
-      background-image: url("../images/backpackIcon.svg");
-      background-repeat: no-repeat;
-      border: 0;
-      width: 2rem;
-      aspect-ratio: 1;
-      right: 1rem;
-    }
-  
-    .mobile-nav-toggle[aria-expanded='true'] {
-      background-image: url("../images/close-icon.svg");
-      background-color: transparent;
-    }
-  
-    .social-icon {
-      padding-right: 0rem;
-    }
+  .header-nav-bttns {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .icon {
+    width: 1.5rem; /* Set the desired width */
+    height: 1.5rem; /* Set the desired height */
+  }
+
+  .stat-border {
+    border: 2px solid var(--border);
+    padding: 0.3rem;
+    width: 4.2rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .stat-content {
+    justify-content: space-between; /* Align items with space between them */
+  }
+
+  .equipment-border {
+    border: 2px solid var(--border);
+    padding: 0.3rem;
+    width: 10rem;
+  }
+
 }

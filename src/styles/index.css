@@ -32,16 +32,6 @@ body {
   width: 1px;
 }
 
-.title {
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 0.5rem;
-}
 
-.border {
-  border: 2px solid var(--border);
-  padding: 0.3rem;
-  overflow: auto;
-  height: 38rem;
-}
+
+
