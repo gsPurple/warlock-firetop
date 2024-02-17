@@ -3,4 +3,7 @@ export const HINTS = 0;
 export const ADVSTARTPAGE = 6;
 export const STARTADV = "START ADVENTURE";
 export const BACKTOMENU = "Back to Menu";
+export const ROLLSTA = "Roll Stamina";
+export const ROLLSKI = "Roll Skill";
+export const ROLLLUK = "Roll Luck";
 export const ADVENTUREMODE = 1;

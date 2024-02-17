@@ -48,28 +48,27 @@ let pages = [
         title: "YOUR STATS - STAMINA",
         pageContent: "Click the ROLL button to roll the dice and get your STAMINA value.\n\nYour initial STAMINA will be the sum of the numbers rolled on both dice plus the base STAMINA value (12).",
         choices: ["Roll Stamina"],
+        stats: true,
     },
     {
         current: 7,
         title: "YOUR STATS - LUCK",
         pageContent: "Click the ROLL button on the left panel to roll the dice and get your LUCK value.\n\nYour initial LUCK will be the number rolled on the die plus the base LUCK value (6).",
-        choices: 0,
-        next: 8
+        choices: ["Roll Luck"],
+        stats: true,
     },
     {
         current: 8,
         title: "YOUR STATS - SKILL",
         pageContent: "Click the ROLL button on the left panel to roll the dice and get your SKILL value.\n\nYour initial SKILL will be the number rolled on the die plus the base SKILL value (6).",
-        choices: 0,
-        next: 9
+        choices: ["Roll Skill"],
+        stats: true,
     },
     {
         current: 9,
         title: "POTIONS",
         pageContent: "A strange man shows you three potions. You don't know him, but you feel you can trust him as if you did...\n\n'Your quest intrigues me young adventurer' he said, leaning towards you. 'You may take a potion from my collection, to help you in your adventure!'\n\nPotion of Skill - restores SKILL points\nPotion of Strength - restores STAMINA points\nPotion of Fortune - restores LUCK points and adds 1 to initial LUCK",
-        choices: ["Potion of Skill", "Potion of Strength", "Potion of Fortune"],
-        next: 5,
-        previous: 4
+        choices: ["Potion of Skill", "Potion of Strength", "Potion of Fortune"]
     },
     {
         current: 10,

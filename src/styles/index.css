@@ -2,6 +2,9 @@
   --background: #FAF9F6;
   --border: #0E1212;
   --text-color: #0E1212;
+  --darkred: #a30e0e;
+  --darkgreen: #066106;
+  --blue: #12128c;
 }
 
 @media(prefers-color-scheme: dark) {
@@ -9,7 +12,24 @@
     --background: #1a1a1a !important;
     --border: #555556 !important;
     --text-color: #d8d8d5 !important;
+    --blue: #5381d5;
   }
+}
+
+.red {
+  color: var(--darkred);
+}
+
+.green {
+  color: var(--darkgreen);
+}
+
+.blue {
+  color: var(--blue);
+}
+
+.bold {
+  font-weight: bold;
 }
 
 html {

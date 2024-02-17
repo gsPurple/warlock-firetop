@@ -43,21 +43,21 @@ const Header = ({ playerData }) => {
                         <div className='stat-container stat-border'>
                             <div className="stat-content">
                                 <object className='icon' data={heartSVG} type="image/svg+xml" aria-label="Stamina Icon"/>
-                                <div>{playerData.initSta}/{playerData.currentSta}</div>
+                                <div>{playerData.currentSta}/{playerData.initSta}</div>
                             </div>
                         </div>
 
                         <div className='stat-container stat-border'>
                             <div className="stat-content">
                                 <object className='icon' data={skillSVG} type="image/svg+xml" aria-label="Skill Icon"/>
-                                <div>{playerData.initSkill}/{playerData.currentSkill}</div>
+                                <div>{playerData.currentSkill}/{playerData.initSkill}</div>
                             </div>
                         </div>
 
                         <div className='stat-container stat-border'>
                             <div className="stat-content">
                                 <object className='icon' data={cloverSVG} type="image/svg+xml" aria-label="Luck Icon"/>
-                                <div>{playerData.initLuck}/{playerData.currentLuck}</div>
+                                <div>{playerData.currentLuck}/{playerData.initLuck}</div>
                             </div>
                         </div>
 
