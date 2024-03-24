@@ -7,3 +7,6 @@ export const ROLLSTA = "Roll Stamina";
 export const ROLLSKI = "Roll Skill";
 export const ROLLLUK = "Roll Luck";
 export const ADVENTUREMODE = 1;
+export const SKILLPOTION = "Potion of Skill";
+export const STRPOTION = "Potion of Strenght";
+export const FORTPOTION = "Potion of Fortune";

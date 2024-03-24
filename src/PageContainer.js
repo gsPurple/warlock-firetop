@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import GameMenu from './GameMenu';
 import { infoPages } from './utils/infoPagesObj';
-import { STARTADV, BACKTOMENU, ADVENTUREMODE, ADVSTARTPAGE } from './utils/constantsfile';
-import { ROLLSTA, ROLLSKI, ROLLLUK } from './utils/constantsfile';
+import * as constants from './utils/constantsfile';
 import './styles/page-container.css';
 import Header from './Header';
 import ChoiceReader from './utils/ChoiceReader';
@@ -26,22 +25,29 @@ function PageContainer() {
     inventory: ['Sword', 'Shield', 'Leather Armour'],
   });
 
+  const addItemToInventory = (item) => {
+    setPlayerState(prevState => ({
+      ...prevState,
+      inventory: [...prevState.inventory, item]
+    }));
+  };
+
   const handleChoice = (choice) => {
+    console.log("Handle choice: " + choice)
+
     let choiceIndex;
 
     switch(choice) {
-        case BACKTOMENU:
+        case constants.BACKTOMENU:
           choiceIndex = null;
           break;
-        case STARTADV:
-          setCurrentMode(ADVENTUREMODE);
-          choiceIndex = ADVSTARTPAGE;
+        case constants.STARTADV:
+          setCurrentMode(constants.ADVENTUREMODE);
+          choiceIndex = constants.ADVSTARTPAGE;
           break;
-        case ROLLSTA:
-        case ROLLSKI:
-        case ROLLLUK:
-          console.log(choice)
-
+        case constants.ROLLSTA:
+        case constants.ROLLSKI:
+        case constants.ROLLLUK:
           let d1 = rollDie();
           let d2 = rollDie();
           setDieOne(d1);
@@ -50,10 +56,10 @@ function PageContainer() {
           let statValue = d1 + d2 + parseInt(currentPage.pageContent.match(/\d+/g));
           
           let newState;
-          if(choice === ROLLSTA) {
+          if(choice === constants.ROLLSTA) {
             newState = {initSta: statValue, currentSta: statValue}
           }
-          else if (choice === ROLLSKI) {
+          else if (choice === constants.ROLLSKI) {
             newState = {initSkill: statValue, currentSkill: statValue}
           }
           else {
@@ -69,11 +75,24 @@ function PageContainer() {
           currentPage.next = currentPage.current + 1;
           currentPage.choices = 0;
           break;
+        case constants.SKILLPOTION:
+          addItemToInventory("Skill Potion")
+          choiceIndex = "";
+          break;
+        case constants.STRPOTION:
+          choiceIndex = "";
+          break;
+        case constants.FORTPOTION:
+          choiceIndex = "";
+          break;
         default:
-          if(currentPage.stats) {
-            setDieOne(null)
-            setDieTwo(null)
+          if(choice > 1) {
+            if(currentPage.stats) {
+              setDieOne(null)
+              setDieTwo(null)
+            }
           }
+          
           choiceIndex = choice;
     }
     
@@ -92,7 +111,7 @@ function PageContainer() {
 
 
   switch(currentMode) {
-    case ADVENTUREMODE:
+    case constants.ADVENTUREMODE:
       
       return (
         <div className='ui-container'>
