@@ -17,6 +17,13 @@
     margin-top: 0.5rem;
   }
 
+.border {
+    border: 2px solid var(--border);
+    padding: 0.3rem;
+    overflow: auto;
+    height: 38rem;
+}
+
 #button-next {
     float: right;
 }
@@ -25,11 +32,17 @@
     float: left;
 }
 
-.border {
-    border: 2px solid var(--border);
-    padding: 0.3rem;
-    overflow: auto;
-    height: 38rem;
+#imageContainer {
+    width: 15.46rem;
+    height: 22rem;
+    margin: 0 auto;
+    margin-top: 10px;
+    border: 2px solid #000000;
+}
+
+#image {
+    width: inherit;
+    height: inherit;
 }
 
 @media screen and (min-width: 768px) {
@@ -51,6 +64,11 @@
         width: 38rem;
         height: 42rem;
         margin: auto;
+    }
+
+    #imageContainer {
+        width: 20.4rem;
+        height: 29rem;
     }
 
     

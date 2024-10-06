@@ -3,7 +3,7 @@ import GameMenu from './GameMenu';
 import { infoPages } from './utils/infoPagesObj';
 import * as constants from './utils/constantsfile';
 import './styles/page-container.css';
-import Header from './Header';
+import AdventurePage from './AdventurePage';
 import ChoiceReader from './utils/ChoiceReader';
 import rollDie from './utils/rollDie';
 
@@ -76,14 +76,16 @@ function PageContainer() {
           currentPage.choices = 0;
           break;
         case constants.SKILLPOTION:
-          addItemToInventory("Skill Potion")
-          choiceIndex = "";
+          addItemToInventory(constants.SKILLPOTION)
+          choiceIndex = 10;
           break;
         case constants.STRPOTION:
-          choiceIndex = "";
+          addItemToInventory(constants.STRPOTION)
+          choiceIndex = 10;
           break;
         case constants.FORTPOTION:
-          choiceIndex = "";
+          addItemToInventory(constants.FORTPOTION)
+          choiceIndex = 10;
           break;
         default:
           if(choice > 1) {
@@ -109,45 +111,20 @@ function PageContainer() {
 
   const pageContentParagraphs = currentPage.pageContent.split('\n');
 
+  console.log(playerState)
 
   switch(currentMode) {
     case constants.ADVENTUREMODE:
       
       return (
-        <div className='ui-container'>
-          <Header playerData={playerState} className='left-col'/>
-          <div className="page-container border">
-            <h1 className='title'>{currentPage.title}</h1>
-            {pageContentParagraphs.map((paragraph, index) => (
-              <p className='text-content' key={index}>{paragraph}</p>
-            ))}
-
-            {currentPage.stats &&
-            <div>
-              {<div>Die One: {dieOne !== null ? <span className="red bold"> {dieOne} </span> : 'Not rolled yet'}</div>}
-              {<div>Die Two: {dieTwo !== null ? <span className="green bold"> {dieTwo} </span> : 'Not rolled yet'}</div>}
-              <p></p>
-              {
-                <div>TOTAL:&nbsp;<span className="red bold">{dieOne !== null ? dieOne : '0'}</span> + 
-                           &nbsp;<span className="green bold">{dieTwo !== null ? dieTwo : '0'}</span> +
-                           &nbsp;<span className="blue bold">{currentPage.pageContent.match(/\d+/g)}</span> = 
-                           &nbsp;{dieOne + dieTwo + parseInt(currentPage.pageContent.match(/\d+/g))}</div>}
-                </div>
-              }
-          
-            <div className='navigation-button-container'>
-              <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} />
-            </div>
-
-            <div>
-                {currentPage.previous !== undefined && <button id='button-back' onClick={() => handleChoice(currentPage.previous)}>
-                  Back
-                </button>}
-    
-                {currentPage.next !== undefined && <button id='button-next' onClick={() => handleChoice(currentPage.next)}>Next</button>}
-            </div>
-          </div>
-        </div>
+        <AdventurePage 
+          playerState={playerState} 
+          currentPage={currentPage} 
+          pageContentParagraphs={pageContentParagraphs}
+          dieOne={dieOne} 
+          dieTwo={dieTwo} 
+          handleChoice={handleChoice}
+        />
       );
 
     default:

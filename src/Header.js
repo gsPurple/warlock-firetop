@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import Inventory from './Inventory';
 import './styles/header.css';
-import heartSVG from './images/heart_Icon.svg';
-import skillSVG from './images/skill_icon.svg';
-import cloverSVG from './images/clover_icon.svg';
-import goldSVG from './images/gold_icon.svg';
-import provisionsSVG from './images/provisions_icon.svg';
+import heartSVG from './images/icons/heart_Icon.svg';
+import skillSVG from './images/icons/skill_icon.svg';
+import cloverSVG from './images/icons/clover_icon.svg';
+import goldSVG from './images/icons/gold_icon.svg';
 
-const Header = ({ playerData }) => {
+const Header = ({ playerState }) => {
     const [isLargeScreen, setIsLargeScreen] = useState(false);
     const [dataVisible, setDataVisible] = useState(false);
     const [ariaExpanded, setAriaExpanded] = useState(false);
@@ -43,28 +43,28 @@ const Header = ({ playerData }) => {
                         <div className='stat-container stat-border'>
                             <div className="stat-content">
                                 <object className='icon' data={heartSVG} type="image/svg+xml" aria-label="Stamina Icon"/>
-                                <div>{playerData.currentSta}/{playerData.initSta}</div>
+                                <div>{playerState.currentSta}/{playerState.initSta}</div>
                             </div>
                         </div>
 
                         <div className='stat-container stat-border'>
                             <div className="stat-content">
                                 <object className='icon' data={skillSVG} type="image/svg+xml" aria-label="Skill Icon"/>
-                                <div>{playerData.currentSkill}/{playerData.initSkill}</div>
+                                <div>{playerState.currentSkill}/{playerState.initSkill}</div>
                             </div>
                         </div>
 
                         <div className='stat-container stat-border'>
                             <div className="stat-content">
                                 <object className='icon' data={cloverSVG} type="image/svg+xml" aria-label="Luck Icon"/>
-                                <div>{playerData.currentLuck}/{playerData.initLuck}</div>
+                                <div>{playerState.currentLuck}/{playerState.initLuck}</div>
                             </div>
                         </div>
 
                         <div className='stat-container stat-border'>
                             <div className="stat-content">
                                 <object className='icon' data={goldSVG} type="image/svg+xml" aria-label="Gold Icon"/>
-                                <div>{playerData.gold}</div>
+                                <div>{playerState.gold}</div>
                             </div>
                         </div>
 
@@ -73,24 +73,13 @@ const Header = ({ playerData }) => {
                         </button>
                     </div>
                     
-                    <div id='primary-nav' data-visible={dataVisible} className='header-nav-bttns primary-nav'>
-                        {!isLargeScreen && <h3>Inventory</h3>}
-                        
-                        <div className='stat-container stat-border'>
-                            <div className="stat-content">
-                                <object className='icon' data={provisionsSVG} type="image/svg+xml" aria-label="Provisions Icon"/>
-                                <div>{playerData.provisions}</div>
-                            </div>
-                        </div>
-
-                        <div className='equipment-border'>
-                            <span className='label'>Equipment:</span>
-                            {playerData.inventory.map((item, index) => (
-                                <div key={index}>{item}</div>
-                            ))}
-                        </div>
-                        
-                    </div> 
+                    <Inventory
+                        playerState={playerState} 
+                        dataVisible={dataVisible} 
+                        isLargeScreen={isLargeScreen}
+                        ariaExpanded={ariaExpanded}
+                        clickNavToggle={clickNavToggle}
+                    />
                     
                 </div>
             </div>
