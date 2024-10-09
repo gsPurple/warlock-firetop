@@ -111,11 +111,8 @@ function PageContainer() {
 
   const pageContentParagraphs = currentPage.pageContent.split('\n');
 
-  console.log(playerState)
-
   switch(currentMode) {
-    case constants.ADVENTUREMODE:
-      
+    case constants.ADVENTUREMODE:      
       return (
         <AdventurePage 
           playerState={playerState} 
