@@ -21,7 +21,7 @@
     border: 2px solid var(--border);
     padding: 0.3rem;
     overflow: auto;
-    height: 38rem;
+    height: 37rem;
 }
 
 #button-next {
@@ -61,8 +61,8 @@
     }
 
     .border {
-        width: 38rem;
-        height: 42rem;
+        width: 40vw;
+        height: 91vh;
         margin: auto;
     }
 
@@ -72,4 +72,23 @@
     }
 
     
+}
+
+@media screen and (min-width: 2159px) {
+
+    .border {
+        padding: 1.2rem;
+    }
+
+    #imageContainer {
+        margin-top: 5vh;
+        width: 19.2vw;
+        height: 26.4vw;
+    }
+
+    button {
+        font-size: inherit;
+    }
+    
+  
 }

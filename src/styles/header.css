@@ -142,7 +142,7 @@
   .stat-border {
     border: 2px solid var(--border);
     padding: 0.3rem;
-    width: 4.2rem;
+    width: 4.6vw;
     margin-bottom: 0.2rem;
   }
 
@@ -154,6 +154,18 @@
     border: 2px solid var(--border);
     padding: 0.3rem;
     width: 10rem;
+  }
+
+}
+
+@media screen and (min-width: 2159px) {
+
+  body {
+    font-size: calc(15px + 0.3vw);
+  }
+
+  .equipment-border {
+    width: 7vw;
   }
 
 }
