@@ -3,7 +3,7 @@ import Header from './Header';
 import ChoiceReader from './utils/ChoiceReader';
 
 
-const AdventurePage = ({ playerState, dieOne, dieTwo, currentPage, handleChoice, pageContentParagraphs }) => {
+const AdventurePage = ({ playerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, pageContentParagraphs }) => {
 
     console.log(playerState)
     
@@ -35,11 +35,8 @@ const AdventurePage = ({ playerState, dieOne, dieTwo, currentPage, handleChoice,
               </div>
 
             }
-
-          
-            <div className='navigation-button-container'>
-              <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} />
-            </div>
+            
+            <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} testYourLuck={testYourLuck}/>            
 
             <div>
                 {currentPage.previous !== undefined && <button id='button-back' onClick={() => handleChoice(currentPage.previous)}>

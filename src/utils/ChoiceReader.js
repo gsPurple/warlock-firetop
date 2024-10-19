@@ -1,8 +1,8 @@
 import React from 'react';
 
-function ChoiceReader({ currentPage, handleChoice }) {
+function ChoiceReader({ currentPage, handleChoice, testYourLuck}) {
   return (
-    <div>
+    <div className='navigation-button-container'>
       {Array.isArray(currentPage.choices) &&
         currentPage.choices.map((choice, index) => {
 
@@ -14,6 +14,12 @@ function ChoiceReader({ currentPage, handleChoice }) {
             </button>
           );
         })}
+      
+      {(currentPage.canTestLuck) && 
+        <button onClick={() => testYourLuck()}>
+          Test your Luck
+        </button>
+      }
     </div>
   );
 }

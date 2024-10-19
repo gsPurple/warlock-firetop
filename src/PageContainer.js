@@ -111,6 +111,29 @@ function PageContainer() {
 
   const pageContentParagraphs = currentPage.pageContent.split('\n');
 
+  const testYourLuck = () => {
+    const dieOne = rollDie()
+    const dieTwo = rollDie()
+    const result = dieOne + dieTwo;
+  
+    if (result <= playerState.currentLuck) {
+      console.log("LUCK TEST VALUE ---> Lucky");
+      setCurrentPageIndex(currentPage.lucky);
+    } else {
+      console.log("LUCK TEST VALUE ---> Unlucky");
+      setCurrentPageIndex(currentPage.unlucky);
+    }
+  
+    if (parseInt(playerState.currentLuck) > 0) {
+      setPlayerState((prevState) => ({
+        ...prevState,
+        currentLuck: parseInt(prevState.currentLuck) - 1,
+      }));
+    }
+  
+    console.log("Roll result: " + result + " current luck: " + playerState.currentLuck);
+  };
+
   switch(currentMode) {
     case constants.ADVENTUREMODE:      
       return (
@@ -121,6 +144,7 @@ function PageContainer() {
           dieOne={dieOne} 
           dieTwo={dieTwo} 
           handleChoice={handleChoice}
+          testYourLuck={testYourLuck}
         />
       );
 
