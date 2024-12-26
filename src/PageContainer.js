@@ -22,7 +22,7 @@ function PageContainer() {
     currentLuck: '00',
     gold: '0',
     provisions: '00',
-    inventory: ['Sword', 'Shield', 'Leather Armour'],
+    inventory: ['Sword', 'Shield', 'Leather Armour', 'Lantern'],
   });
 
   const addItemToInventory = (item) => {
@@ -38,6 +38,25 @@ function PageContainer() {
     let choiceIndex;
 
     switch(choice) {
+        case "DEV":
+          console.log("DEV PAGE")
+          setPlayerState((prevState) => ({
+            ...prevState,
+            initSta: '15',
+            currentSta: '15',
+            initSkill: '12',
+            currentSkill: '12',
+            initLuck: '10',
+            currentLuck: '10',
+            gold: '15',
+            provisions: '5',
+            inventory: ['Debug','Sword', 'Shield', 'Leather Armour','Lantern', 'Potion of Skill x2'],
+          }));
+          
+          setCurrentMode(constants.ADVENTUREMODE);
+
+          choiceIndex = 12;
+          break;
         case constants.BACKTOMENU:
           choiceIndex = null;
           break;
@@ -76,15 +95,15 @@ function PageContainer() {
           currentPage.choices = 0;
           break;
         case constants.SKILLPOTION:
-          addItemToInventory(constants.SKILLPOTION)
+          addItemToInventory(constants.SKILLPOTION + " x2")
           choiceIndex = 10;
           break;
         case constants.STRPOTION:
-          addItemToInventory(constants.STRPOTION)
+          addItemToInventory(constants.STRPOTION + " x2")
           choiceIndex = 10;
           break;
         case constants.FORTPOTION:
-          addItemToInventory(constants.FORTPOTION)
+          addItemToInventory(constants.FORTPOTION + " x2")
           choiceIndex = 10;
           break;
         default:
@@ -138,7 +157,8 @@ function PageContainer() {
     case constants.ADVENTUREMODE:      
       return (
         <AdventurePage 
-          playerState={playerState} 
+          playerState={playerState}
+          setPlayerState={setPlayerState}
           currentPage={currentPage} 
           pageContentParagraphs={pageContentParagraphs}
           dieOne={dieOne} 

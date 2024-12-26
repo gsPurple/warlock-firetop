@@ -1,4 +1,4 @@
-import ToolTips from '../tooltipsText.js';
+import ToolTips from '../TooltipsText.js';
 
 function tooltipText(item) {
 
@@ -10,10 +10,12 @@ function tooltipText(item) {
             break;
 
         case "Potion of Strength x2":
+        case "Potion of Strength x1":
             result = ToolTips.PotionofStrength;
             break;
 
-        case "Potion of Strength x1":
+        case "Potion of Skill x2":
+        case "Potion of Skill x1":
             result = ToolTips.PotionofStrength;
             break;
 

@@ -6,7 +6,7 @@ import skillSVG from './images/icons/skill_icon.svg';
 import cloverSVG from './images/icons/clover_icon.svg';
 import goldSVG from './images/icons/gold_icon.svg';
 
-const Header = ({ playerState }) => {
+const Header = ({ playerState, setPlayerState }) => {
     const [isLargeScreen, setIsLargeScreen] = useState(false);
     const [dataVisible, setDataVisible] = useState(false);
     const [ariaExpanded, setAriaExpanded] = useState(false);
@@ -74,7 +74,8 @@ const Header = ({ playerState }) => {
                     </div>
                     
                     <Inventory
-                        playerState={playerState} 
+                        playerState={playerState}
+                        setPlayerState={setPlayerState}
                         dataVisible={dataVisible} 
                         isLargeScreen={isLargeScreen}
                         ariaExpanded={ariaExpanded}

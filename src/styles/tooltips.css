@@ -1,0 +1,43 @@
+.tooltip {
+    position: relative;
+    
+}
+  
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: rgb(180, 131, 41);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    top: 1.3rem;
+    left: 60%;
+}
+
+.invItem:hover {
+    background-image: linear-gradient(to left, rgba(255,0,0,0), rgba(208, 107, 40, 0.603));
+    border-radius: 5px;
+}
+  
+  
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+@media screen and (min-width: 768px) {
+
+    .tooltip .tooltiptext {
+        top: -0.5rem;
+        left: 110%;
+    }
+
+    .invItem:hover {
+        background-image: linear-gradient(to left, rgba(255,0,0,0), rgba(170,170,170,0.4));
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+}

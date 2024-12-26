@@ -72,8 +72,8 @@ let pages = [
     },
     {
         current: 9,
-        title: "POTIONS",
-        pageContent: "A strange man shows you three potions. You don't know him, but you feel you can trust him as if you did...\n\n'Your quest intrigues me young adventurer' he said, leaning towards you. 'You may take a potion from my collection, to help you in your adventure!'\n\nPotion of Skill - restores SKILL points\nPotion of Strength - restores STAMINA points\nPotion of Fortune - Adds 1 to initial LUCK and restores LUCK points",
+        title: "EQUIPMENT & POTIONS",
+        pageContent: "You will start your adventure with a bare minimum of equipment, but you may find other items during your travels. You are armed with a sword and are dressed in leather armour. You have a rucksack (haversack, backpack) on your back to hold your Provisions and any treasures you may come across. You also carry a lantern which lights your way.\n\nIn addition, you may take one bottle of a magical potion which will aid you on your quest. You may choose to take a bottle of any of the following:\n\nPotion of Skill - restores SKILL points\nPotion of Strength - restores STAMINA points\nPotion of Fortune - Restores LUCK points and adds 1 to initial LUCK\n\nThese potions may be taken at any time during your adventure. Each bottle of potion contains enough for two measures i.e. the characteristics may be restored twice during an adventure.\n\nRemember also that you may only choose one of the three potions to take on your trip, so choose wisely!",
         choices: ["Potion of Skill", "Potion of Strength", "Potion of Fortune"],
         choice0: "Potion of Skill",
         choice1: "Potion of Strength",
