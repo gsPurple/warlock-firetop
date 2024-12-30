@@ -43,14 +43,14 @@ function PageContainer() {
           setPlayerState((prevState) => ({
             ...prevState,
             initSta: '15',
-            currentSta: '15',
+            currentSta: '12',
             initSkill: '12',
-            currentSkill: '12',
+            currentSkill: '6',
             initLuck: '10',
             currentLuck: '10',
             gold: '15',
             provisions: '5',
-            inventory: ['Debug','Sword', 'Shield', 'Leather Armour','Lantern', 'Potion of Skill x2'],
+            inventory: ['Debug','Sword', 'Shield', 'Leather Armour','Lantern', 'Potion of Skill x2', 'Potion of Fortune', 'Potion of Strength x2'],
           }));
           
           setCurrentMode(constants.ADVENTUREMODE);

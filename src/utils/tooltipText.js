@@ -19,6 +19,10 @@ function tooltipText(item) {
             result = ToolTips.PotionofStrength;
             break;
 
+        case "Potion of Fortune":
+            result = ToolTips.PotionofFortune;
+            break;
+
         case "Escape":
             result = ToolTips.Escape;
             break;

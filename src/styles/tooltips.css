@@ -5,7 +5,7 @@
   
 .tooltip .tooltiptext {
     visibility: hidden;
-    width: 120px;
+    width: 8rem;
     background-color: rgb(180, 131, 41);
     color: #fff;
     text-align: center;
@@ -37,7 +37,15 @@
     .invItem:hover {
         background-image: linear-gradient(to left, rgba(255,0,0,0), rgba(170,170,170,0.4));
         border-radius: 5px;
+    }
+
+    .consumable:hover {        
         cursor: pointer;
+    }
+
+    .non-consumable:hover {
+        cursor: default;
     }
     
 }
+
