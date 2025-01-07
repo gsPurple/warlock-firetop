@@ -1,6 +1,6 @@
 import React from 'react';
 import Header from './Header';
-import ChoiceReader from './utils/ChoiceReader';
+import ChoiceReader from '../utils/ChoiceReader';
 
 
 const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, pageContentParagraphs }) => {
@@ -31,7 +31,7 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
 
             {(currentPage.image !== undefined) &&
               <div id="imageContainer">
-                  <img id='image' src={ require('./images/ilustrations/' + currentPage.image)} alt={currentPage.image} />
+                  <img id='image' src={ require('../images/ilustrations/' + currentPage.image)} alt={currentPage.image} />
               </div>
 
             }

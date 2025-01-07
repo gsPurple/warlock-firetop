@@ -1,6 +1,6 @@
 import React from 'react';
-import './styles/game-menu.css';
-import { HOWTO, HINTS, STARTADV } from './utils/constantsfile';
+import '../styles/game-menu.css';
+import { HOWTO, HINTS, STARTADV } from '../utils/constantsfile';
 
 function GameMenu({ onSelectOption }) {
   const handleButtonSelection = (index) => {

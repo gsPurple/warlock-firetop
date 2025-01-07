@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Inventory from './Inventory';
-import './styles/header.css';
-import heartSVG from './images/icons/heart_Icon.svg';
-import skillSVG from './images/icons/skill_icon.svg';
-import cloverSVG from './images/icons/clover_icon.svg';
-import goldSVG from './images/icons/gold_icon.svg';
+import '../styles/header.css';
+import heartSVG from '../images/icons/heart_Icon.svg';
+import skillSVG from '../images/icons/skill_icon.svg';
+import cloverSVG from '../images/icons/clover_icon.svg';
+import goldSVG from '../images/icons/gold_icon.svg';
 
 const Header = ({ playerState, setPlayerState }) => {
     const [isLargeScreen, setIsLargeScreen] = useState(false);

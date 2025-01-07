@@ -109,7 +109,7 @@ let pages = [
         choices: ["Turn West - 71", "Turn East - 278"],
         previous: 12,
         choice0: 14,
-        choice1: 9
+        choice1: 18
     },
     {
         current: 14,
@@ -134,19 +134,25 @@ let pages = [
         pageContent: "To your left, on the west face of the passage, there is a rough-cut wooden door. You listen at the door and can hear a rasping sound which may be some sort of creature snoring.",
         choices: ["Open the door - 82", "Press on northwards - 208"],
         choice0: 13,
-        choice1: 14,
-        previous: -1
+        choice1: 14
     },
     {
         current: 17,
         title: "248",
         pageContent: "You step with a crunch on some loose ground and his eyes flick open.\n\nThe creature that has just awakened is an ORC! He scrambles to his feet and turns to grasp at a rope which is probably the alarm bell. You must attack him quickly!",
         choices: [],
-        image: 'wofmsword.png',
         battle: true,
         enemies: ["Orc-6-5"],
         win: 7,
         previous: -1
+    },
+    {
+        current: 18,
+        title: "278",
+        pageContent: "The passageway soon comes to an end at a locked wooden door. You listen at the door but hear nothing.\n\nWill you try to charge the door down or would you rather turn round and go back to the junction?",
+        choices: ["Charge door - 156","Turn back - 92"],
+        choice0: 10,
+        choice1: 11
     },
 ];
 module.exports = {infoPages: pages};

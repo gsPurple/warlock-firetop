@@ -1,5 +1,5 @@
 import React from 'react';
-import ChoiceReader from './utils/ChoiceReader';
+import ChoiceReader from '../utils/ChoiceReader';
 
 
 const MenuPage = ({ playerState, currentPage, handleChoice, pageContentParagraphs }) => {

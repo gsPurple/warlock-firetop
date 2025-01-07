@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import GameMenu from './GameMenu';
-import { infoPages } from './utils/infoPagesObj';
-import * as constants from './utils/constantsfile';
-import './styles/page-container.css';
+import { infoPages } from '../utils/infoPagesObj';
+import * as constants from '../utils/constantsfile';
+import '../styles/page-container.css';
 import AdventurePage from './AdventurePage';
+import BattlePage from './BattlePage';
 import MenuPage from './MenuPage';
-import rollDie from './utils/rollDie';
+import rollDie from '../utils/rollDie';
 
 function PageContainer() {
   const [currentPageIndex, setCurrentPageIndex] = useState(null);
@@ -47,7 +48,7 @@ function PageContainer() {
             initSkill: '12',
             currentSkill: '6',
             initLuck: '10',
-            currentLuck: '10',
+            currentLuck: '3',
             gold: '15',
             provisions: '5',
             inventory: ['Debug','Sword', 'Shield', 'Leather Armour','Lantern', 'Potion of Skill x2', 'Potion of Fortune', 'Potion of Strength x2'],
@@ -155,18 +156,29 @@ function PageContainer() {
 
   switch(currentMode) {
     case constants.ADVENTUREMODE:      
-      return (
-        <AdventurePage 
-          playerState={playerState}
-          setPlayerState={setPlayerState}
-          currentPage={currentPage} 
-          pageContentParagraphs={pageContentParagraphs}
-          dieOne={dieOne} 
-          dieTwo={dieTwo} 
-          handleChoice={handleChoice}
-          testYourLuck={testYourLuck}
-        />
-      );
+    return currentPage.battle ? (
+      <BattlePage 
+        playerState={playerState}
+        setPlayerState={setPlayerState}
+        currentPage={currentPage} 
+        pageContentParagraphs={pageContentParagraphs}
+        dieOne={dieOne} 
+        dieTwo={dieTwo} 
+        handleChoice={handleChoice}
+        testYourLuck={testYourLuck}
+      />
+    ) : (
+      <AdventurePage 
+        playerState={playerState}
+        setPlayerState={setPlayerState}
+        currentPage={currentPage} 
+        pageContentParagraphs={pageContentParagraphs}
+        dieOne={dieOne} 
+        dieTwo={dieTwo} 
+        handleChoice={handleChoice}
+        testYourLuck={testYourLuck}
+      />
+    );
 
     default:
       return (

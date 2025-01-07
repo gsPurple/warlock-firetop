@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import provisionsSVG from './images/icons/provisions_icon.svg';
-import tooltipText from './utils/tooltipText';
-import * as constants from './utils/constantsfile';
-import './styles/tooltips.css'
-import Modal from './utils/Modal';
+import provisionsSVG from '../images/icons/provisions_icon.svg';
+import tooltipText from '../utils/tooltipText';
+import * as constants from '../utils/constantsfile';
+import '../styles/tooltips.css'
+import Modal from '../utils/Modal';
 
 const Inventory = ({ playerState, setPlayerState, dataVisible, isLargeScreen}) => {
     const [isModalOpen, setModalOpen] = useState(false);
