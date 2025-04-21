@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Header from './Header';
 import ChoiceReader from '../utils/ChoiceReader';
 
@@ -6,6 +6,15 @@ import ChoiceReader from '../utils/ChoiceReader';
 const BattlePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, pageContentParagraphs }) => {
 
     console.log("A battle has started...")
+
+    const [battleState, setbattleState] = useState({
+      enemyNum: currentPage.enemies.length,
+      enemies: currentPage.enemies,
+      enemyName: currentPage.enemies[0].split("-")[0],
+      enemySTA: parseInt(currentPage.enemies[0].split("-")[2]),
+      currentSTA:parseInt(currentPage.enemies[0].split("-")[2]),
+      enemySKL: currentPage.enemies[0].split("-")[1],
+    });
     
     return (
         <div className='ui-container'>
@@ -16,25 +25,23 @@ const BattlePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, 
               <p className='text-content' key={index}>{paragraph}</p>
             ))}
 
-            {currentPage.stats &&
-            <div>
-              {<div>Die One: {dieOne !== null ? <span className="red bold"> {dieOne} </span> : 'Not rolled yet'}</div>}
-              {<div>Die Two: {dieTwo !== null ? <span className="green bold"> {dieTwo} </span> : 'Not rolled yet'}</div>}
-              <p></p>
-              {
-                <div>TOTAL:&nbsp;<span className="red bold">{dieOne !== null ? dieOne : '0'}</span> + 
-                           &nbsp;<span className="green bold">{dieTwo !== null ? dieTwo : '0'}</span> +
-                           &nbsp;<span className="blue bold">{currentPage.pageContent.match(/\d+/g)}</span> = 
-                           &nbsp;{dieOne + dieTwo + parseInt(currentPage.pageContent.match(/\d+/g))}</div>}
+            {(currentPage.image !== null && currentPage.image !== undefined) &&
+                <div id="swordImgContainer">
+                    <img 
+                        id="image" 
+                        src={`/src/images/decor/${currentPage.image}`} 
+                        alt={currentPage.image} 
+                    />
                 </div>
-            }
-
-            {(currentPage.image !== undefined) &&
-              <div id="imageContainer">
-                  <img id='image' src={ require('../images/ilustrations/' + currentPage.image)} alt={currentPage.image} />
-              </div>
 
             }
+
+            <hr />
+
+            <div>Enemy: {battleState.enemyName}</div>
+
+            <div>Skill: {battleState.enemySKL}</div>
+            
             
             <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} testYourLuck={testYourLuck}/>            
 

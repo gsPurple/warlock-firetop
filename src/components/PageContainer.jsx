@@ -56,7 +56,7 @@ function PageContainer() {
           
           setCurrentMode(constants.ADVENTUREMODE);
 
-          choiceIndex = 12;
+          choiceIndex = 17;
           break;
         case constants.BACKTOMENU:
           choiceIndex = null;

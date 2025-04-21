@@ -29,12 +29,15 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
                 </div>
             }
 
-            {(currentPage.image !== undefined) &&
-              <div id="imageContainer">
-                  <img id='image' src={ require('../images/ilustrations/' + currentPage.image)} alt={currentPage.image} />
-              </div>
-
-            }
+            {(currentPage.image !== undefined) && (
+                <div id="imageContainer">
+                    <img 
+                        id="image" 
+                        src={`/src/images/ilustrations/${currentPage.image}`} 
+                        alt={currentPage.image} 
+                    />
+                </div>
+            )}
             
             <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} testYourLuck={testYourLuck}/>            
 

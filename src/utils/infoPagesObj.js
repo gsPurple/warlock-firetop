@@ -1,4 +1,4 @@
-let pages = [
+const pages = [
     {
         current: 0,
         title: "HINTS ON PLAY",
@@ -122,7 +122,7 @@ let pages = [
     {
         current: 15,
         title: "71",
-        pageContent: "There is a right-hand turn to the north in the passage. Cautiously you approach a sentry post on the corner and, as you look in, you can see a strange Goblin-like creature in leather armour asleep at his post. You try to tiptoe past him. If you're lucky, he will not wake up and remain snoring loudly - turn to 301. If not turn to 248.",
+        pageContent: "There is a right-hand turn to the north in the passage. Cautiously you approach a sentry post on the corner and, as you look in, you can see a strange Goblin-like creature in leather armour asleep at his post. You try to tiptoe past him.\nIf you're lucky, he will not wake up and remain snoring loudly - turn to 301.\nIf not turn to 248.",
         choices: [],
         canTestLuck: true,
         lucky: 16,
@@ -139,12 +139,12 @@ let pages = [
     {
         current: 17,
         title: "248",
+        image: 'wofmsword.png',
         pageContent: "You step with a crunch on some loose ground and his eyes flick open.\n\nThe creature that has just awakened is an ORC! He scrambles to his feet and turns to grasp at a rope which is probably the alarm bell. You must attack him quickly!",
         choices: [],
         battle: true,
         enemies: ["Orc-6-5"],
-        win: 7,
-        previous: -1
+        next: 7
     },
     {
         current: 18,
@@ -155,4 +155,4 @@ let pages = [
         choice1: 11
     },
 ];
-module.exports = {infoPages: pages};
+export const infoPages = pages;

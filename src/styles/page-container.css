@@ -45,6 +45,18 @@
     height: inherit;
 }
 
+#swordImgContainer {
+    width: 305px;
+    height: 85px;
+    margin: 0 auto;
+    margin-top: 10px;
+}
+
+#imageSword {
+    width: 305px;
+    height: 85px;
+}
+
 @media screen and (min-width: 768px) {
 
     .ui-container {
