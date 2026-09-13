@@ -61,15 +61,20 @@
 
     .ui-container {
         display: grid;
-        grid-template-areas: 'page stats . ';
+        grid-template-areas: 'stats page enemies';
+        justify-content: space-between;
     }
 
     .left-col {
-        grid-area: 'stats';
+        grid-area: stats;
     }
 
     .page-container {
-        grid-area: 'page';
+        grid-area: page;
+    }
+
+    .right-col {
+        grid-area: enemies;
     }
 
     .border {

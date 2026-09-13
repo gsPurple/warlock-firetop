@@ -6,7 +6,9 @@ import GameMenu from './GameMenu';
 import AdventurePage from './AdventurePage';
 import BattlePage from './BattlePage';
 import MenuPage from './MenuPage';
+import DeathPage from './DeathPage';
 import rollDie from '../utils/rollDie';
+import testLuck from '../utils/testLuck';
 
 const playerStateReducer = (state, action) => {
   switch (action.type) {
@@ -148,11 +150,9 @@ function PageContainer() {
   const pageContentParagraphs = currentPage.pageContent.split('\n');
 
   const testYourLuck = () => {
-    const dieOne = rollDie();
-    const dieTwo = rollDie();
-    const result = dieOne + dieTwo;
+    const { result, lucky } = testLuck(state.currentLuck);
 
-    if (result <= state.currentLuck) {
+    if (lucky) {
       console.log("LUCK TEST VALUE ---> Lucky");
       setCurrentPageIndex(currentPage.lucky);
     } else {
@@ -162,7 +162,7 @@ function PageContainer() {
 
     if (parseInt(state.currentLuck) > 0) {
       dispatch({
-        type: 'SET_PLAYER_STATS',
+        type: 'SET_PLAYER_STATE',
         payload: { currentLuck: state.currentLuck - 1 },
       });
     }
@@ -171,9 +171,11 @@ function PageContainer() {
   };
 
   switch (currentMode) {
+    case constants.DEATHMODE:
+      return <DeathPage handleChoice={handleChoice} />;
     case constants.ADVENTUREMODE:
       return currentPage.battle ? (
-        <BattlePage 
+        <BattlePage
           playerState={state}
           setPlayerState={dispatch}
           currentPage={currentPage}
@@ -182,6 +184,7 @@ function PageContainer() {
           dieTwo={dieTwo}
           handleChoice={handleChoice}
           testYourLuck={testYourLuck}
+          onPlayerDeath={() => setCurrentMode(constants.DEATHMODE)}
         />
       ) : (
         <AdventurePage 

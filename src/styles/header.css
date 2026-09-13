@@ -68,10 +68,70 @@
   transform: translateX(0%);
 }
 
+.enemy-nav {
+  position: fixed;
+  flex-direction: column;
+  inset: 0 0 0 0%;
+  background: hsla(0, 0%, 0%, 0.8);
+  padding: 1.3rem 1rem;
+
+  transform: translateX(-100%);
+  transition: transform 350ms ease-in-out;
+}
+
+.enemy-nav[data-visible='true'] {
+  transform: translateX(0%);
+}
+
 .header-nav-bttns {
   
   padding: 0 1rem 4rem;
 }
+
+.mobile-enemy-toggle {
+  display: block;
+  position: absolute;
+  z-index: 9999;
+  background-color: transparent;
+  background-image: url("../images/icons/enemiesIcon.svg"); /* your enemy icon */
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: 0;
+  width: 2rem;
+  aspect-ratio: 1;
+  top: 0.2rem;
+  right: 3rem; /* ← Position it to the left of the inventory button */
+}
+
+.mobile-enemy-toggle[aria-expanded='true'] {
+  background-image: url("../images/icons/close-icon.svg"); /* optional */
+}
+
+.enemy-icon-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.enemy-notification {
+  position: absolute;
+  top: -0.2rem;
+  left: -0.5rem;
+  background-color: red;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  pointer-events: none; /* So the badge doesn’t interfere with clicking the button */
+}
+
+
 
 .mobile-nav-toggle {
   display: block;
@@ -95,8 +155,39 @@
   padding-right: 0rem;
 }
 
-.equipment-border > .label {
+.equipment-border > .label,
+.enemy-card-list > .label {
   font-weight: bold;
+}
+
+.enemy-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.enemy-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border: 2px solid var(--border);
+  padding: 0.3rem 0.5rem;
+}
+
+.enemy-card.defeated {
+  opacity: 0.4;
+}
+
+.enemy-card-name {
+  font-weight: bold;
+  overflow-wrap: anywhere;
+}
+
+.enemy-card-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
   
 @media screen and (min-width: 768px) {
@@ -118,13 +209,32 @@
     display: none;
   }
 
+  .mobile-enemy-toggle {
+    display: none;
+  }
+
+  .mobile-only-heading {
+    display: none;
+  }
+
   .primary-nav {
     position: static;
     flex-direction: column;
     inset: 0 0 0 0%;
     background: transparent;
     padding: 0;
-  
+
+    transform: translateX(0%);
+    transition: none;
+  }
+
+  .enemy-nav {
+    position: static;
+    flex-direction: column;
+    inset: 0 0 0 0%;
+    background: transparent;
+    padding: 0;
+
     transform: translateX(0%);
     transition: none;
   }
@@ -142,7 +252,7 @@
   .stat-border {
     border: 2px solid var(--border);
     padding: 0.3rem;
-    width: 4.6vw;
+    min-width: 4.6vw;
     margin-bottom: 0.2rem;
   }
 
@@ -156,12 +266,20 @@
     width: 10rem;
   }
 
+  .enemy-card-list {
+    min-width: 10rem;
+  }
+
 }
 
 @media screen and (min-width: 2159px) {
 
   .equipment-border {
     width: 7vw;
+  }
+
+  .enemy-card-list {
+    min-width: 7vw;
   }
 
 }

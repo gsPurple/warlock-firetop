@@ -6,7 +6,7 @@ import skillSVG from '../images/icons/skill_icon.svg';
 import cloverSVG from '../images/icons/clover_icon.svg';
 import goldSVG from '../images/icons/gold_icon.svg';
 
-const Header = ({ playerState, setPlayerState }) => {
+const Header = ({ playerState, setPlayerState, enemies = [], enemyExpanded = false, onEnemyToggle = () => {}, className }) => {
     const [isLargeScreen, setIsLargeScreen] = useState(false);
     const [dataVisible, setDataVisible] = useState(false);
     const [ariaExpanded, setAriaExpanded] = useState(false);
@@ -36,7 +36,7 @@ const Header = ({ playerState, setPlayerState }) => {
     };
 
     return (
-        <header>
+        <header className={className}>
             <div className='parent'>
                 <div className='header-container'>
                     <div className='stats'>
@@ -68,20 +68,29 @@ const Header = ({ playerState, setPlayerState }) => {
                             </div>
                         </div>
 
+                        {enemies.length > 0 &&
+                            <button onClick={() => onEnemyToggle()} className='mobile-enemy-toggle' aria-controls='enemy-nav' aria-expanded={enemyExpanded}>
+                                <div className="enemy-icon-wrapper">
+                                    <span className="enemy-notification">{enemies.length}</span>
+                                </div>
+                                <span className='sr-only'>Enemies</span>
+                            </button>
+                        }
+
                         <button onClick={() => clickNavToggle()} className='mobile-nav-toggle' aria-controls='primary-nav' aria-expanded={ariaExpanded}>
-                            <span className='sr-only'>Menu</span>
+                            <span className='sr-only'>Inventory</span>
                         </button>
                     </div>
-                    
+
                     <Inventory
                         playerState={playerState}
                         setPlayerState={setPlayerState}
-                        dataVisible={dataVisible} 
+                        dataVisible={dataVisible}
                         isLargeScreen={isLargeScreen}
                         ariaExpanded={ariaExpanded}
                         clickNavToggle={clickNavToggle}
                     />
-                    
+
                 </div>
             </div>
         </header>
