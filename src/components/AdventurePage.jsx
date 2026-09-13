@@ -1,15 +1,15 @@
 import React from 'react';
 import Header from './Header';
-import ChoiceReader from './utils/ChoiceReader';
+import ChoiceReader from '../utils/ChoiceReader';
 
 
-const AdventurePage = ({ playerState, dieOne, dieTwo, currentPage, handleChoice, pageContentParagraphs }) => {
+const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, pageContentParagraphs }) => {
 
     console.log(playerState)
     
     return (
         <div className='ui-container'>
-          <Header playerState={playerState} className='left-col'/>
+          <Header playerState={playerState} setPlayerState={setPlayerState} className='left-col'/>
           <div className="page-container border">
             <h1 className='title'>{currentPage.title}</h1>
             {pageContentParagraphs.map((paragraph, index) => (
@@ -29,17 +29,17 @@ const AdventurePage = ({ playerState, dieOne, dieTwo, currentPage, handleChoice,
                 </div>
             }
 
-            {(currentPage.image !== undefined) &&
-              <div id="imageContainer">
-                  <img id='image' src={ require('./images/ilustrations/' + currentPage.image)} alt={currentPage.image} />
-              </div>
-
-            }
-
-          
-            <div className='navigation-button-container'>
-              <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} />
-            </div>
+            {(currentPage.image !== undefined) && (
+                <div id="imageContainer">
+                    <img 
+                        id="image" 
+                        src={`/src/images/ilustrations/${currentPage.image}`} 
+                        alt={currentPage.image} 
+                    />
+                </div>
+            )}
+            
+            <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} testYourLuck={testYourLuck}/>            
 
             <div>
                 {currentPage.previous !== undefined && <button id='button-back' onClick={() => handleChoice(currentPage.previous)}>

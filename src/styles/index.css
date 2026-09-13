@@ -53,5 +53,13 @@ body {
 }
 
 
+@media screen and (min-width: 2159px) {
+
+  body {
+    font-size: calc(15px + 0.2vw);
+  }
+
+}
+
 
 

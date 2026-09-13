@@ -1,4 +1,4 @@
-let pages = [
+const pages = [
     {
         current: 0,
         title: "HINTS ON PLAY",
@@ -72,8 +72,8 @@ let pages = [
     },
     {
         current: 9,
-        title: "POTIONS",
-        pageContent: "A strange man shows you three potions. You don't know him, but you feel you can trust him as if you did...\n\n'Your quest intrigues me young adventurer' he said, leaning towards you. 'You may take a potion from my collection, to help you in your adventure!'\n\nPotion of Skill - restores SKILL points\nPotion of Strength - restores STAMINA points\nPotion of Fortune - Adds 1 to initial LUCK and restores LUCK points",
+        title: "EQUIPMENT & POTIONS",
+        pageContent: "You will start your adventure with a bare minimum of equipment, but you may find other items during your travels. You are armed with a sword and are dressed in leather armour. You have a rucksack (haversack, backpack) on your back to hold your Provisions and any treasures you may come across. You also carry a lantern which lights your way.\n\nIn addition, you may take one bottle of a magical potion which will aid you on your quest. You may choose to take a bottle of any of the following:\n\nPotion of Skill - restores SKILL points\nPotion of Strength - restores STAMINA points\nPotion of Fortune - Restores LUCK points and adds 1 to initial LUCK\n\nThese potions may be taken at any time during your adventure. Each bottle of potion contains enough for two measures i.e. the characteristics may be restored twice during an adventure.\n\nRemember also that you may only choose one of the three potions to take on your trip, so choose wisely!",
         choices: ["Potion of Skill", "Potion of Strength", "Potion of Fortune"],
         choice0: "Potion of Skill",
         choice1: "Potion of Strength",
@@ -98,9 +98,61 @@ let pages = [
         current: 12,
         title: "1",
         image: 'wofm001.png',
-        pageContent: "At last your two-day hike is over. You unsheathe your sword, lay it on the ground and sigh with relief as you lower yourself down on to the mossy rocks to sit for a moment's rest. You stretch, rub your eyes and finally look up at Firetop Mountain.",
+        pageContent: "The steep face in front of you looks to have been savaged by the claws of some gargantuan beast...",
         choices: 0,
         next: 13
     },
+    {
+        current: 13,
+        title: "1",
+        pageContent: "At last your two-day hike is over. You unsheathe your sword, lay it on the ground and sigh with relief as you lower yourself down on to the mossy rocks to sit for a moment's rest. You stretch, rub your eyes and finally look up at Firetop Mountain.\nThe very mountain itself looks menacing. The steep face in front of you looks to have been savaged by the claws of some gargantuan beast. Sharp rocky crags jut out at unnatural angles. At the top of the mountain you can see the eerie red colouring - probably some strange vegetation - which has given the mountain its name. Perhaps no one will ever know exactly what grows up there, as climbing the peak must surely be impossible.\n\nYour quest lies ahead of you. Across the clearing is a dark cave entrance. You pick up your sword, get to your feet and consider what dangers may lie ahead of you. But with determination, you thrust the sword home into its scabbard and approach the cave.\n\nYou peer into the gloom to see dark, slimy walls with pools of water on the stone floor in front of you. The air is cold and dank. You light your lantern and step warily into the blackness. Cobwebs brush your face and you hear the scurrying of tiny feet: rats, most likely. You set off into the cave. After a few yards you arrive at a junction.",
+        choices: ["Turn West - 71", "Turn East - 278"],
+        previous: 12,
+        choice0: 14,
+        choice1: 18
+    },
+    {
+        current: 14,
+        title: "71",
+        image: 'wofm071.png',
+        pageContent: "As you look in, you can see a strange Goblin-like creature in leather armor asleep at his post.",
+        choices: 0,
+        next: 15
+    },
+    {
+        current: 15,
+        title: "71",
+        pageContent: "There is a right-hand turn to the north in the passage. Cautiously you approach a sentry post on the corner and, as you look in, you can see a strange Goblin-like creature in leather armour asleep at his post. You try to tiptoe past him.\nIf you're lucky, he will not wake up and remain snoring loudly - turn to 301.\nIf not turn to 248.",
+        choices: [],
+        canTestLuck: true,
+        lucky: 16,
+        unlucky: 17,
+    },
+    {
+        current: 16,
+        title: "301",
+        pageContent: "To your left, on the west face of the passage, there is a rough-cut wooden door. You listen at the door and can hear a rasping sound which may be some sort of creature snoring.",
+        choices: ["Open the door - 82", "Press on northwards - 208"],
+        choice0: 13,
+        choice1: 14
+    },
+    {
+        current: 17,
+        title: "248",
+        image: 'wofmsword.png',
+        pageContent: "You step with a crunch on some loose ground and his eyes flick open.\n\nThe creature that has just awakened is an ORC! He scrambles to his feet and turns to grasp at a rope which is probably the alarm bell. You must attack him quickly!",
+        choices: [],
+        battle: true,
+        enemies: ["Orc-6-5"],
+        next: 7
+    },
+    {
+        current: 18,
+        title: "278",
+        pageContent: "The passageway soon comes to an end at a locked wooden door. You listen at the door but hear nothing.\n\nWill you try to charge the door down or would you rather turn round and go back to the junction?",
+        choices: ["Charge door - 156","Turn back - 92"],
+        choice0: 10,
+        choice1: 11
+    },
 ];
-module.exports = {infoPages: pages};
+export const infoPages = pages;

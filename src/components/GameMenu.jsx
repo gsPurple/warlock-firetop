@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import './styles/game-menu.css';
-import { HOWTO, HINTS, STARTADV } from './utils/constantsfile';
+import React from 'react';
+import '../styles/game-menu.css';
+import { HOWTO, HINTS, STARTADV } from '../utils/constantsfile';
 
 function GameMenu({ onSelectOption }) {
   const handleButtonSelection = (index) => {
@@ -14,6 +14,7 @@ function GameMenu({ onSelectOption }) {
         <button onClick={() => handleButtonSelection(HOWTO)}>HOW TO PLAY</button>
         <button onClick={() => handleButtonSelection(HINTS)}>HINTS ON PLAY</button>
         <button onClick={() => handleButtonSelection(STARTADV)}>START YOUR ADVENTURE</button>
+        <button onClick={() => handleButtonSelection("DEV")}>DEV</button>
       </div>
     </div>
   );
