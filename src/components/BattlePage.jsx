@@ -3,6 +3,7 @@ import Header from './Header';
 import EnemyList from './EnemyList';
 import testLuck from '../utils/testLuck';
 import { resolveRound, getDamage } from '../utils/battleLogic';
+import parseFormattedText from '../utils/parseFormattedText';
 
 const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParagraphs, handleChoice, onPlayerDeath }) => {
 
@@ -112,7 +113,7 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
           <div className="page-container border">
             <h1 className='title'>{currentPage.title}</h1>
             {pageContentParagraphs.map((paragraph, index) => (
-              <p className='text-content' key={index}>{paragraph}</p>
+              <p className='text-content' key={index}>{parseFormattedText(paragraph)}</p>
             ))}
 
             {(currentPage.image !== null && currentPage.image !== undefined) &&

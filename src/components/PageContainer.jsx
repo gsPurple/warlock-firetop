@@ -77,7 +77,7 @@ function PageContainer() {
           },
         });
         setCurrentMode(constants.ADVENTUREMODE);
-        choiceIndex = 17;
+        choiceIndex = 16;
         break;
       case constants.BACKTOMENU:
         choiceIndex = null;

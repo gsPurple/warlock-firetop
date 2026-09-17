@@ -1,19 +1,20 @@
 import React from 'react';
 import Header from './Header';
 import ChoiceReader from '../utils/ChoiceReader';
+import parseFormattedText from '../utils/parseFormattedText';
 
 
 const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, pageContentParagraphs }) => {
 
     console.log(playerState)
-    
+
     return (
         <div className='ui-container'>
           <Header playerState={playerState} setPlayerState={setPlayerState} className='left-col'/>
           <div className="page-container border">
             <h1 className='title'>{currentPage.title}</h1>
             {pageContentParagraphs.map((paragraph, index) => (
-              <p className='text-content' key={index}>{paragraph}</p>
+              <p className='text-content' key={index}>{parseFormattedText(paragraph)}</p>
             ))}
 
             {currentPage.stats &&

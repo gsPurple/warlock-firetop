@@ -133,8 +133,8 @@ const pages = [
         title: "301",
         pageContent: "To your left, on the west face of the passage, there is a rough-cut wooden door. You listen at the door and can hear a rasping sound which may be some sort of creature snoring.",
         choices: ["Open the door - 82", "Press on northwards - 208"],
-        choice0: 13,
-        choice1: 14
+        choice0: 19,
+        choice1: 20
     },
     {
         current: 17,
@@ -144,15 +144,33 @@ const pages = [
         choices: [],
         battle: true,
         enemies: ["Orc-6-5"],
-        next: 7
+        next: 16
     },
     {
         current: 18,
         title: "278",
         pageContent: "The passageway soon comes to an end at a locked wooden door. You listen at the door but hear nothing.\n\nWill you try to charge the door down or would you rather turn round and go back to the junction?",
         choices: ["Charge door - 156","Turn back - 92"],
-        choice0: 10,
-        choice1: 11
+        choice0: -1,
+        choice1: -1
+    },
+    {
+        current: 19,
+        title: "82",
+        pageContent: "The door opens to reveal a small, smelly room. In the centre of the room is a rickety wooden table on which stands a lit candle. Underneath the table is a **small wooden box**. Asleep on a straw mattress in the far corner of the room is a short, stocky creature with an ugly, warty face; the same sort of creature that you found asleep at the sentry post. He must be the guard for the night watch.\n\nYou may either return to the corridor and press on northwards or creep into the room and try to take the box without waking the creature. If you want to try to steal the box, **Test your Luck**. If you are [[green:Lucky]], he does not wake up - turn to 147. If you are [[red:Unlucky]], turn to 33.",
+        choices: ["Return to corridor - 208"],
+        canTestLuck: true,
+        choice0: -1,
+        lucky: -1,
+        unlucky: -1,
+    },
+    {
+        current: 20,
+        title: "208",
+        pageContent: "Further up the passage along the west wall you see another door. You listen at it but hear nothing.\n\nYou can try to open the door or continue northwards.",
+        choices: ["Open door - 397", "Continue northwards - 363"],
+        choice0: -1,
+        choice1: -1,
     },
 ];
 export const infoPages = pages;
