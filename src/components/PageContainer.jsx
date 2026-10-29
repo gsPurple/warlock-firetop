@@ -25,6 +25,20 @@ const playerStateReducer = (state, action) => {
           [`init${action.stat}`]: action.value,
           [`current${action.stat}`]: action.value, // Update currentStat as well
         };
+    case 'CHANGE_STAT': {
+      // stat is 'Sta', 'Skill' or 'Luck' (never below 0, gains never pass the initial value)
+      // or 'Gold' (never below 0, no upper limit)
+      if (action.stat === 'Gold') {
+        return { ...state, gold: Math.max(parseInt(state.gold) + action.change, 0) };
+      }
+      const current = parseInt(state[`current${action.stat}`]);
+      const initial = parseInt(state[`init${action.stat}`]);
+      const changed = action.change > 0 ? Math.min(current + action.change, Math.max(initial, current)) : Math.max(current + action.change, 0);
+      return {
+        ...state,
+        [`current${action.stat}`]: changed,
+      };
+    }
     case 'ADD_ITEM':
       return {
         ...state,
@@ -77,22 +91,42 @@ function PageContainer() {
 
   const currentPage = pages[currentPageId] && { title: String(currentPageId), ...pages[currentPageId] };
 
-  // Dice only matter on the page they were rolled on, so they are cleared on every move
+  // Applies a page's onEnter or a choice's effects: { addItem } or { stat, change }
+  const applyEffects = (effects = []) => {
+    let stamina = parseInt(state.currentSta);
+
+    effects.forEach((effect) => {
+      if (effect.addItem) {
+        dispatch({ type: 'ADD_ITEM', item: effect.addItem });
+      }
+      if (effect.stat) {
+        dispatch({ type: 'CHANGE_STAT', stat: effect.stat, change: effect.change });
+        if (effect.stat === 'Sta') {
+          stamina = Math.max(stamina + effect.change, 0);
+        }
+      }
+    });
+
+    // Losing the last STAMINA outside a battle is a death too
+    if (stamina <= 0 && parseInt(state.currentSta) > 0) {
+      setDying(true);
+    }
+  };
+
+  // Dice only matter on the page they were rolled on, so they are cleared on every move.
+  // A page's onEnter effects are applied here, once per arrival
   const goTo = (pageId) => {
     setDieOne(null);
     setDieTwo(null);
     setPendingTest(null);
     setCurrentPageId(pageId);
+    applyEffects(pages[pageId]?.onEnter);
   };
 
   const handleChoice = (choice) => {
     console.log("Handle choice: " + (choice.action || choice.to));
 
-    (choice.effects || []).forEach((effect) => {
-      if (effect.addItem) {
-        dispatch({ type: 'ADD_ITEM', item: effect.addItem });
-      }
-    });
+    applyEffects(choice.effects);
 
     switch (choice.action) {
       case "DEV":
@@ -104,14 +138,14 @@ function PageContainer() {
             initSkill: '12',
             currentSkill: '6',
             initLuck: '10',
-            currentLuck: '5',
+            currentLuck: '4',
             gold: '15',
             provisions: '5',
             inventory: ['Debug','Sword', 'Shield', 'Leather Armour','Lantern', 'Potion of Skill x2', 'Potion of Fortune', 'Potion of Strength x2'],
           },
         });
         setCurrentMode(constants.ADVENTUREMODE);
-        goTo(248);
+        goTo(343);
         break;
       case constants.BACKTOMENU:
         setCurrentMode(null);

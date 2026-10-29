@@ -3,6 +3,12 @@ import Header from './Header';
 import ChoiceReader from '../utils/ChoiceReader';
 import DiceRoll from './DiceRoll';
 import parseFormattedText from '../utils/parseFormattedText';
+import goldSVG from '../images/icons/gold_icon.svg';
+import cloverSVG from '../images/icons/clover_icon.svg';
+import heartSVG from '../images/icons/heart_Icon.svg';
+
+const STAT_NAMES = { Sta: 'STAMINA', Skill: 'SKILL', Luck: 'LUCK', Gold: 'GOLD' };
+const STAT_ICONS = { Sta: heartSVG, Luck: cloverSVG, Gold: goldSVG };
 
 
 const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, testYourSkill, pendingTest, pageContentParagraphs }) => {
@@ -45,6 +51,29 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
             {pageContentParagraphs.map((paragraph, index) => (
               <p className='text-content' key={index}>{parseFormattedText(paragraph)}</p>
             ))}
+
+            {(currentPage.onEnter || [])
+              .filter((effect) => effect.stat)
+              .map((effect, index) => {
+                const gain = effect.change > 0;
+                const arrow = gain ? '▲' : '▼';
+                const colorClass = !gain ? 'red' : effect.stat === 'Gold' ? 'gold' : 'green';
+
+                return (
+                  <p key={index} className={`stat-change bold ${colorClass}`}>
+                    {STAT_ICONS[effect.stat] &&
+                      <span className='stat-change-icon'>
+                        <img src={STAT_ICONS[effect.stat]} alt='' />
+                        <span className={`stat-badge ${gain ? 'green' : 'red'}`} aria-hidden='true'>{arrow}</span>
+                      </span>
+                    }
+                    {gain ? '+' : '−'}{Math.abs(effect.change)} {STAT_NAMES[effect.stat]}
+                    {!STAT_ICONS[effect.stat] &&
+                      <span className={`stat-arrow ${gain ? 'green' : 'red'}`} aria-hidden='true'>{arrow}</span>
+                    }
+                  </p>
+                );
+              })}
 
             {currentPage.type === 'stats' &&
             <div>

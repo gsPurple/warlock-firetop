@@ -5,6 +5,7 @@
   --darkred: #a30e0e;
   --darkgreen: #066106;
   --blue: #12128c;
+  --gold: #a87400;
 }
 
 @media(prefers-color-scheme: dark) {
@@ -13,6 +14,7 @@
     --border: #555556 !important;
     --text-color: #d8d8d5 !important;
     --blue: #5381d5;
+    --gold: #e6b422 !important;
   }
 }
 
@@ -26,6 +28,10 @@
 
 .blue {
   color: var(--blue);
+}
+
+.gold {
+  color: var(--gold);
 }
 
 .bold {

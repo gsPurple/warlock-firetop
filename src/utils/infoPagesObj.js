@@ -12,7 +12,9 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 //       Next then reveals the text. (On battle pages image is a small decoration.)
 // A page's title defaults to its id.
 // choices: [{ label, to }] navigates; { label, action } runs an action;
-//          effects: [{ addItem }] are applied before moving on.
+//          effects: [{ addItem }] or [{ stat, change }] are applied before moving on.
+// onEnter: [{ stat: "Sta" | "Skill" | "Luck" | "Gold", change }] is applied once when the player
+//          arrives on the page, and shown on it as a +/- notice.
 export const pages = {
     hints: {
         title: "HINTS ON PLAY",
@@ -137,7 +139,7 @@ export const pages = {
     },
     82: {
         type: "luck",
-        text: "The door opens to reveal a small, smelly room. In the centre of the room is a rickety wooden table on which stands a lit candle. Underneath the table is a **small wooden box**. Asleep on a straw mattress in the far corner of the room is a short, stocky creature with an ugly, warty face; the same sort of creature that you found asleep at the sentry post. He must be the guard for the night watch.\n\nYou may either return to the corridor and press on northwards or creep into the room and try to take the box without waking the creature. If you want to try to steal the box, **Test your Luck**. If you are [[green:Lucky]], he does not wake up - turn to 147. If you are [[red:Unlucky]], turn to 33.",
+        text: "The door opens to reveal a small, smelly room. In the centre of the room is a rickety wooden table on which stands a lit candle. Underneath the table is a **small wooden box**. Asleep on a straw mattress in the far corner of the room is a short, stocky creature with an ugly, warty face; the same sort of creature that you found asleep at the sentry post. He must be the guard for the night watch.\n\nYou may either return to the corridor and press on northwards or creep into the room and try to take the box without waking the creature.\n\nIf you want to try to steal the box, **Test your Luck**. If you are [[green:Lucky]], he does not wake up - turn to 147. If you are [[red:Unlucky]], turn to 33.",
         choices: [{ label: "Return to corridor", to: 208 }],
         lucky: 147,
         unlucky: 33,
@@ -163,5 +165,22 @@ export const pages = {
         ],
         success: 343,
         fail: 92,
+    },
+    343: {
+        text: "The door bursts open and you fall headlong into a room. But your heart jumps as you realize you are not landing on the floor, but plunging down a pit of some kind!\n\nLuckily the pit is not particularly deep and you land in a heap less than two metres down.\n\nLose 1 STAMINA point for your bruises, climb out of the pit into the room and leave through the door, heading westwards.",
+        onEnter: [{ stat: "Sta", change: -1 }],
+        choices: [
+            { label: "Head westwards", to: 92 },
+        ],
+    },
+    147: {
+        text: "You leave the room and open the box in the passage.\n\nInside you find a single Piece of Gold and a small mouse, which must have been the creature's pet. You keep the coin and release the mouse, which scurries off down the passageway. Gain 2 LUCK points.",
+        onEnter: [
+            { stat: "Gold", change: 1 },
+            { stat: "Luck", change: 2 },
+        ],
+        choices: [
+            { label: "Press on northwards", to: 208 },
+        ],
     },
 };
