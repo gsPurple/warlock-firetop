@@ -1,11 +1,9 @@
-export const HOWTO = 1;
-export const HINTS = 0;
-export const ADVSTARTPAGE = 6;
+export const HOWTO = "intro";
+export const HINTS = "hints";
+export const ADVSTARTPAGE = "roll-stamina";
 export const STARTADV = "START ADVENTURE";
 export const BACKTOMENU = "Back to Menu";
-export const ROLLSTA = "Roll Stamina";
-export const ROLLSKI = "Roll Skill";
-export const ROLLLUK = "Roll Luck";
+export const ROLLSTAT = "ROLL_STAT";
 export const ADVENTUREMODE = 4;
 export const DEATHMODE = 5;
 export const SKILLPOTION = "Potion of Skill";

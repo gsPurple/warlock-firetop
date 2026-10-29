@@ -1,5 +1,5 @@
 import React, { useReducer, useState } from 'react';
-import { infoPages } from '../utils/infoPagesObj';
+import { pages } from '../utils/infoPagesObj';
 import * as constants from '../utils/constantsfile';
 import '../styles/page-container.css';
 import GameMenu from './GameMenu';
@@ -47,20 +47,32 @@ const initialState = {
 };
 
 function PageContainer() {
-  const [currentPageIndex, setCurrentPageIndex] = useState(null);
+  const [currentPageId, setCurrentPageId] = useState(null);
   const [currentMode, setCurrentMode] = useState(null);
   const [dieOne, setDieOne] = useState(null);
   const [dieTwo, setDieTwo] = useState(null);
 
   const [state, dispatch] = useReducer(playerStateReducer, initialState);
 
-  const currentPage = infoPages[currentPageIndex];
+  const currentPage = pages[currentPageId] && { title: String(currentPageId), ...pages[currentPageId] };
+
+  // Dice only matter on the stat roll pages, so they are cleared on every move
+  const goTo = (pageId) => {
+    setDieOne(null);
+    setDieTwo(null);
+    setCurrentPageId(pageId);
+  };
 
   const handleChoice = (choice) => {
-    console.log("Handle choice: " + choice);
-    let choiceIndex;
+    console.log("Handle choice: " + (choice.action || choice.to));
 
-    switch (choice) {
+    (choice.effects || []).forEach((effect) => {
+      if (effect.addItem) {
+        dispatch({ type: 'ADD_ITEM', item: effect.addItem });
+      }
+    });
+
+    switch (choice.action) {
       case "DEV":
         dispatch({
           type: 'SET_PLAYER_STATE',
@@ -77,87 +89,61 @@ function PageContainer() {
           },
         });
         setCurrentMode(constants.ADVENTUREMODE);
-        choiceIndex = 16;
+        goTo(1);
         break;
       case constants.BACKTOMENU:
-        choiceIndex = null;
+        setCurrentMode(null);
+        goTo(null);
         break;
       case constants.STARTADV:
         setCurrentMode(constants.ADVENTUREMODE);
-        choiceIndex = constants.ADVSTARTPAGE;
+        goTo(constants.ADVSTARTPAGE);
         break;
-      case constants.ROLLSTA:
-      case constants.ROLLSKI:
-      case constants.ROLLLUK:
-        let d1 = rollDie();
-        let d2 = rollDie();
+      case constants.ROLLSTAT: {
+        const d1 = rollDie();
+        const d2 = rollDie();
         setDieOne(d1);
         setDieTwo(d2);
 
-        let statValue = d1 + d2 + parseInt(currentPage.pageContent.match(/\d+/g));
-
         dispatch({
           type: 'ROLL_STAT',
-          stat: choice === constants.ROLLSTA ? 'Sta' : (choice === constants.ROLLSKI ? 'Skill' : 'Luck'),
-          value: statValue,
+          stat: currentPage.stat,
+          value: d1 + d2 + currentPage.base,
         });
-
-        choiceIndex = "";
-        currentPage.next = currentPage.current + 1;
-        currentPage.choices = 0;
         break;
-      case constants.SKILLPOTION:
-        dispatch({
-          type: 'ADD_ITEM',
-          item: constants.SKILLPOTION + " x2",
-        });
-        choiceIndex = 10;
-        break;
-      case constants.STRPOTION:
-        dispatch({
-          type: 'ADD_ITEM',
-          item: constants.STRPOTION + " x2",
-        });
-        choiceIndex = 10;
-        break;
-      case constants.FORTPOTION:
-        dispatch({
-          type: 'ADD_ITEM',
-          item: constants.FORTPOTION + " x2",
-        });
-        choiceIndex = 10;
-        break;
+      }
       default:
-        if (choice > 1) {
-          if (currentPage.stats) {
-            setDieOne(null);
-            setDieTwo(null);
-          }
+        if (choice.to !== undefined) {
+          goTo(choice.to);
         }
-
-        choiceIndex = choice;
-    }
-
-    if (typeof choiceIndex !== 'string') {
-      setCurrentPageIndex(choiceIndex);
     }
   };
 
-  if (currentPageIndex === null) {
+  if (currentPageId === null) {
     return <GameMenu onSelectOption={handleChoice} />;
   }
 
-  const pageContentParagraphs = currentPage.pageContent.split('\n');
+  if (!currentPage) {
+    return (
+      <div className="page-container border">
+        <h1 className="title">{currentPageId}</h1>
+        <p className="text-content">This page hasn't been written yet.</p>
+        <button onClick={() => handleChoice({ action: constants.BACKTOMENU })}>Back to Menu</button>
+      </div>
+    );
+  }
+
+  const pageContentParagraphs = currentPage.text.split('\n');
 
   const testYourLuck = () => {
     const { result, lucky } = testLuck(state.currentLuck);
 
     if (lucky) {
       console.log("LUCK TEST VALUE ---> Lucky");
-      setCurrentPageIndex(currentPage.lucky);
+      goTo(currentPage.lucky);
     } else {
       console.log("LUCK TEST VALUE ---> Unlucky");
-      setCurrentPageIndex(currentPage.unlucky);
+      goTo(currentPage.unlucky);
     }
 
     if (parseInt(state.currentLuck) > 0) {
@@ -174,7 +160,7 @@ function PageContainer() {
     case constants.DEATHMODE:
       return <DeathPage handleChoice={handleChoice} />;
     case constants.ADVENTUREMODE:
-      return currentPage.battle ? (
+      return currentPage.type === 'battle' ? (
         <BattlePage
           playerState={state}
           setPlayerState={dispatch}
@@ -187,7 +173,8 @@ function PageContainer() {
           onPlayerDeath={() => setCurrentMode(constants.DEATHMODE)}
         />
       ) : (
-        <AdventurePage 
+        <AdventurePage
+          key={currentPageId}
           playerState={state}
           setPlayerState={dispatch}
           currentPage={currentPage}
@@ -200,7 +187,7 @@ function PageContainer() {
       );
     default:
       return (
-        <MenuPage 
+        <MenuPage
           playerState={state}
           currentPage={currentPage}
           pageContentParagraphs={pageContentParagraphs}

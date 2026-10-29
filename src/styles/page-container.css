@@ -32,12 +32,19 @@
     float: left;
 }
 
-#imageContainer {
-    width: 15.46rem;
-    height: 22rem;
-    margin: 0 auto;
-    margin-top: 10px;
+.illustration {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 60vh;
+    margin: 10px auto;
     border: 2px solid #000000;
+}
+
+.caption {
+    text-align: center;
+    font-style: italic;
 }
 
 #image {
@@ -83,24 +90,15 @@
         margin: auto;
     }
 
-    #imageContainer {
-        width: 20.4rem;
-        height: 29rem;
+    .illustration {
+        max-height: 68vh;
     }
-
-    
 }
 
 @media screen and (min-width: 2159px) {
 
     .border {
         padding: 1.2rem;
-    }
-
-    #imageContainer {
-        margin-top: 5vh;
-        width: 19.2vw;
-        height: 26.4vw;
     }
 
     button {

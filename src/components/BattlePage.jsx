@@ -148,7 +148,7 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
                 }
 
                 {isLastEnemy && enemySta <= 0 && currentPage.next !== undefined &&
-                    <button id='button-next' onClick={() => handleChoice(currentPage.next)}>Continue</button>
+                    <button id='button-next' onClick={() => handleChoice({ to: currentPage.next })}>Continue</button>
                 }
             </div>
           </div>

@@ -20,11 +20,11 @@ const MenuPage = ({ playerState, currentPage, handleChoice, pageContentParagraph
             </div>
 
             <div>
-                {currentPage.previous !== undefined && <button id='button-back' onClick={() => handleChoice(currentPage.previous)}>
+                {currentPage.previous !== undefined && <button id='button-back' onClick={() => handleChoice({ to: currentPage.previous })}>
                   Back
                 </button>}
-    
-                {currentPage.next !== undefined && <button id='button-next' onClick={() => handleChoice(currentPage.next)}>Next</button>}
+
+                {currentPage.next !== undefined && <button id='button-next' onClick={() => handleChoice({ to: currentPage.next })}>Next</button>}
             </div>
           </div>
         </div>

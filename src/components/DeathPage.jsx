@@ -8,7 +8,7 @@ const DeathPage = ({ handleChoice }) => {
             <p className="text-content">Your adventure ends here, slain in battle.</p>
 
             <div>
-                <button onClick={() => handleChoice(constants.BACKTOMENU)}>Back to Menu</button>
+                <button onClick={() => handleChoice({ action: constants.BACKTOMENU })}>Back to Menu</button>
             </div>
         </div>
     );
