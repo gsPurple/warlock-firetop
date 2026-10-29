@@ -5,7 +5,8 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 // choice.to) is one of these ids.
 //
 // type: omitted = plain story page, "luck" = shows a Test your Luck button
-//       (needs lucky/unlucky), "battle" = needs enemies ("Name-skill-stamina") and next,
+//       (needs lucky/unlucky), "skill" = shows a Test your Skill button (roll two dice,
+//       success if <= current SKILL; needs success/fail), "battle" = needs enemies ("Name-skill-stamina") and next,
 //       "stats" = initial stat roll (needs stat and base).
 // image + caption: the page opens on the full-size illustration (as in the book) and
 //       Next then reveals the text. (On battle pages image is a small decoration.)
@@ -147,5 +148,20 @@ export const pages = {
             { label: "Open door", to: 397 },
             { label: "Continue northwards", to: 363 },
         ],
+    },
+    92: {
+        text: "You arrive back at the junction in the passage. You look left to see the cave entrance in the dim distance but walk straight on.",
+        choices: [
+            { label: "Walk straight", to: 71 },
+        ],
+    },
+    156: {
+        type: "skill",
+        text: "You charge the door with your shoulder.\n\nRoll two dice.\n\nIf the number rolled is less than or equal to your SKILL score, you succeed.\n\nIf the number rolled is greater than your SKILL, you rub your bruised shoulder and decide against trying again. You will have to return to the junction.",
+        choices: [
+            
+        ],
+        success: 343,
+        fail: 92,
     },
 };

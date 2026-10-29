@@ -1,6 +1,6 @@
 import React from 'react';
 
-function ChoiceReader({ currentPage, handleChoice, testYourLuck, rolled }) {
+function ChoiceReader({ currentPage, handleChoice, testYourLuck, testYourSkill, rolled }) {
   // A stat page's roll button disappears once the dice have been rolled
   const showChoices = !(currentPage.type === 'stats' && rolled);
 
@@ -12,6 +12,12 @@ function ChoiceReader({ currentPage, handleChoice, testYourLuck, rolled }) {
             {typeof choice.to === 'number' ? `${choice.label} - ${choice.to}` : choice.label}
           </button>
         ))}
+
+      {currentPage.type === 'skill' &&
+        <button onClick={() => testYourSkill()}>
+          Test your Skill
+        </button>
+      }
 
       {currentPage.type === 'luck' &&
         <button onClick={() => testYourLuck()}>

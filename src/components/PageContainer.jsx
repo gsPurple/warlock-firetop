@@ -9,6 +9,7 @@ import MenuPage from './MenuPage';
 import DeathPage from './DeathPage';
 import rollDie from '../utils/rollDie';
 import testLuck from '../utils/testLuck';
+import testSkill from '../utils/testSkill';
 
 const playerStateReducer = (state, action) => {
   switch (action.type) {
@@ -82,14 +83,14 @@ function PageContainer() {
             initSkill: '12',
             currentSkill: '6',
             initLuck: '10',
-            currentLuck: '3',
+            currentLuck: '10',
             gold: '15',
             provisions: '5',
             inventory: ['Debug','Sword', 'Shield', 'Leather Armour','Lantern', 'Potion of Skill x2', 'Potion of Fortune', 'Potion of Strength x2'],
           },
         });
         setCurrentMode(constants.ADVENTUREMODE);
-        goTo(1);
+        goTo(278);
         break;
       case constants.BACKTOMENU:
         setCurrentMode(null);
@@ -156,6 +157,13 @@ function PageContainer() {
     console.log("Roll result: " + result + " current luck: " + state.currentLuck);
   };
 
+  const testYourSkill = () => {
+    const { result, success } = testSkill(state.currentSkill);
+
+    console.log("SKILL TEST VALUE ---> " + (success ? "Success" : "Failure") + " (rolled " + result + " vs skill " + state.currentSkill + ")");
+    goTo(success ? currentPage.success : currentPage.fail);
+  };
+
   switch (currentMode) {
     case constants.DEATHMODE:
       return <DeathPage handleChoice={handleChoice} />;
@@ -183,6 +191,7 @@ function PageContainer() {
           dieTwo={dieTwo}
           handleChoice={handleChoice}
           testYourLuck={testYourLuck}
+          testYourSkill={testYourSkill}
         />
       );
     default:
