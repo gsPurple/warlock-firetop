@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import Header from './Header';
 import ChoiceReader from '../utils/ChoiceReader';
+import DiceRoll from './DiceRoll';
 import parseFormattedText from '../utils/parseFormattedText';
 
 
-const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, testYourSkill, pageContentParagraphs }) => {
+const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, testYourSkill, pendingTest, pageContentParagraphs }) => {
 
     console.log(playerState)
 
@@ -58,10 +59,13 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
                 </div>
             }
 
-            <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} testYourLuck={testYourLuck} testYourSkill={testYourSkill} rolled={dieOne !== null}/>
+            {pendingTest
+              ? <DiceRoll test={pendingTest} onContinue={() => handleChoice({ to: pendingTest.to })} />
+              : <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} testYourLuck={testYourLuck} testYourSkill={testYourSkill} rolled={dieOne !== null}/>
+            }
 
             <div>
-                {(currentPage.image !== undefined || currentPage.previous !== undefined) && <button id='button-back' onClick={() => currentPage.image !== undefined ? setShowText(false) : handleChoice({ to: currentPage.previous })}>
+                {!pendingTest && (currentPage.image !== undefined || currentPage.previous !== undefined) && <button id='button-back' onClick={() => currentPage.image !== undefined ? setShowText(false) : handleChoice({ to: currentPage.previous })}>
                   Back
                 </button>}
 

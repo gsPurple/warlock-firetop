@@ -1,0 +1,97 @@
+.dice-roll {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.dice-tray {
+    display: flex;
+    gap: 1.25rem;
+}
+
+.die {
+    display: grid;
+    grid-template-areas:
+        'p1 p2 p3'
+        'p4 p5 p6'
+        'p7 p8 p9';
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0.45rem;
+    box-sizing: border-box;
+    background-color: var(--background);
+    border: 2px solid var(--border);
+    border-radius: 0.6rem;
+    box-shadow: 0 3px 0 var(--border);
+}
+
+.pip {
+    width: 0.65rem;
+    height: 0.65rem;
+    place-self: center;
+    border-radius: 50%;
+    background-color: currentColor;
+}
+
+.die-rolling {
+    animation: die-tumble 0.35s ease-in-out infinite alternate;
+}
+
+/* The second die tumbles the other way so the pair doesn't move in lockstep */
+.die-rolling + .die-rolling {
+    animation-name: die-tumble-reverse;
+    animation-delay: -0.15s;
+}
+
+.die-landed {
+    animation: die-land 0.35s ease-out;
+}
+
+@keyframes die-tumble {
+    from { transform: translateY(0) rotate(-18deg); }
+    to   { transform: translateY(-0.6rem) rotate(22deg); }
+}
+
+@keyframes die-tumble-reverse {
+    from { transform: translateY(-0.6rem) rotate(20deg); }
+    to   { transform: translateY(0) rotate(-24deg); }
+}
+
+@keyframes die-land {
+    0%   { transform: scale(1.2); }
+    60%  { transform: scale(0.94); }
+    100% { transform: scale(1); }
+}
+
+.dice-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    text-align: center;
+    animation: dice-fade-in 0.4s ease-out;
+}
+
+.dice-verdict {
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+@keyframes dice-fade-in {
+    from { opacity: 0; transform: translateY(0.4rem); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .die-rolling,
+    .die-landed,
+    .dice-result {
+        animation: none;
+    }
+}

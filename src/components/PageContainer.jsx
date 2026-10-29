@@ -52,15 +52,17 @@ function PageContainer() {
   const [currentMode, setCurrentMode] = useState(null);
   const [dieOne, setDieOne] = useState(null);
   const [dieTwo, setDieTwo] = useState(null);
+  const [pendingTest, setPendingTest] = useState(null); // luck/skill roll waiting for the player to continue
 
   const [state, dispatch] = useReducer(playerStateReducer, initialState);
 
   const currentPage = pages[currentPageId] && { title: String(currentPageId), ...pages[currentPageId] };
 
-  // Dice only matter on the stat roll pages, so they are cleared on every move
+  // Dice only matter on the page they were rolled on, so they are cleared on every move
   const goTo = (pageId) => {
     setDieOne(null);
     setDieTwo(null);
+    setPendingTest(null);
     setCurrentPageId(pageId);
   };
 
@@ -137,15 +139,20 @@ function PageContainer() {
   const pageContentParagraphs = currentPage.text.split('\n');
 
   const testYourLuck = () => {
-    const { result, lucky } = testLuck(state.currentLuck);
+    const { dieOne, dieTwo, result, lucky } = testLuck(state.currentLuck);
 
-    if (lucky) {
-      console.log("LUCK TEST VALUE ---> Lucky");
-      goTo(currentPage.lucky);
-    } else {
-      console.log("LUCK TEST VALUE ---> Unlucky");
-      goTo(currentPage.unlucky);
-    }
+    console.log("LUCK TEST VALUE ---> " + (lucky ? "Lucky" : "Unlucky"));
+    setPendingTest({
+      stat: 'LUCK',
+      target: parseInt(state.currentLuck),
+      dieOne,
+      dieTwo,
+      result,
+      passed: lucky,
+      passText: 'You were Lucky!',
+      failText: 'You were Unlucky!',
+      to: lucky ? currentPage.lucky : currentPage.unlucky,
+    });
 
     if (parseInt(state.currentLuck) > 0) {
       dispatch({
@@ -158,10 +165,20 @@ function PageContainer() {
   };
 
   const testYourSkill = () => {
-    const { result, success } = testSkill(state.currentSkill);
+    const { dieOne, dieTwo, result, success } = testSkill(state.currentSkill);
 
     console.log("SKILL TEST VALUE ---> " + (success ? "Success" : "Failure") + " (rolled " + result + " vs skill " + state.currentSkill + ")");
-    goTo(success ? currentPage.success : currentPage.fail);
+    setPendingTest({
+      stat: 'SKILL',
+      target: parseInt(state.currentSkill),
+      dieOne,
+      dieTwo,
+      result,
+      passed: success,
+      passText: 'Success!',
+      failText: 'Failure!',
+      to: success ? currentPage.success : currentPage.fail,
+    });
   };
 
   switch (currentMode) {
@@ -192,6 +209,7 @@ function PageContainer() {
           handleChoice={handleChoice}
           testYourLuck={testYourLuck}
           testYourSkill={testYourSkill}
+          pendingTest={pendingTest}
         />
       );
     default:
