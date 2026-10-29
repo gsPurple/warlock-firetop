@@ -1,7 +1,8 @@
-import React, { useReducer, useState } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { pages } from '../utils/infoPagesObj';
 import * as constants from '../utils/constantsfile';
 import '../styles/page-container.css';
+import '../styles/death-transition.css';
 import GameMenu from './GameMenu';
 import AdventurePage from './AdventurePage';
 import BattlePage from './BattlePage';
@@ -47,12 +48,30 @@ const initialState = {
   inventory: ['Sword', 'Shield', 'Leather Armour', 'Lantern'],
 };
 
+// Death transition timings in ms, measured from the killing blow. The red flash starts
+// immediately (see death-transition.css); the death screen takes over after a pause.
+const DEATH_SWITCH = 1500;
+const DEATH_END = 1600;
+
 function PageContainer() {
   const [currentPageId, setCurrentPageId] = useState(null);
   const [currentMode, setCurrentMode] = useState(null);
   const [dieOne, setDieOne] = useState(null);
   const [dieTwo, setDieTwo] = useState(null);
   const [pendingTest, setPendingTest] = useState(null); // luck/skill roll waiting for the player to continue
+  const [dying, setDying] = useState(false); // killing blow landed, transition to the death screen running
+
+  useEffect(() => {
+    if (!dying) return;
+
+    const toDeathScreen = setTimeout(() => setCurrentMode(constants.DEATHMODE), DEATH_SWITCH);
+    const end = setTimeout(() => setDying(false), DEATH_END);
+
+    return () => {
+      clearTimeout(toDeathScreen);
+      clearTimeout(end);
+    };
+  }, [dying]);
 
   const [state, dispatch] = useReducer(playerStateReducer, initialState);
 
@@ -81,18 +100,18 @@ function PageContainer() {
           type: 'SET_PLAYER_STATE',
           payload: {
             initSta: '15',
-            currentSta: '12',
+            currentSta: '2',
             initSkill: '12',
             currentSkill: '6',
             initLuck: '10',
-            currentLuck: '10',
+            currentLuck: '5',
             gold: '15',
             provisions: '5',
             inventory: ['Debug','Sword', 'Shield', 'Leather Armour','Lantern', 'Potion of Skill x2', 'Potion of Fortune', 'Potion of Strength x2'],
           },
         });
         setCurrentMode(constants.ADVENTUREMODE);
-        goTo(278);
+        goTo(248);
         break;
       case constants.BACKTOMENU:
         setCurrentMode(null);
@@ -181,6 +200,7 @@ function PageContainer() {
     });
   };
 
+  const renderScreen = () => {
   switch (currentMode) {
     case constants.DEATHMODE:
       return <DeathPage handleChoice={handleChoice} />;
@@ -195,7 +215,7 @@ function PageContainer() {
           dieTwo={dieTwo}
           handleChoice={handleChoice}
           testYourLuck={testYourLuck}
-          onPlayerDeath={() => setCurrentMode(constants.DEATHMODE)}
+          onPlayerDeath={() => setDying(true)}
         />
       ) : (
         <AdventurePage
@@ -222,6 +242,14 @@ function PageContainer() {
         />
       );
   }
+  };
+
+  return (
+    <>
+      {renderScreen()}
+      {dying && <div className='death-flash' />}
+    </>
+  );
 }
 
 export default PageContainer;

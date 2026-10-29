@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Header from './Header';
 import EnemyList from './EnemyList';
+import BattleRound from './BattleRound';
+import { QuickRoll } from './DiceRoll';
 import testLuck from '../utils/testLuck';
 import { resolveRound, getDamage } from '../utils/battleLogic';
 import parseFormattedText from '../utils/parseFormattedText';
@@ -17,6 +19,9 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
     const [currentEnemyIndex, setCurrentEnemyIndex] = useState(0);
     const [enemyStaminas, setEnemyStaminas] = useState(parsedEnemies.map((enemy) => enemy.initSta));
     const [roundMessage, setRoundMessage] = useState(null);
+    const [round, setRound] = useState(null); // the last attack round, shown until the next Attack
+    const [roundNumber, setRoundNumber] = useState(0);
+    const [luckRoll, setLuckRoll] = useState(null); // Luck test in progress while its dice are on screen
     const [pendingWound, setPendingWound] = useState(null); // 'enemy' | 'player' | null
     const [enemyExpanded, setEnemyExpanded] = useState(false);
 
@@ -69,15 +74,13 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
     };
 
     const handleAttack = () => {
-        const round = resolveRound(playerState.currentSkill, enemy.skill);
+        const result = resolveRound(playerState.currentSkill, enemy.skill);
 
-        if (round.outcome === 'miss') {
-            setRoundMessage(`Both attacks miss (You: ${round.playerAttack}, ${enemy.name}: ${round.enemyAttack}).`);
-            return;
-        }
-
-        setRoundMessage(`(You: ${round.playerAttack}, ${enemy.name}: ${round.enemyAttack})`);
-        setPendingWound(round.outcome === 'playerWins' ? 'enemy' : 'player');
+        // Names and skills are copied in because the enemy can change before the panel is dismissed
+        setRound({ ...result, enemyName: enemy.name, enemySkill: enemy.skill, playerSkill: parseInt(playerState.currentSkill) });
+        setRoundNumber(roundNumber + 1);
+        setRoundMessage(null);
+        setPendingWound(result.outcome === 'miss' ? null : result.outcome === 'playerWins' ? 'enemy' : 'player');
     };
 
     const enemyDisplayData = parsedEnemies.map((parsedEnemy, index) => ({
@@ -86,19 +89,28 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
         stamina: enemyStaminas[index],
     }));
 
-    const resolveWound = (useLuck) => {
-        let damage = 2;
-        let luckMessage = '';
+    // What a Luck test would do to the pending wound, shown before the player chooses
+    const luckHint = pendingWound === 'enemy'
+        ? `Lucky: ${getDamage(true, true, true)} damage to the ${enemy.name}. Unlucky: only ${getDamage(true, true, false)}.`
+        : `Lucky: you take only ${getDamage(false, true, true)} damage. Unlucky: you take ${getDamage(false, true, false)}.`;
 
-        if (useLuck) {
-            const { lucky } = testLuck(playerState.currentLuck);
-            decrementLuck();
-            damage = getDamage(pendingWound === 'enemy', true, lucky);
-            luckMessage = lucky ? ' You were lucky!' : ' You were unlucky!';
-        }
-
-        applyDamage(pendingWound, damage, luckMessage);
+    // The Luck test is rolled now but only applied once its dice have been shown
+    const startLuckTest = () => {
+        const { dieOne, dieTwo, lucky } = testLuck(playerState.currentLuck);
+        setLuckRoll({ dice: [dieOne, dieTwo], lucky });
     };
+
+    const finishLuckTest = () => {
+        decrementLuck();
+        applyDamage(
+            pendingWound,
+            getDamage(pendingWound === 'enemy', true, luckRoll.lucky),
+            luckRoll.lucky ? ' You were lucky!' : ' You were unlucky!'
+        );
+        setLuckRoll(null);
+    };
+
+    const resolveWound = () => applyDamage(pendingWound, 2);
 
     return (
         <div className='ui-container'>
@@ -133,18 +145,31 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
             <div>Skill: {enemy.skill}</div>
             <div>Stamina: {enemySta}</div>
 
-            {roundMessage && <p>{roundMessage}</p>}
+            {round &&
+                <BattleRound key={roundNumber} round={round} roundMessage={roundMessage}>
+                    {pendingWound && luckRoll &&
+                        <QuickRoll dice={luckRoll.dice} colorClass='green' onDone={finishLuckTest} />
+                    }
+
+                    {pendingWound && !luckRoll &&
+                        <>
+                            <p className='battle-luck-hint'>{luckHint}</p>
+                            <button onClick={startLuckTest}>Test your Luck</button>
+                            <button onClick={resolveWound}>
+                                {pendingWound === 'enemy' ? 'Deal 2 damage' : 'Take 2 damage'}
+                            </button>
+                        </>
+                    }
+
+                    {!pendingWound && !battleOver &&
+                        <button onClick={handleAttack}>Attack</button>
+                    }
+                </BattleRound>
+            }
 
             <div className='navigation-button-container'>
-                {!battleOver && !pendingWound &&
+                {!round && !battleOver &&
                     <button onClick={handleAttack}>Attack</button>
-                }
-
-                {pendingWound &&
-                    <>
-                        <button onClick={() => resolveWound(true)}>Test your Luck</button>
-                        <button onClick={() => resolveWound(false)}>Continue to Next Turn</button>
-                    </>
                 }
 
                 {isLastEnemy && enemySta <= 0 && currentPage.next !== undefined &&

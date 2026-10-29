@@ -1,8 +1,10 @@
 import rollDie from './rollDie';
 
 export function resolveRound(playerSkill, enemySkill) {
-    const playerRoll = rollDie() + rollDie();
-    const enemyRoll = rollDie() + rollDie();
+    const playerDice = [rollDie(), rollDie()];
+    const enemyDice = [rollDie(), rollDie()];
+    const playerRoll = playerDice[0] + playerDice[1];
+    const enemyRoll = enemyDice[0] + enemyDice[1];
 
     const playerAttack = playerRoll + parseInt(playerSkill);
     const enemyAttack = enemyRoll + parseInt(enemySkill);
@@ -11,7 +13,7 @@ export function resolveRound(playerSkill, enemySkill) {
     if (playerAttack > enemyAttack) outcome = 'playerWins';
     else if (enemyAttack > playerAttack) outcome = 'enemyWins';
 
-    return { playerRoll, enemyRoll, playerAttack, enemyAttack, outcome };
+    return { playerDice, enemyDice, playerRoll, enemyRoll, playerAttack, enemyAttack, outcome };
 }
 
 // woundedEnemy: true if the player scored the wound, false if the creature did

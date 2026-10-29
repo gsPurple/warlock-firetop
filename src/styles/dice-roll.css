@@ -95,3 +95,102 @@
         animation: none;
     }
 }
+
+/* Battle rounds: both sides' dice side by side */
+.battle-round {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1.5rem;
+}
+
+.battle-sides {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.battle-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    padding: 0.5rem 0.25rem;
+    border: 2px solid transparent;
+    border-radius: 0.6rem;
+    text-align: center;
+}
+
+.battle-winner {
+    border-color: currentColor;
+    animation: dice-fade-in 0.4s ease-out;
+}
+
+.battle-side-name {
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.battle-round .dice-tray {
+    gap: 0.5rem;
+}
+
+.battle-round .die {
+    width: 2.8rem;
+    height: 2.8rem;
+    padding: 0.35rem;
+}
+
+.battle-round .pip {
+    width: 0.5rem;
+    height: 0.5rem;
+}
+
+.battle-calc {
+    margin-top: 0.6rem;
+    font-size: 0.9rem;
+}
+
+.battle-total {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.battle-vs {
+    align-self: center;
+    font-weight: bold;
+    opacity: 0.6;
+}
+
+.battle-outcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0.75rem;
+    text-align: center;
+    animation: dice-fade-in 0.4s ease-out;
+}
+
+.battle-result-text {
+    margin: 0.4rem 0 0;
+}
+
+.battle-actions {
+    margin-top: 1rem;
+}
+
+.battle-luck-hint {
+    margin: 0 0 0.5rem;
+    font-size: 0.9rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .battle-winner,
+    .battle-outcome {
+        animation: none;
+    }
+}
