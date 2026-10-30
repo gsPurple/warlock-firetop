@@ -27,9 +27,12 @@ const playerStateReducer = (state, action) => {
         };
     case 'CHANGE_STAT': {
       // stat is 'Sta', 'Skill' or 'Luck' (never below 0, gains never pass the initial value)
-      // or 'Gold' (never below 0, no upper limit)
+      // or 'Gold' / 'Provisions' (never below 0, no upper limit)
       if (action.stat === 'Gold') {
         return { ...state, gold: Math.max(parseInt(state.gold) + action.change, 0) };
+      }
+      if (action.stat === 'Provisions') {
+        return { ...state, provisions: Math.max(parseInt(state.provisions) + action.change, 0) };
       }
       const current = parseInt(state[`current${action.stat}`]);
       const initial = parseInt(state[`init${action.stat}`]);
@@ -37,6 +40,18 @@ const playerStateReducer = (state, action) => {
       return {
         ...state,
         [`current${action.stat}`]: changed,
+      };
+    }
+    case 'EAT': {
+      // One meal: -1 Provisions, +MEAL_STAMINA Stamina (never past the initial value)
+      // and only one meal per page (ateOnPage is cleared by goTo)
+      if (parseInt(state.provisions) <= 0 || state.ateOnPage) return state;
+      const current = parseInt(state.currentSta);
+      return {
+        ...state,
+        provisions: parseInt(state.provisions) - 1,
+        ateOnPage: true,
+        currentSta: Math.min(current + constants.MEAL_STAMINA, Math.max(parseInt(state.initSta), current)),
       };
     }
     case 'ADD_ITEM':
@@ -58,7 +73,8 @@ const initialState = {
   initLuck: '00',
   currentLuck: '00',
   gold: '0',
-  provisions: '00',
+  provisions: '10',
+  ateOnPage: false, // a meal was already eaten on the current page
   inventory: ['Sword', 'Shield', 'Leather Armour', 'Lantern'],
 };
 
@@ -119,6 +135,7 @@ function PageContainer() {
     setDieOne(null);
     setDieTwo(null);
     setPendingTest(null);
+    dispatch({ type: 'SET_PLAYER_STATE', payload: { ateOnPage: false } });
     setCurrentPageId(pageId);
     applyEffects(pages[pageId]?.onEnter);
   };
@@ -152,6 +169,7 @@ function PageContainer() {
         goTo(null);
         break;
       case constants.STARTADV:
+        dispatch({ type: 'SET_PLAYER_STATE', payload: initialState });
         setCurrentMode(constants.ADVENTUREMODE);
         goTo(constants.ADVSTARTPAGE);
         break;

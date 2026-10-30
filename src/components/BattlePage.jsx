@@ -118,6 +118,7 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
               playerState={playerState}
               setPlayerState={setPlayerState}
               enemies={enemyDisplayData}
+              inBattle
               enemyExpanded={enemyExpanded}
               onEnemyToggle={() => setEnemyExpanded(!enemyExpanded)}
               className='left-col'

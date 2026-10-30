@@ -5,7 +5,7 @@ import * as constants from '../utils/constantsfile';
 import '../styles/tooltips.css'
 import Modal from '../utils/Modal';
 
-const Inventory = ({ playerState, setPlayerState, dataVisible, isLargeScreen}) => {
+const Inventory = ({ playerState, setPlayerState, dataVisible, isLargeScreen, inBattle = false}) => {
     const [isModalOpen, setModalOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [modalData, setModalData] = useState({ item: '', effect: '' });
@@ -53,6 +53,17 @@ const Inventory = ({ playerState, setPlayerState, dataVisible, isLargeScreen}) =
         setModalData({ item: '', effect: '' });
         setModalOpen(false);
         setSelectedItem(null);
+    };
+
+    const missingSta = Number(playerState.initSta) - Number(playerState.currentSta);
+    const eatBlocker = playerState.ateOnPage ? "You already ate on this page"
+        : Number(playerState.provisions) <= 0 ? "You have no Provisions left"
+        : missingSta <= 0 ? "Your Stamina is already full"
+        : null;
+
+    const handleEatClick = () => {
+        setSelectedItem(constants.PROVISIONS);
+        openModal(constants.PROVISIONS, `eat a meal and recover ${Math.min(constants.MEAL_STAMINA, missingSta)} points of Stamina`);
     };
 
     const handleItemClick = (item) => {
@@ -151,18 +162,25 @@ const Inventory = ({ playerState, setPlayerState, dataVisible, isLargeScreen}) =
                 onClose={() => closeModal()}
                 onConfirm={() => {
                     console.log(`Using ${modalData.item} to ${modalData.effect}`);
-                    confirmItemUsage(selectedItem)
+                    if (selectedItem === constants.PROVISIONS) {
+                        setPlayerState({ type: 'EAT' });
+                    } else {
+                        confirmItemUsage(selectedItem)
+                    }
                     setModalOpen(false);
                 }}
             />
             <div id='primary-nav' data-visible={dataVisible} className='header-nav-bttns primary-nav'>            
                 {!isLargeScreen && <h3>Backpack</h3>}
             
-                <div className='stat-container stat-border'>
-                    <div className="stat-content">
-                        <object className='icon' data={provisionsSVG} type="image/svg+xml" aria-label="Provisions Icon"/>
-                        <div>{playerState.provisions}</div>
+                <div className='provisions-row'>
+                    <div className='stat-container stat-border'>
+                        <div className="stat-content">
+                            <object className='icon' data={provisionsSVG} type="image/svg+xml" aria-label="Provisions Icon"/>
+                            <div>{playerState.provisions}</div>
+                        </div>
                     </div>
+                    {!inBattle && <button className='eat-button' onClick={handleEatClick} disabled={eatBlocker !== null} title={eatBlocker ?? 'Eat a meal'}>Eat</button>}
                 </div>
 
                 <div className='equipment-border'>

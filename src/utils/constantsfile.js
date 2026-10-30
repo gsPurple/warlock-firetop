@@ -9,3 +9,5 @@ export const DEATHMODE = 5;
 export const SKILLPOTION = "Potion of Skill";
 export const STRPOTION = "Potion of Strength";
 export const FORTPOTION = "Potion of Fortune";
+export const PROVISIONS = "Provisions";
+export const MEAL_STAMINA = 4;
