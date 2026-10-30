@@ -8,7 +8,6 @@ const tooltips = {
     PotionofStrength: <div className='tooltiptext'>A potion that restores your Stamina points</div>,
     PotionofSkill: <div className='tooltiptext'>A potion that restores your Skill points</div>,
     PotionofFortune: <div className='tooltiptext'>A potion that restores your Luck points and adds 1 to Initial Luck</div>,
-    Escape: <div className='tooltiptext'>You will LOSE 2 STAMINA points!<br/>(1 if you're lucky)</div>,
     Key99: <div className='tooltiptext'>A bronze coloured key with the number 99 carved into it</div>,
     Provisions: <div className='tooltiptext'>Each provision restores 4 STAMINA points</div>,
     SilkyBlackGlove: <div className='tooltiptext'>A mysterious glove</div>,
@@ -39,9 +38,6 @@ function tooltipText(item) {
             break;
         case "Potion of Fortune":
             result = tooltips.PotionofFortune;
-            break;
-        case "Escape":
-            result = tooltips.Escape;
             break;
         case "Sword":
             result = tooltips.Sword;

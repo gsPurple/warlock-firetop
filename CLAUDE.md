@@ -16,6 +16,8 @@ A React + Vite web adaptation of the Fighting Fantasy gamebook. Commands: `npm r
 - Stat keys in effects: `Sta`, `Skill`, `Luck`, `Gold`, `Provisions`. Gains never exceed the initial value; nothing drops below 0.
 - Text markup in page text: `**bold**`, `_italic_`, `[[color:text]]` (see `parseFormattedText.jsx`). Paragraphs are split on `\n`.
 - Enemies are `"Name-skill-stamina"` strings, e.g. `"Orc-6-5"`.
+- Battle pages can set `escape: <page id>` to offer an Escape button (confirmation modal, one wound on the player, optional Luck test). Escaping is only allowed when a page offers it.
+- Reducer actions in `PageContainer`: `SET_PLAYER_STATE`, `ROLL_STAT`, `CHANGE_STAT`, `EAT` (one meal per page), `USE_ITEM` (potions), `ADD_ITEM`.
 - Game rules follow the book; the rules pages in `infoPagesObj.js` are the source of truth for mechanics.
 
 ## Workflow
