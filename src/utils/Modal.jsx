@@ -1,15 +1,16 @@
 import React from 'react';
 import '../styles/modal.css';
 
-const Modal = ({ showModal, onClose, onConfirm, item, effect }) => {
+// With `message` it asks that question; otherwise it asks to use `item` to `effect`, or says the item can't be used
+const Modal = ({ showModal, onClose, onConfirm, item, effect, message }) => {
   if (!showModal) return null;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
         <div className="modal" onClick={(e) => e.stopPropagation()}>
-            {item ? (
+            {message || item ? (
                 <>
-                    <p>Are you sure you want to use {item} to {effect}?</p>
+                    <p>{message ?? `Are you sure you want to use ${item} to ${effect}?`}</p>
                     <div className="modal-buttons">
                         <button onClick={onConfirm}>Yes</button>
                         <button onClick={onClose}>No</button>

@@ -287,6 +287,7 @@ function PageContainer() {
     case constants.ADVENTUREMODE:
       return currentPage.type === 'battle' ? (
         <BattlePage
+          key={currentPageId}
           playerState={state}
           setPlayerState={dispatch}
           currentPage={currentPage}

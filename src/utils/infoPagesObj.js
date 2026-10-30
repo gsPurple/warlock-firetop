@@ -6,7 +6,8 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 //
 // type: omitted = plain story page, "luck" = shows a Test your Luck button
 //       (needs lucky/unlucky), "skill" = shows a Test your Skill button (roll two dice,
-//       success if <= current SKILL; needs success/fail), "battle" = needs enemies ("Name-skill-stamina") and next,
+//       success if <= current SKILL; needs success/fail), "battle" = needs enemies ("Name-skill-stamina") and next
+//       (optional escape: page id to flee to - adds an Escape button, the creature gets one wound on you),
 //       "stats" = initial stat roll (needs stat and base).
 // image + caption: the page opens on the full-size illustration (as in the book) and
 //       Next then reveals the text. (On battle pages image is a small decoration.)
@@ -218,6 +219,7 @@ export const pages = {
         image: "wofmsword.png",
         text: "The sleeping creature awakens startled. He jumps up and rushes at you, unarmed. With your sword you should be able to defeat him, but his sharp teeth look rather vicious.\n\nYou may _Escape_ through the door or stand and fight the Orc who is attacking you.",
         enemies: ["Orc-6-4"],
+        escape: 320,
         next: 147,
     },
 };
