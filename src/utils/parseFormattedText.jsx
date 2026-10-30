@@ -1,5 +1,5 @@
-// Syntax: **bold text** and [[color:text]], e.g. [[red:Unlucky]]
-const FORMAT_REGEX = /\*\*(.+?)\*\*|\[\[(\w+):(.+?)\]\]/g;
+// Syntax: **bold text**, _italic text_ and [[color:text]], e.g. [[red:Unlucky]]
+const FORMAT_REGEX = /\*\*(.+?)\*\*|_(.+?)_|\[\[(\w+):(.+?)\]\]/g;
 
 const parseFormattedText = (text) => {
   const nodes = [];
@@ -14,8 +14,10 @@ const parseFormattedText = (text) => {
 
     if (match[1] !== undefined) {
       nodes.push(<strong key={key++}>{match[1]}</strong>);
+    } else if (match[2] !== undefined) {
+      nodes.push(<em key={key++}>{match[2]}</em>);
     } else {
-      nodes.push(<span key={key++} style={{ color: match[2] }}>{match[3]}</span>);
+      nodes.push(<span key={key++} style={{ color: match[3] }}>{match[4]}</span>);
     }
 
     lastIndex = FORMAT_REGEX.lastIndex;

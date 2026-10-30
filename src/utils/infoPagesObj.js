@@ -13,12 +13,12 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 // A page's title defaults to its id.
 // choices: [{ label, to }] navigates; { label, action } runs an action;
 //          effects: [{ addItem }] or [{ stat, change }] are applied before moving on.
-// onEnter: [{ stat: "Sta" | "Skill" | "Luck" | "Gold", change }] is applied once when the player
+// onEnter: [{ stat: "Sta" | "Skill" | "Luck" | "Gold" | "Provisions", change }] is applied once when the player
 //          arrives on the page, and shown on it as a +/- notice.
 export const pages = {
     hints: {
         title: "HINTS ON PLAY",
-        text: "There is one true way through the Warlock's dungeon and it will take you several attempts to find it. Make notes and draw a map as you explore - this map will be invaluable in future adventures and enable you to progress rapidly through to unexplored sections.\n\nNot all rooms contain treasure; many merely contain traps and creatures which you will no doubt fall foul of. There are many 'wild goose chase' passages and whilst you may indeed progress through the dungeon, you will not take the Warlock's treasure unless you have picked up certain specific items on the way.\n\nSeveral keys will be found in dungeon rooms. Only by arriving at the Warlock's treasure with the correct keys to open his chest will you get to his treasure. You can expect many frustrations in Firetop Mountain.\nThe one true way involves a minimum of risk and any player, no matter how weak on initial rolls, should be able to get through very easily.\n\nMay the luck of the gods go with you on the adventure ahead!",
+        text: "There is one true way through the Warlock's dungeon and it will take you several attempts to find it. Make notes and draw a map as you explore - this map will be invaluable in future adventures and enable you to progress rapidly through to unexplored sections.\n\nNot all rooms contain treasure; many merely contain traps and creatures which you will no doubt fall foul of. There are many 'wild goose chase' passages and whilst you may indeed progress through the dungeon, you will not take the Warlock's treasure unless you have picked up certain specific items on the way.\n\nSeveral keys will be found in dungeon rooms. Only by arriving at the Warlock's treasure with the correct keys to open his chest will you get to his treasure. You can expect many frustrations in Firetop Mountain.\nThe 'one true way' involves a minimum of risk and any player, no matter how weak on initial rolls, should be able to get through fairly easily.\n\n**May the luck of the gods go with you on the adventure ahead!**",
         choices: [{ label: BACKTOMENU, action: BACKTOMENU }],
     },
     intro: {
@@ -29,34 +29,64 @@ export const pages = {
     },
     fight: {
         title: "HOW TO FIGHT CREATURES OF THE UNDERWORLD",
-        text: "Before embarking on your adventure, you must first determine your own strengths and weaknesses. You have in your possession a sword and a shield together with a rucksack containing provisions (food and drink) for the trip. You have been preparing for your quest by training yourself in swordplay and exercising vigorously to build up your stamina.\n\nTo see how effective your preparations have been, we will use a random roll to determine your initial SKILL and STAMINA scores.",
+        text: "Before embarking on your adventure, you must first determine your own strengths and weaknesses. You have in your possession a sword and a shield together with a rucksack containing provisions (food and drink) for the trip. You have been preparing for your quest by training yourself in swordplay and exercising vigorously to build up your stamina.\n\nTo see how effective your preparations have been, we will use a random roll to determine your initial _SKILL_, _STAMINA_ and _LUCK_ scores.",
         previous: "intro",
-        next: "skill-stamina",
+        next: "skill-stamina-luck",
     },
-    "skill-stamina": {
-        title: "SKILL AND STAMINA",
-        text: "Your SKILL score reflects your swordsmanship and general fighting expertise - the higher the better. Your STAMINA score reflects your general constitution, your will to survive, your determination and overall fitness - the higher your STAMINA score, the longer you will be able to survive. Your LUCK score indicates how naturally lucky you are. Luck - and magic - are facts of life in the fantasy kingdom you are about to explore.\n\nBATTLES:\nYou will often come across battles against a creature of some sort. An option to flee may be given, but if not - or if you choose to attack the creature anyway - you must resolve the battle until you or the creature die (STAMINA reaches 0).\n\nESCAPING:\nWhen you run away from a battle the creature automatically gets in one wound on you (you lose 2 STAMINA) as you flee. Such is the price of cowardice. Note that the option to escape isn't always given to you.",
+    "skill-stamina-luck": {
+        title: "SKILL, STAMINA AND LUCK",
+        text: "Your _SKILL_ score reflects your swordsmanship and general fighting expertise - the higher the better. Your _STAMINA_ score reflects your general constitution, your will to survive, your determination and overall fitness - the higher your _STAMINA_ score, the longer you will be able to survive. Your _LUCK_ score indicates how naturally lucky you are. Luck - and magic - are facts of life in the fantasy kingdom you are about to explore.\n\n_SKILL, STAMINA and LUCK_ scores change constantly during an adventure. Although you may receive additional _SKILL, STAMINA, and LUCK_ points, these totals may never exceed your _Initial_ scores except on very rare occasions, when instructed on a particular page.",
         previous: "fight",
-        next: "luck-rules",
+        next: "battles",
+    },
+    "battles": {
+        title: "BATTLES",
+        text: "You will often come across battles against a creature of some sort. An option to flee may be given, but if not - or if you choose to attack the creature anyway - you must resolve the battle until you or the creature die.\n\n**The sequence of combat is then:**\n\n**1.** Roll the two dice for the creature. Add its _SKILL_ score. This total is **its** _Attack Strength_\n\n**2.** Roll the two dice for yourself. Add your current _SKILL_. This total is **your** _Attack Strength_.\n\n**3.** Whose _Attack Strength_ is higher? If your _Attack Strength_ is higher, you have wounded the creature. If the creature's _Attack Strength_  is higher, it has wounded you. (If both are the same, you have both missed - the next _Attack Round_ starts from step 1 above.)\n\n**4.** If you wounded the creature, subtract 2 points from **its** _STAMINA_ score. You may use _LUCK_ here to do additional damage (see 'Using Luck in Battles' in the next pages).\n\n**5.** If the creature wounded you, subtract 2 points from **your** _STAMINA_ score. You may use _LUCK_ to minimize the damage.\n\n**6.** Make the appropriate changes to either the creature's or your own _STAMINA_ scores (and your _LUCK_ score if you used _LUCK_) and begin the next _Attack Round_ (repeat steps 1-6).\n\n**7.** This continues until the _STAMINA_ score of either you or the creature you are fighting has been reduced to zero (death).",
+        previous: "skill-stamina-luck",
+        next: "escaping-battles",
+    },
+    "escaping-battles": {
+        title: "ESCAPING FROM BATTLES",
+        text: "On some pages you will be given the option of _Escaping from the battle_. _You may only Escape_ if it is offered to you on the page.\n\nIf you do run away, the creature automatically scores one wound on you (subtract 2 _STAMINA_ points) as you flee. Such is the price of cowardice. You can use _LUCK_ on this wound in the normal way (see 'Using Luck in Battles' on the next pages).",
+        previous: "battles",
+        next: "luck-rules"
     },
     "luck-rules": {
         title: "LUCK",
-        text: "At various times during your adventure, either in battles or when you come across situations in which you could either be lucky or unlucky, you may call on your luck to make the outcome more favourable. But beware! Using luck is a risky business and if you are unlucky, the results could be disastrous.\n\nTo use luck we will roll two dice. If the number rolled is equal to or less than your current LUCK score, you have been lucky and the result will go in your favour. If not, you have been unlucky and you will be penalized.\nThis procedure is known as Testing your Luck. Each time you do it, one point will be subtracted from your current LUCK score. Thus you will soon realize that the more you rely on your luck, the more risky this will become.\n\nWhen in battle, if you have just wounded the creature, you may test your Luck and, if you are lucky, you will do an extra 2 points of damage. However, if you are unlucky, you will only take 1 point from the creature's STAMINA.\nYou can also use luck to minimize the damage a creature does to you when you get wounded, but if you're unlucky you will suffer 3 points of damage, instead of the normal 2.",
-        previous: "skill-stamina",
-        next: "restoring",
+        text: "Sometimes you will be told to _Test your Luck_. As you will discover, using Luck is a risky business. The way you _Test your Luck_ is as follows:\n\n**Two dice will be rolled**. If the number rolled is _equal to_ or _less than_ your current _LUCK_ score, you have been _lucky_. If the number rolled is _higher_ than your current _LUCK_ score, you have been _unlucky_.\n\nThe consequences of being _lucky_ or _unlucky_ will be found on the page. Each time you _Test your Luck_, you must subtract one point from your current _LUCK_ score. So the more you rely on luck, the more risky this becomes.",
+        previous: "escaping-battles",
+        next: "luck-in-battle",
     },
-    restoring: {
-        title: "RESTORING SKILL, STAMINA AND LUCK",
-        text: "Your stat scores can never exceed their initial value unless specifically instructed.\n\nSKILL - A Magic Weapon may increase your SKILL score, but remember that you can only use one weapon at a time!\n\nSTAMINA - This stat will change a lot during your adventure. As you near your goal, your STAMINA level may be dangerously low and battles may be particularly risky, so be careful!\nProvisions will restore 4 points of STAMINA, but you can only eat one at a time and only in certain occasions. Remember that you have a long way to go, so use your Provisions wisely!\n\nLUCK - When you are particularly lucky your LUCK score may increase.\n\nYou can also come across Potions that will restore your stat scores to their initial state. These can be used at any time.",
-        choices: [{ label: BACKTOMENU, action: BACKTOMENU }],
+    "luck-in-battle": {
+        title: "USING LUCK IN BATTLES",
+        text: "In battles, you always have the option of using your luck either to score a more serious wound on a creature, or to minimize the effects of a wound the creature has just scored on you.\n\n**IF YOU HAVE JUST WOUNDED THE CREATURE:** you may _Test your Luck_ as described above. If you are _lucky_, subtract an _extra 2_ points from the creature's _STAMINA_ score (i.e. 4 instead of 2 normally). But if you are _unlucky_, you must restore 1 point to the creature's _STAMINA_ (so instead of scoring the normal 2 points of damage, you have now scored only 1).\n\n**IF THE CREATURE HAS JUST WOUNDED YOU:** you can _Test your Luck_ to try to minimize the wound. If you are _lucky_ restore 1 point of your _STAMINA_ (i.e. instead of doing 2 points of damage, it has done only 1). If you are _unlucky_ subtract _1 extra STAMINA_ point.\n\nDon't forget to subtract 1 point from your _LUCK_ score each time you _Test your Luck_.",
         previous: "luck-rules",
+        next: "restoring"
+    },
+    "restoring": {
+        title: "RESTORING SKILL, STAMINA AND LUCK",
+        text: "Occasionally, a page may give instructions to alter your _SKILL_ score. A Magic Weapon may increase your _SKILL_, but remember that only one weapon can be used at a time! You cannot claim 2 _SKILL_ bonuses for carrying two Magic Swords. Your _SKILL_ score can never exceed its _Initial_ value unless specifically instructed.\n\nDrinking the Potion of Skill will restore your _SKILL_ to its _Initial_ level at any time.",
+        previous: "luck-in-battle",
+        next: "stamina-and-provisions"
+    },
+    "stamina-and-provisions":{
+        title: "STAMINA AND PROVISIONS",
+        text: "Your _STAMINA_ score will change a lot during the adventure. As you near your goal, your _STAMINA_ level may be dangerously low and battles may be particularly risky, so be careful!\n\nYou start the game with enough Provisions for ten meals. You may eat **only one** meal at a time. When you eat a meal, add 4 points to your _STAMINA_ score and deduct 1 point from your _Provisions_. Remember that you have a long way to go, so use your Provisions wisely!\n\nDon't forget that your _STAMINA_ score may never exceed its _Initial_ value unless specifically instructed on a page.\n\nDrinking a Potion of Strength will restore your _STAMINA_ to its _Initial_ level at any time.",
+        previous: "restoring",
+        next: "restore-luck"
+    },
+    "restore-luck":{
+        title: "RESTORING LUCK",
+        text: "You will find additions to your _LUCK_ score awarded when you have been particularly lucky. Remember that, as with _SKILL_ and _STAMINA_, your _LUCK_ score may never exceed its _Initial_ value unless specifically instructed on a page.\n\nDrinking a Potion of Fortune will restore your _LUCK_ to its _Initial_ level at any time, and increase your _Initial LUCK_ by 1 point.",
+        choices: [{ label: BACKTOMENU, action: BACKTOMENU }],
+        previous: "stamina-and-provisions",
     },
     "roll-stamina": {
         title: "YOUR STATS - STAMINA",
         type: "stats",
         stat: "Sta",
         base: 12,
-        text: "Click the ROLL button to roll the dice and get your STAMINA value.\n\nYour initial STAMINA will be the sum of the numbers rolled on both dice plus the base STAMINA value (12).",
+        text: "Click the ROLL button to roll the dice and get your _STAMINA_ value.\n\nYour initial _STAMINA_ will be the sum of the numbers rolled on both dice plus the base _STAMINA_ value (12).",
         choices: [{ label: "Roll Stamina", action: ROLLSTAT }],
         next: "roll-luck",
     },
@@ -65,7 +95,7 @@ export const pages = {
         type: "stats",
         stat: "Luck",
         base: 6,
-        text: "Click the ROLL button on the left panel to roll the dice and get your LUCK value.\n\nYour initial LUCK will be the number rolled on the die plus the base LUCK value (6).",
+        text: "Click the ROLL button on the left panel to roll the dice and get your _LUCK_ value.\n\nYour initial _LUCK_ will be the number rolled on the die plus the base _LUCK_ value (6).",
         choices: [{ label: "Roll Luck", action: ROLLSTAT }],
         next: "roll-skill",
     },
@@ -74,13 +104,13 @@ export const pages = {
         type: "stats",
         stat: "Skill",
         base: 6,
-        text: "Click the ROLL button on the left panel to roll the dice and get your SKILL value.\n\nYour initial SKILL will be the number rolled on the die plus the base SKILL value (6).",
+        text: "Click the ROLL button on the left panel to roll the dice and get your _SKILL_ value.\n\nYour initial _SKILL_ will be the number rolled on the die plus the base _SKILL_ value (6).",
         choices: [{ label: "Roll Skill", action: ROLLSTAT }],
         next: "equipment",
     },
     equipment: {
         title: "EQUIPMENT & POTIONS",
-        text: "You will start your adventure with a bare minimum of equipment, but you may find other items during your travels. You are armed with a sword and are dressed in leather armour. You have a rucksack (haversack, backpack) on your back to hold your Provisions and any treasures you may come across. You also carry a lantern which lights your way.\n\nIn addition, you may take one bottle of a magical potion which will aid you on your quest. You may choose to take a bottle of any of the following:\n\nPotion of Skill - restores SKILL points\nPotion of Strength - restores STAMINA points\nPotion of Fortune - Restores LUCK points and adds 1 to initial LUCK\n\nThese potions may be taken at any time during your adventure. Each bottle of potion contains enough for two measures i.e. the characteristics may be restored twice during an adventure.\n\nRemember also that you may only choose one of the three potions to take on your trip, so choose wisely!",
+        text: "You will start your adventure with a bare minimum of equipment, but you may find other items during your travels. You are armed with a sword and are dressed in leather armour. You have a rucksack (haversack, backpack) on your back to hold your Provisions and any treasures you may come across. You also carry a lantern which lights your way.\n\nIn addition, you may take one bottle of a magical potion which will aid you on your quest. You may choose to take a bottle of any of the following:\n\nPotion of Skill - restores _SKILL_ points\nPotion of Strength - restores _STAMINA_ points\nPotion of Fortune - Restores _LUCK_ points and adds 1 to initial _LUCK_\n\nThese potions may be taken at any time during your adventure. Each bottle of potion contains enough for two measures i.e. the characteristics may be restored twice during an adventure.\n\nRemember also that you may only choose one of the three potions to take on your trip, so choose wisely!",
         choices: [
             { label: SKILLPOTION, effects: [{ addItem: `${SKILLPOTION} x2` }], to: "rumours-1" },
             { label: STRPOTION, effects: [{ addItem: `${STRPOTION} x2` }], to: "rumours-1" },
@@ -159,7 +189,7 @@ export const pages = {
     },
     156: {
         type: "skill",
-        text: "You charge the door with your shoulder.\n\nRoll two dice.\n\nIf the number rolled is less than or equal to your SKILL score, you succeed.\n\nIf the number rolled is greater than your SKILL, you rub your bruised shoulder and decide against trying again. You will have to return to the junction.",
+        text: "You charge the door with your shoulder.\n\nRoll two dice.\n\nIf the number rolled is less than or equal to your _SKILL_ score, you succeed.\n\nIf the number rolled is greater than your _SKILL_, you rub your bruised shoulder and decide against trying again. You will have to return to the junction.",
         choices: [
             
         ],
@@ -167,14 +197,14 @@ export const pages = {
         fail: 92,
     },
     343: {
-        text: "The door bursts open and you fall headlong into a room. But your heart jumps as you realize you are not landing on the floor, but plunging down a pit of some kind!\n\nLuckily the pit is not particularly deep and you land in a heap less than two metres down.\n\nLose 1 STAMINA point for your bruises, climb out of the pit into the room and leave through the door, heading westwards.",
+        text: "The door bursts open and you fall headlong into a room. But your heart jumps as you realize you are not landing on the floor, but plunging down a pit of some kind!\n\nLuckily the pit is not particularly deep and you land in a heap less than two metres down.\n\nLose 1 _STAMINA_ point for your bruises, climb out of the pit into the room and leave through the door, heading westwards.",
         onEnter: [{ stat: "Sta", change: -1 }],
         choices: [
             { label: "Head westwards", to: 92 },
         ],
     },
     147: {
-        text: "You leave the room and open the box in the passage.\n\nInside you find a single Piece of Gold and a small mouse, which must have been the creature's pet. You keep the coin and release the mouse, which scurries off down the passageway. Gain 2 LUCK points.",
+        text: "You leave the room and open the box in the passage.\n\nInside you find a single Piece of Gold and a small mouse, which must have been the creature's pet. You keep the coin and release the mouse, which scurries off down the passageway. Gain 2 _LUCK_ points.",
         onEnter: [
             { stat: "Gold", change: 1 },
             { stat: "Luck", change: 2 },
@@ -182,5 +212,12 @@ export const pages = {
         choices: [
             { label: "Press on northwards", to: 208 },
         ],
+    },
+    33: {
+        type: "battle",
+        image: "wofmsword.png",
+        text: "The sleeping creature awakens startled. He jumps up and rushes at you, unarmed. With your sword you should be able to defeat him, but his sharp teeth look rather vicious.\n\nYou may _Escape_ through the door or stand and fight the Orc who is attacking you.",
+        enemies: ["Orc-6-4"],
+        next: 147,
     },
 };
