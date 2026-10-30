@@ -54,6 +54,34 @@ const playerStateReducer = (state, action) => {
         currentSta: Math.min(current + constants.MEAL_STAMINA, Math.max(parseInt(state.initSta), current)),
       };
     }
+    case 'USE_ITEM': {
+      // A potion ("Potion of Skill x2"): restore its stat, then lower the count / remove it
+      const index = state.inventory.indexOf(action.item);
+      if (index === -1) return state;
+      const match = action.item.match(/^(.+?)\s+x(\d+)$/);
+      const baseName = match ? match[1] : action.item;
+      let changes;
+      switch (baseName) {
+        case constants.SKILLPOTION:
+          changes = { currentSkill: Math.max(parseInt(state.currentSkill), parseInt(state.initSkill)) };
+          break;
+        case constants.STRPOTION:
+          changes = { currentSta: Math.max(parseInt(state.currentSta), parseInt(state.initSta)) };
+          break;
+        case constants.FORTPOTION: {
+          const initLuck = parseInt(state.initLuck) + 1;
+          changes = { initLuck, currentLuck: Math.max(parseInt(state.currentLuck), initLuck) };
+          break;
+        }
+        default:
+          return state;
+      }
+      const inventory = [...state.inventory];
+      const left = match ? parseInt(match[2]) - 1 : 0;
+      if (left > 0) inventory[index] = `${baseName} x${left}`;
+      else inventory.splice(index, 1);
+      return { ...state, ...changes, inventory };
+    }
     case 'ADD_ITEM':
       return {
         ...state,

@@ -12,6 +12,7 @@ A React + Vite web adaptation of the Fighting Fantasy gamebook. Commands: `npm r
 ## Conventions
 
 - Player stats are stored as strings (`'00'`), so always `parseInt` before doing maths.
+- Player state only changes through reducer actions (`dispatch` in `PageContainer`); components receive it as `setPlayerState`, so never pass it a function or a plain object. Add a new action instead.
 - Stat keys in effects: `Sta`, `Skill`, `Luck`, `Gold`, `Provisions`. Gains never exceed the initial value; nothing drops below 0.
 - Text markup in page text: `**bold**`, `_italic_`, `[[color:text]]` (see `parseFormattedText.jsx`). Paragraphs are split on `\n`.
 - Enemies are `"Name-skill-stamina"` strings, e.g. `"Orc-6-5"`.
