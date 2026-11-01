@@ -10,7 +10,8 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 //       (optional escape: page id to flee to - adds an Escape button, the creature gets one wound on you),
 //       "stats" = initial stat roll (needs stat and base).
 // image + caption: the page opens on the full-size illustration (as in the book) and
-//       Next then reveals the text. (On battle pages image is a small decoration.)
+//       Next then reveals the text (or, on battle pages, the fight). Battle pages always
+//       show the sword decoration themselves, so it isn't set per page.
 // A page's title defaults to its id.
 // choices: [{ label, to }] navigates; { label, action } runs an action;
 //          effects: [{ addItem }] or [{ stat, change }] are applied before moving on.
@@ -156,7 +157,6 @@ export const pages = {
     },
     248: {
         type: "battle",
-        image: "wofmsword.png",
         text: "You step with a crunch on some loose ground and his eyes flick open.\n\nThe creature that has just awakened is an ORC! He scrambles to his feet and turns to grasp at a rope which is probably the alarm bell. You must attack him quickly!",
         enemies: ["Orc-6-5"],
         next: 301,
@@ -216,10 +216,59 @@ export const pages = {
     },
     33: {
         type: "battle",
-        image: "wofmsword.png",
         text: "The sleeping creature awakens startled. He jumps up and rushes at you, unarmed. With your sword you should be able to defeat him, but his sharp teeth look rather vicious.\n\nYou may _Escape_ through the door or stand and fight the Orc who is attacking you.",
         enemies: ["Orc-6-4"],
         escape: 320,
         next: 147,
+    },
+    363: {
+        text: "Further up the passage, on the west wall, you see another similar door. You listen at the door and grimace to hear the worst singing you have ever heard in your life!\n\nDo you want to go into the room to investigate this hideous din or walk on up the passageway?",
+        choices: [
+            { label: "Investigate the hideous din", to: 370 },
+            { label: "Continue up the passageway", to: 42 },
+        ],
+    },
+    397: {
+        text: "The door opens to reveal a small room with a stone floor and dirty walls. There is a stale smell in the air. In the centre of the room is a makeshift wooden table on which is standing a lit candle.\n\nUnder the table is a small box. In the far corner of the room is a small mattress.\n\nYou may either open the box or leave the room.",
+        choices: [
+            { label: "Open the box", to: 240 },
+            { label: "Leave the room", to: 363 },
+        ],
+    },
+    320: {
+        text: "You run out of the room and slam the door shut behind you.\n\nYou turn northwards up the passageway passing a similar-looking door further up.",
+        choices: [
+            { label: "Turn northwards", to: 363 },
+        ],
+    },
+    240: {
+        type: "battle",
+        text: "The box is light, but something rattles within. You open the lid and a small _SNAKE_ darts out to bite at your wrist.\n\nYou must fight the Snake.",
+        image: "wofm240.png",
+        caption: "You open the lid and a small Snake darts out to bite at your wrist!",
+        enemies: ["Snake-5-2"],
+        next: 145,
+    },
+    42: {
+        text: "You eventually arrive at the end of the passage, at a three-way junction. You may turn either to the west or to the east.",
+        choices: [
+            { label: "Turn west", to: 257 },
+            { label: "Turn east", to: 113 },
+        ],
+    },
+    370: {
+        text: "The door opens to reveal a small room. The room is dirty and unkempt. A straw mattress lies in one corner. In the centre of the room is a wooden table upon which a candle burns, lighting the room with its flickering flame.\n\nA small box rests under the table. Seated around the table are two small creatures with warty skin, dressed in leather armour. They are drinking some sort of grog and, by the way they stagger to their feet on your arrival, you assume they are very drunk.\n\nYou may either draw your sword and leap forward at them or slam the door quickly and run on up the passage.",
+        image: "wofm370.png",
+        caption: "Seated around the table, are two small creatures with warty skin, dressed in leather armour.",
+        choices: [
+            { label: "Draw your sword", to: 116 },
+            { label: "Slam the door and run", to: 42 },
+        ],
+    },
+    145: {
+        text: "The box has fallen to the ground during your fight with the Snake and out of it has fallen a bronze-coloured key with the number _99_ carved into it.\n\nYou may take this key with you and leave the room. You gain 1 _LUCK_ point.",
+        choices: [
+            { label: "Move on", to: 363 },
+        ],
     },
 };

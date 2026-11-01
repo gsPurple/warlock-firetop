@@ -7,6 +7,8 @@ import Modal from '../utils/Modal';
 import testLuck from '../utils/testLuck';
 import { resolveRound, getDamage } from '../utils/battleLogic';
 import parseFormattedText from '../utils/parseFormattedText';
+import IllustrationPage from './IllustrationPage';
+import swordImg from '../images/decor/wofmsword.png';
 
 const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParagraphs, handleChoice, onPlayerDeath }) => {
 
@@ -26,6 +28,8 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
     const [pendingWound, setPendingWound] = useState(null); // 'enemy' | 'player' | null
     const [enemyExpanded, setEnemyExpanded] = useState(false);
     const [escapeModalOpen, setEscapeModalOpen] = useState(false);
+    // Pages with an image open on the full-size illustration, like adventure pages; Next reveals the battle
+    const [showBattle, setShowBattle] = useState(currentPage.image === undefined);
     // null | { stage: 'choice' } | { stage: 'rolling', dice, lucky } | { stage: 'done', message, dead }
     const [escape, setEscape] = useState(null);
 
@@ -157,6 +161,17 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
 
     const escapeButton = canEscape && <button onClick={() => setEscapeModalOpen(true)}>Escape</button>;
 
+    if (!showBattle) {
+        return (
+            <IllustrationPage
+                header={<Header playerState={playerState} setPlayerState={setPlayerState} className='left-col'/>}
+                currentPage={currentPage}
+                handleChoice={handleChoice}
+                onNext={() => setShowBattle(true)}
+            />
+        );
+    }
+
     return (
         <div className='ui-container'>
           <Modal
@@ -180,16 +195,9 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
               <p className='text-content' key={index}>{parseFormattedText(paragraph)}</p>
             ))}
 
-            {(currentPage.image !== null && currentPage.image !== undefined) &&
-                <div id="swordImgContainer">
-                    <img
-                        id="image"
-                        src={`/src/images/decor/${currentPage.image}`}
-                        alt={currentPage.image}
-                    />
-                </div>
-
-            }
+            <div id="swordImgContainer">
+                <img id="image" src={swordImg} alt="" />
+            </div>
 
             <hr />
 

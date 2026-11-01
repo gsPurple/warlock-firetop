@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from './Header';
 import ChoiceReader from '../utils/ChoiceReader';
 import DiceRoll from './DiceRoll';
+import IllustrationPage from './IllustrationPage';
 import parseFormattedText from '../utils/parseFormattedText';
 import goldSVG from '../images/icons/gold_icon.svg';
 import cloverSVG from '../images/icons/clover_icon.svg';
@@ -20,26 +21,12 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
 
     if (!showText) {
       return (
-        <div className='ui-container'>
-          <Header playerState={playerState} setPlayerState={setPlayerState} className='left-col'/>
-          <div className="page-container border">
-            <h1 className='title'>{currentPage.title}</h1>
-            <img
-                className="illustration"
-                src={`/src/images/ilustrations/${currentPage.image}`}
-                alt={currentPage.image}
-            />
-            {currentPage.caption && <p className='text-content caption'>{currentPage.caption}</p>}
-
-            <div>
-                {currentPage.previous !== undefined && <button id='button-back' onClick={() => handleChoice({ to: currentPage.previous })}>
-                  Back
-                </button>}
-
-                <button id='button-next' onClick={() => setShowText(true)}>Next</button>
-            </div>
-          </div>
-        </div>
+        <IllustrationPage
+            header={<Header playerState={playerState} setPlayerState={setPlayerState} className='left-col'/>}
+            currentPage={currentPage}
+            handleChoice={handleChoice}
+            onNext={() => setShowText(true)}
+        />
       );
     }
 
