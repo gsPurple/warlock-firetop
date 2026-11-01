@@ -87,6 +87,14 @@ const playerStateReducer = (state, action) => {
         ...state,
         inventory: [...state.inventory, action.item],
       };
+    case 'TAKE_ITEM':
+      // A page's pickable item: each can be taken once per visit (takenOnPage is cleared by goTo)
+      if (state.takenOnPage.includes(action.item)) return state;
+      return {
+        ...state,
+        inventory: [...state.inventory, action.item],
+        takenOnPage: [...state.takenOnPage, action.item],
+      };
     default:
       return state;
   }
@@ -103,6 +111,7 @@ const initialState = {
   gold: '0',
   provisions: '10',
   ateOnPage: false, // a meal was already eaten on the current page
+  takenOnPage: [], // items already taken from the current page
   inventory: ['Sword', 'Shield', 'Leather Armour', 'Lantern'],
 };
 
@@ -163,7 +172,7 @@ function PageContainer() {
     setDieOne(null);
     setDieTwo(null);
     setPendingTest(null);
-    dispatch({ type: 'SET_PLAYER_STATE', payload: { ateOnPage: false } });
+    dispatch({ type: 'SET_PLAYER_STATE', payload: { ateOnPage: false, takenOnPage: [] } });
     setCurrentPageId(pageId);
     applyEffects(pages[pageId]?.onEnter);
   };
@@ -190,7 +199,7 @@ function PageContainer() {
           },
         });
         setCurrentMode(constants.ADVENTUREMODE);
-        goTo(343);
+        goTo(constants.DEVPAGE);
         break;
       case constants.BACKTOMENU:
         setCurrentMode(null);

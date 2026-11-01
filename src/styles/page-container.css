@@ -10,6 +10,15 @@
     margin-top: 2rem;
 }
 
+/* Optional items a page offers: a centered row above the choices, buttons styled like the choice buttons */
+.take-item-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
 .title {
     font-size: 2rem;
     font-weight: bold;

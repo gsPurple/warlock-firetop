@@ -15,6 +15,7 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 // A page's title defaults to its id.
 // choices: [{ label, to }] navigates; { label, action } runs an action;
 //          effects: [{ addItem }] or [{ stat, change }] are applied before moving on.
+// items: ["Item name"] shows a Take button per item on the page; taking is optional and once per visit.
 // onEnter: [{ stat: "Sta" | "Skill" | "Luck" | "Gold" | "Provisions", change }] is applied once when the player
 //          arrives on the page, and shown on it as a +/- notice.
 export const pages = {
@@ -267,6 +268,8 @@ export const pages = {
     },
     145: {
         text: "The box has fallen to the ground during your fight with the Snake and out of it has fallen a bronze-coloured key with the number _99_ carved into it.\n\nYou may take this key with you and leave the room. You gain 1 _LUCK_ point.",
+        onEnter: [{ stat: "Luck", change: 1 }],
+        items: ["Bronze Key 99"],
         choices: [
             { label: "Move on", to: 363 },
         ],

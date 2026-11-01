@@ -62,6 +62,19 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
                 );
               })}
 
+            {currentPage.items &&
+              <div className='take-item-container'>
+                {currentPage.items.map((item) => {
+                  const taken = playerState.takenOnPage.includes(item);
+                  return (
+                    <button key={item} disabled={taken} onClick={() => setPlayerState({ type: 'TAKE_ITEM', item })}>
+                      {taken ? `${item} taken` : `Take ${item}`}
+                    </button>
+                  );
+                })}
+              </div>
+            }
+
             {currentPage.type === 'stats' &&
             <div>
               {<div>Die One: {dieOne !== null ? <span className="red bold"> {dieOne} </span> : 'Not rolled yet'}</div>}
