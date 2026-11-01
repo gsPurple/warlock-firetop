@@ -7,6 +7,7 @@ import cloverSVG from '../images/icons/clover_icon.svg';
 import goldSVG from '../images/icons/gold_icon.svg';
 
 const Header = ({ playerState, setPlayerState, enemies = [], inBattle = false, enemyExpanded = false, onEnemyToggle = () => {}, className }) => {
+    const aliveEnemies = enemies.filter((enemy) => parseInt(enemy.stamina) > 0).length;
     const [isLargeScreen, setIsLargeScreen] = useState(false);
     const [dataVisible, setDataVisible] = useState(false);
     const [ariaExpanded, setAriaExpanded] = useState(false);
@@ -82,7 +83,7 @@ const Header = ({ playerState, setPlayerState, enemies = [], inBattle = false, e
                         {enemies.length > 0 &&
                             <button onClick={clickEnemyToggle} className='mobile-enemy-toggle' aria-controls='enemy-nav' aria-expanded={enemyExpanded}>
                                 <div className="enemy-icon-wrapper">
-                                    <span className="enemy-notification">{enemies.length}</span>
+                                    {aliveEnemies > 0 && <span className="enemy-notification">{aliveEnemies}</span>}
                                 </div>
                                 <span className='sr-only'>Enemies</span>
                             </button>

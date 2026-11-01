@@ -2,6 +2,12 @@
     text-align: justify;
 }
 
+.text-content.bullet {
+    margin: 0.25em 0;
+    padding-left: 1.5em;
+    text-indent: -1em;
+}
+
 
 .navigation-button-container {
     display: flex;

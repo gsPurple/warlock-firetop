@@ -30,4 +30,8 @@ const parseFormattedText = (text) => {
   return nodes;
 };
 
+// Lines starting with "• " get a tight, hanging-indent style (see page-container.css)
+export const paragraphClassName = (paragraph) =>
+  paragraph.startsWith('• ') ? 'text-content bullet' : 'text-content';
+
 export default parseFormattedText;

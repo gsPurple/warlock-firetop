@@ -3,7 +3,7 @@ import Header from './Header';
 import ChoiceReader from '../utils/ChoiceReader';
 import DiceRoll from './DiceRoll';
 import IllustrationPage from './IllustrationPage';
-import parseFormattedText from '../utils/parseFormattedText';
+import parseFormattedText, { paragraphClassName } from '../utils/parseFormattedText';
 import goldSVG from '../images/icons/gold_icon.svg';
 import cloverSVG from '../images/icons/clover_icon.svg';
 import heartSVG from '../images/icons/heart_Icon.svg';
@@ -36,7 +36,7 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
           <div className="page-container border">
             <h1 className='title'>{currentPage.title}</h1>
             {pageContentParagraphs.map((paragraph, index) => (
-              <p className='text-content' key={index}>{parseFormattedText(paragraph)}</p>
+              <p className={paragraphClassName(paragraph)} key={index}>{parseFormattedText(paragraph)}</p>
             ))}
 
             {(currentPage.onEnter || [])

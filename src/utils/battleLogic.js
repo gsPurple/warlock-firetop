@@ -1,12 +1,13 @@
 import rollDie from './rollDie';
 
-export function resolveRound(playerSkill, enemySkill) {
+// playerAttackMod: flat modifier to the player's Attack Strength for this fight (a page's playerAttackMod)
+export function resolveRound(playerSkill, enemySkill, playerAttackMod = 0) {
     const playerDice = [rollDie(), rollDie()];
     const enemyDice = [rollDie(), rollDie()];
     const playerRoll = playerDice[0] + playerDice[1];
     const enemyRoll = enemyDice[0] + enemyDice[1];
 
-    const playerAttack = playerRoll + parseInt(playerSkill);
+    const playerAttack = playerRoll + parseInt(playerSkill) + playerAttackMod;
     const enemyAttack = enemyRoll + parseInt(enemySkill);
 
     let outcome = 'miss';

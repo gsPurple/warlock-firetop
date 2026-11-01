@@ -1,7 +1,7 @@
 import { DieFace, useTumble } from './DiceRoll';
 import '../styles/dice-roll.css';
 
-const BattleSide = ({ name, dice, skill, total, rolling, colorClass, winner }) => (
+const BattleSide = ({ name, dice, skill, mod = 0, total, rolling, colorClass, winner }) => (
   <div className={`battle-side${!rolling && winner ? ' battle-winner' : ''}`}>
     <div className='battle-side-name'>{name}</div>
     <div className='dice-tray'>
@@ -9,7 +9,7 @@ const BattleSide = ({ name, dice, skill, total, rolling, colorClass, winner }) =
       <DieFace value={dice[1]} rolling={rolling} colorClass={colorClass} />
     </div>
     <div className='battle-calc'>
-      {rolling ? '\u00a0' : <>{dice[0]} + {dice[1]} + <span className='bold'>{skill}</span> SKILL</>}
+      {rolling ? '\u00a0' : <>{dice[0]} + {dice[1]} + <span className='bold'>{skill}</span> SKILL{mod !== 0 && <> <span className={`battle-mod ${mod > 0 ? 'positive' : 'negative'}`}>{mod > 0 ? '+' : '-'}{Math.abs(mod)} {mod > 0 ? 'BONUS' : 'PENALTY'}</span></>}</>}
     </div>
     <div className='battle-total'>{rolling ? '\u00a0' : `= ${total}`}</div>
   </div>
@@ -37,6 +37,7 @@ const BattleRound = ({ round, roundMessage, children }) => {
           name='You'
           dice={playerDice}
           skill={round.playerSkill}
+          mod={round.playerAttackMod}
           total={round.playerAttack}
           rolling={rolling}
           colorClass='blue'

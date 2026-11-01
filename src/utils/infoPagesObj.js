@@ -7,7 +7,8 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 // type: omitted = plain story page, "luck" = shows a Test your Luck button
 //       (needs lucky/unlucky), "skill" = shows a Test your Skill button (roll two dice,
 //       success if <= current SKILL; needs success/fail), "battle" = needs enemies ("Name-skill-stamina") and next
-//       (optional escape: page id to flee to - adds an Escape button, the creature gets one wound on you),
+//       (optional escape: page id to flee to - adds an Escape button, the creature gets one wound on you;
+//       optional playerAttackMod: number added to (or, if negative, taken from) your Attack Strength every round of this fight),
 //       "stats" = initial stat roll (needs stat and base).
 // image + caption: the page opens on the full-size illustration (as in the book) and
 //       Next then reveals the text (or, on battle pages, the fight). Battle pages always
@@ -272,6 +273,58 @@ export const pages = {
         items: ["Bronze Key 99"],
         choices: [
             { label: "Move on", to: 363 },
+        ],
+    },
+    116: {
+        type: "battle",
+        text: "The two drunken _ORCS_ you now face are obviously startled at your entrance and, as quickly as they are able, they fumble around for the weapons.\n\nYou must attack each one in turn.\n\nTheir drunkenness allows you to add 1 point to your dice roll when rolling to work out your _Attack Strength_, during each _Attack Round_.",
+        enemies: ["Orc-5-4", "Orc-5-5"],
+        next: 378,
+        escape: 42,
+        playerAttackMod: 1,
+    },
+    113: {
+        text: "You arrive at another junction in the passage.\n\nYou may either go northwards or continue eastwards.",
+        choices: [
+            { label: "Go northwards", to: 285 },
+            { label: "Continue eastwards", to: 78 },
+        ],
+    },
+    257: {
+        text: "The passageway runs straight for several metres and then ends at a wooden door.\n\nYou listen at the door and hear angry shouting coming from within.\n\nWill you investigate, or turn back?",
+        choices: [
+            { label: "Investigate", to: 168 },
+            { label: "Turn back", to: 293 },
+        ],
+    },
+    293: {
+        text: "You arrive back at the junction in the passage and walk straight on eastwards.",
+        choices: [
+            { label: "Walk eastwards", to: 113 },
+        ],
+    },
+    378: {
+        text: "You wipe your bloodied sword on the mattress. The green blood leaves a slimy stain on the straw.\n\nStepping over the bodies towards the table you flinch at the foul stench of the creatures. You pick up the box from under the table and examine it. It is a small wooden box with crude hinges. The name _'Farrigo Di Maggio'_ is inscribed on a brass nameplate on its lid.\n\nDo you open the box, or do you decide to leave it behind and leave the room?",
+        choices: [
+            { label: "Open the box", to: 296 },
+            { label: "Leave the room", to: 42 },
+        ],
+    },
+    78: {
+        text: "The passage ends at a solid wooden door with metal hinges.\n\nListening at the door, you hear strange mutterings and the clatter of what could be pots and pans. Whatever is in there, there are several of them.\n\nDo you want to go through the door or turn back?",
+        choices: [
+            { label: "Go through door", to: 159 },
+            { label: "Turn back", to: 237 },
+        ],
+    },
+    168: {
+        text: "You open the door to a large room. A large chair behind a solid-looking table suggests to you that someone, or _something_, of rank uses this room.\n\nA chest in the centre catches your eye. In a corner of the room stands a man-sized creature with a warty face, standing over a smaller creature of similar race. With the whip in his hand, the _ORC CHIEFTAIN_ has been beating his servant, who is whimpering, beneath him.\n\nWill you:\n• Attack them both?\n• Spring at the Chieftain in the hope that his servant will aid you?\n• Leave the room and head back for the junction?",
+        image: "wofm168.png",
+        caption: "With the whip in his hand, the Orc Chieftain has been beating his servant, who is whimpering beneath him.",
+        choices: [
+            { label: "Attack them both", to: 372 },
+            { label: "Spring at the Chieftain", to: 65 },
+            { label: "Leave the room", to: 293 },
         ],
     },
 };

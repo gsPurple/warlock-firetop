@@ -6,7 +6,7 @@ import { QuickRoll } from './DiceRoll';
 import Modal from '../utils/Modal';
 import testLuck from '../utils/testLuck';
 import { resolveRound, getDamage } from '../utils/battleLogic';
-import parseFormattedText from '../utils/parseFormattedText';
+import parseFormattedText, { paragraphClassName } from '../utils/parseFormattedText';
 import IllustrationPage from './IllustrationPage';
 import swordImg from '../images/decor/wofmsword.png';
 
@@ -82,10 +82,11 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
     };
 
     const handleAttack = () => {
-        const result = resolveRound(playerState.currentSkill, enemy.skill);
+        const playerAttackMod = currentPage.playerAttackMod || 0;
+        const result = resolveRound(playerState.currentSkill, enemy.skill, playerAttackMod);
 
         // Names and skills are copied in because the enemy can change before the panel is dismissed
-        setRound({ ...result, enemyName: enemy.name, enemySkill: enemy.skill, playerSkill: parseInt(playerState.currentSkill) });
+        setRound({ ...result, enemyName: enemy.name, enemySkill: enemy.skill, playerSkill: parseInt(playerState.currentSkill), playerAttackMod });
         setRoundNumber(roundNumber + 1);
         setRoundMessage(null);
         setPendingWound(result.outcome === 'miss' ? null : result.outcome === 'playerWins' ? 'enemy' : 'player');
@@ -192,7 +193,7 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
           <div className="page-container border">
             <h1 className='title'>{currentPage.title}</h1>
             {pageContentParagraphs.map((paragraph, index) => (
-              <p className='text-content' key={index}>{parseFormattedText(paragraph)}</p>
+              <p className={paragraphClassName(paragraph)} key={index}>{parseFormattedText(paragraph)}</p>
             ))}
 
             <div id="swordImgContainer">

@@ -1,5 +1,5 @@
 import ChoiceReader from '../utils/ChoiceReader';
-import parseFormattedText from '../utils/parseFormattedText';
+import parseFormattedText, { paragraphClassName } from '../utils/parseFormattedText';
 
 
 const MenuPage = ({ playerState, currentPage, handleChoice, pageContentParagraphs }) => {
@@ -11,7 +11,7 @@ const MenuPage = ({ playerState, currentPage, handleChoice, pageContentParagraph
           <div className="page-container border">
             <h1 className='title'>{currentPage.title}</h1>
             {pageContentParagraphs.map((paragraph, index) => (
-              <p className='text-content' key={index}>{parseFormattedText(paragraph)}</p>
+              <p className={paragraphClassName(paragraph)} key={index}>{parseFormattedText(paragraph)}</p>
             ))}
           
             <div className='navigation-button-container'>
