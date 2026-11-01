@@ -1,4 +1,3 @@
-import React from 'react';
 import '../styles/modal.css';
 
 // With `message` it asks that question; otherwise it asks to use `item` to `effect`, or says the item can't be used

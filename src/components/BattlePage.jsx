@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Header from './Header';
 import EnemyList from './EnemyList';
 import BattleRound from './BattleRound';

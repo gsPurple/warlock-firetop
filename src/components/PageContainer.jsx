@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { pages } from '../utils/infoPagesObj';
 import * as constants from '../utils/constantsfile';
 import '../styles/page-container.css';

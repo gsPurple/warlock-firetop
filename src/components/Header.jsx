@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Inventory from './Inventory';
 import '../styles/header.css';
 import heartSVG from '../images/icons/heart_Icon.svg';

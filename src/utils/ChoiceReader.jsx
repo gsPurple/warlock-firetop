@@ -1,4 +1,3 @@
-import React from 'react';
 
 function ChoiceReader({ currentPage, handleChoice, testYourLuck, testYourSkill, rolled }) {
   // A stat page's roll button disappears once the dice have been rolled

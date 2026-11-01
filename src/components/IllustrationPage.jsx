@@ -1,4 +1,3 @@
-import React from 'react';
 
 // Full-size book illustration with its caption, shown before a page's text (see image/caption in infoPagesObj.js)
 const IllustrationPage = ({ header, currentPage, handleChoice, onNext }) => (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import provisionsSVG from '../images/icons/provisions_icon.svg';
 import tooltipText from '../utils/tooltipText';
 import * as constants from '../utils/constantsfile';

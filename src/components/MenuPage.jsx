@@ -1,4 +1,3 @@
-import React from 'react';
 import ChoiceReader from '../utils/ChoiceReader';
 import parseFormattedText from '../utils/parseFormattedText';
 

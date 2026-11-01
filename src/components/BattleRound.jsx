@@ -1,4 +1,3 @@
-import React from 'react';
 import { DieFace, useTumble } from './DiceRoll';
 import '../styles/dice-roll.css';
 

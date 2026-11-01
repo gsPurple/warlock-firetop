@@ -1,4 +1,3 @@
-import React from 'react';
 import * as constants from '../utils/constantsfile';
 
 const DeathPage = ({ handleChoice }) => {
