@@ -327,4 +327,32 @@ export const pages = {
             { label: "Leave the room", to: 293 },
         ],
     },
+    285: {
+        text: "You see a well-used door on the right-hand (east) side of the passageway. With your ear to the keyhole, you listen and hear a man screaming for help from inside.\n\nWill you open the door or walk on?",
+        choices: [
+            { label: "Open the door", to: 213 },
+            { label: "Walk on", to: 314 },
+        ],
+    },
+    237: {
+        text: "You move swiftly down the passage and arrive back at the junction.\n\nTurn northwards this time.",
+        choices: [
+            { label: "Turn northwards", to: 285 },
+        ],
+    },
+    296: {
+        text: "The box contains a small leather-bound book entitled _The Making and Casting of Dragonfire_. You open the pages and begin to read. Fortunately it is written in your own language and so was probably not understood by the Orcs - otherwise this treasure would certainly not be as loosely guarded as it was.\n\nThe book is written in tiny handwriting by _Farrigo Di Maggio_. In it he tells the story of his life's work; the creation of the Dragonfire spell with which to fight evil Dragons.\n\nYou read how, in his last years, Farrigo finally perfected his spell but by then was too old to make use of it. So he completed his book, locked it in a chest and hid it in the depths of Firetop Mountain, afraid that it might fall into the wrong hands. The last page reads...",
+        choices: [
+            { label: "Read the last page", to: "dragon-fire-spell-note" },
+        ],
+    },
+    "dragon-fire-spell-note": {
+        title: "296",
+        image: "wofm_spell_note.png",
+        previous: 296,
+        text: "You say these words slowly and softly. Suddenly the pages seem to glow and as this glow disappears, so do the words on the pages of the book. You repeat the spell to yourself to memorize it and leave the room.",
+        choices: [
+            { label: "Leave the room", effects: [{ addItem: "Dragonfire Spell" }], to: 42 },
+        ],
+    },
 };

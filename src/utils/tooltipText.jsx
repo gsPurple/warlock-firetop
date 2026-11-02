@@ -17,22 +17,22 @@ const tooltips = {
     LightSword: <div className='tooltiptext'>A light sword. Gives you +1 SKILL</div>,
     BoatHouseKey: <div className='tooltiptext'>A key that appears to belong to a boat house</div>,
     PotionofInvisibility: <div className='tooltiptext'>A potion that can turn you invisible in some situations</div>,
+    DragonfireSpell: <div className='tooltiptext'>Ekil Erif<br />Ekam Erif<br />Erif Erif<br />'Di Maggio'</div>,
 };
 
 
 function tooltipText(item) {
     let result;
 
-    switch(item) {
+    // Stacked items carry a count ("Potion of Skill x3"); the tooltip is the same
+    switch(item.replace(/\s+x\d+$/, "")) {
         case "Lantern":
             result = tooltips.Lantern;
             break;
-        case "Potion of Strength x2":
-        case "Potion of Strength x1":
+        case "Potion of Strength":
             result = tooltips.PotionofStrength;
             break;
-        case "Potion of Skill x2":
-        case "Potion of Skill x1":
+        case "Potion of Skill":
             result = tooltips.PotionofSkill;
             break;
         case "Potion of Fortune":
@@ -73,6 +73,9 @@ function tooltipText(item) {
             break;
         case "Potion of Invisibility":
             result = tooltips.PotionofInvisibility;
+            break;
+        case "Dragonfire Spell":
+            result = tooltips.DragonfireSpell;
             break;
         default:
             result = null;

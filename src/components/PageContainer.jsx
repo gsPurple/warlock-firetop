@@ -12,6 +12,27 @@ import rollDie from '../utils/rollDie';
 import testLuck from '../utils/testLuck';
 import testSkill from '../utils/testSkill';
 
+const STACKABLE_ITEMS = [constants.SKILLPOTION, constants.STRPOTION, constants.FORTPOTION];
+
+// Adds an item to the inventory. Potions stack ("Potion of Skill" + "Potion of Skill x2" = "Potion of Skill x3");
+// any other item can only be held once, so a second one is ignored.
+const addToInventory = (inventory, item) => {
+  const parse = (name) => {
+    const match = name.match(/^(.+?)\s+x(\d+)$/);
+    return match ? { baseName: match[1], count: parseInt(match[2]) } : { baseName: name, count: 1 };
+  };
+  const added = parse(item);
+  if (!STACKABLE_ITEMS.includes(added.baseName)) {
+    return inventory.includes(item) ? inventory : [...inventory, item];
+  }
+  const index = inventory.findIndex((held) => parse(held).baseName === added.baseName);
+  if (index === -1) return [...inventory, item];
+  const count = parse(inventory[index]).count + added.count;
+  const stacked = [...inventory];
+  stacked[index] = `${added.baseName} x${count}`;
+  return stacked;
+};
+
 const playerStateReducer = (state, action) => {
   switch (action.type) {
     case 'SET_PLAYER_STATE':
@@ -78,21 +99,22 @@ const playerStateReducer = (state, action) => {
       }
       const inventory = [...state.inventory];
       const left = match ? parseInt(match[2]) - 1 : 0;
-      if (left > 0) inventory[index] = `${baseName} x${left}`;
+      if (left > 1) inventory[index] = `${baseName} x${left}`;
+      else if (left === 1) inventory[index] = baseName;
       else inventory.splice(index, 1);
       return { ...state, ...changes, inventory };
     }
     case 'ADD_ITEM':
       return {
         ...state,
-        inventory: [...state.inventory, action.item],
+        inventory: addToInventory(state.inventory, action.item),
       };
     case 'TAKE_ITEM':
       // A page's pickable item: each can be taken once per visit (takenOnPage is cleared by goTo)
       if (state.takenOnPage.includes(action.item)) return state;
       return {
         ...state,
-        inventory: [...state.inventory, action.item],
+        inventory: addToInventory(state.inventory, action.item),
         takenOnPage: [...state.takenOnPage, action.item],
       };
     default:
