@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Header from './Header';
 import ChoiceReader from '../utils/ChoiceReader';
 import DiceRoll from './DiceRoll';
+import useEscape from './useEscape';
 import IllustrationPage from './IllustrationPage';
 import parseFormattedText, { paragraphClassName } from '../utils/parseFormattedText';
 import goldSVG from '../images/icons/gold_icon.svg';
@@ -12,9 +13,20 @@ const STAT_NAMES = { Sta: 'STAMINA', Skill: 'SKILL', Luck: 'LUCK', Gold: 'GOLD' 
 const STAT_ICONS = { Sta: heartSVG, Luck: cloverSVG, Gold: goldSVG };
 
 
-const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, testYourSkill, pendingTest, pageContentParagraphs }) => {
+const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, testYourSkill, pendingTest, pageContentParagraphs, onPlayerDeath }) => {
 
     console.log(playerState)
+
+    // A page with `escape` offers a way to flee; escapeFoe names who wounds you as you go
+    const { fleeing, escapeButton, escapeUI } = useEscape({
+        foeName: currentPage.escapeFoe,
+        to: currentPage.escape,
+        canEscape: currentPage.escape !== undefined && !pendingTest,
+        playerState,
+        setPlayerState,
+        handleChoice,
+        onPlayerDeath,
+    });
 
     // Pages with an image open on the full-size illustration, like the book; Next reveals the text
     const [showText, setShowText] = useState(currentPage.image === undefined);
@@ -90,11 +102,15 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
 
             {pendingTest
               ? <DiceRoll test={pendingTest} onContinue={() => handleChoice({ to: pendingTest.to })} />
-              : <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} testYourLuck={testYourLuck} testYourSkill={testYourSkill} rolled={dieOne !== null}/>
+              : !fleeing && <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} testYourLuck={testYourLuck} testYourSkill={testYourSkill} rolled={dieOne !== null}>
+                  {escapeButton}
+                </ChoiceReader>
             }
 
+            {escapeUI}
+
             <div>
-                {!pendingTest && (currentPage.image !== undefined || currentPage.previous !== undefined) && <button id='button-back' onClick={() => currentPage.image !== undefined ? setShowText(false) : handleChoice({ to: currentPage.previous })}>
+                {!pendingTest && !fleeing && (currentPage.image !== undefined || currentPage.previous !== undefined) && <button id='button-back' onClick={() => currentPage.image !== undefined ? setShowText(false) : handleChoice({ to: currentPage.previous })}>
                   Back
                 </button>}
 

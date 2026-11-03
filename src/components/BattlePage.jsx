@@ -3,7 +3,7 @@ import Header from './Header';
 import EnemyList from './EnemyList';
 import BattleRound from './BattleRound';
 import { QuickRoll } from './DiceRoll';
-import Modal from '../utils/Modal';
+import useEscape from './useEscape';
 import testLuck from '../utils/testLuck';
 import { resolveRound, getDamage } from '../utils/battleLogic';
 import parseFormattedText, { paragraphClassName } from '../utils/parseFormattedText';
@@ -27,11 +27,8 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
     const [luckRoll, setLuckRoll] = useState(null); // Luck test in progress while its dice are on screen
     const [pendingWound, setPendingWound] = useState(null); // 'enemy' | 'player' | null
     const [enemyExpanded, setEnemyExpanded] = useState(false);
-    const [escapeModalOpen, setEscapeModalOpen] = useState(false);
     // Pages with an image open on the full-size illustration, like adventure pages; Next reveals the battle
     const [showBattle, setShowBattle] = useState(currentPage.image === undefined);
-    // null | { stage: 'choice' } | { stage: 'rolling', dice, lucky } | { stage: 'done', message, dead }
-    const [escape, setEscape] = useState(null);
 
     const enemy = parsedEnemies[currentEnemyIndex];
     const enemySta = enemyStaminas[currentEnemyIndex];
@@ -121,46 +118,15 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
 
     const resolveWound = () => applyDamage(pendingWound, 2);
 
-    // Escaping: the creature gets one wound on you as you flee, and you may Test your Luck on it
-    const canEscape = currentPage.escape !== undefined && !battleOver && !pendingWound && !escape;
-
-    const startEscape = () => {
-        setEscapeModalOpen(false);
-        setEscape({ stage: 'choice' });
-    };
-
-    const applyEscapeWound = (amount, luckMessage = '') => {
-        const newSta = Math.max(playerSta - amount, 0);
-        setPlayerState({
-            type: 'SET_PLAYER_STATE',
-            payload: { currentSta: newSta },
-        });
-        setEscape({
-            stage: 'done',
-            dead: newSta === 0,
-            message: `You flee, but the ${enemy.name} wounds you for ${amount} damage as you go.${luckMessage}`,
-        });
-        if (newSta === 0) {
-            onPlayerDeath();
-        }
-    };
-
-    const startEscapeLuckTest = () => {
-        const { dieOne, dieTwo, lucky } = testLuck(playerState.currentLuck);
-        setEscape({ stage: 'rolling', dice: [dieOne, dieTwo], lucky });
-    };
-
-    const finishEscapeLuckTest = () => {
-        decrementLuck();
-        applyEscapeWound(
-            getDamage(false, true, escape.lucky),
-            escape.lucky ? ' You were lucky!' : ' You were unlucky!'
-        );
-    };
-
-    const escapeHint = `Lucky: you take only ${getDamage(false, true, true)} damage. Unlucky: you take ${getDamage(false, true, false)}.`;
-
-    const escapeButton = canEscape && <button onClick={() => setEscapeModalOpen(true)}>Escape</button>;
+    const { fleeing, escapeButton, escapeUI } = useEscape({
+        foeName: enemy.name,
+        to: currentPage.escape,
+        canEscape: currentPage.escape !== undefined && !battleOver && !pendingWound,
+        playerState,
+        setPlayerState,
+        handleChoice,
+        onPlayerDeath,
+    });
 
     if (!showBattle) {
         return (
@@ -175,12 +141,6 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
 
     return (
         <div className='ui-container'>
-          <Modal
-              showModal={escapeModalOpen}
-              message={`Escape from the battle? The ${enemy.name} gets one wound on you as you flee: you lose 2 STAMINA, and may Test your Luck to try to reduce it.`}
-              onClose={() => setEscapeModalOpen(false)}
-              onConfirm={startEscape}
-          />
           <Header
               playerState={playerState}
               setPlayerState={setPlayerState}
@@ -206,7 +166,7 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
             <div>Skill: {enemy.skill}</div>
             <div>Stamina: {enemySta}</div>
 
-            {round && !escape &&
+            {round && !fleeing &&
                 <BattleRound key={roundNumber} round={round} roundMessage={roundMessage}>
                     {pendingWound && luckRoll &&
                         <QuickRoll dice={luckRoll.dice} colorClass='green' onDone={finishLuckTest} />
@@ -231,41 +191,10 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
                 </BattleRound>
             }
 
-            {escape &&
-                <div className='battle-round'>
-                    <div className='battle-outcome' aria-live='polite'>
-                        <div className='dice-verdict red'>You flee from the battle!</div>
-
-                        {escape.stage === 'choice' &&
-                            <>
-                                <p className='battle-luck-hint'>{escapeHint}</p>
-                                <div className='navigation-button-container battle-actions'>
-                                    <button onClick={startEscapeLuckTest}>Test your Luck</button>
-                                    <button onClick={() => applyEscapeWound(2)}>Take 2 damage</button>
-                                </div>
-                            </>
-                        }
-
-                        {escape.stage === 'rolling' &&
-                            <QuickRoll dice={escape.dice} colorClass='green' onDone={finishEscapeLuckTest} />
-                        }
-
-                        {escape.stage === 'done' &&
-                            <>
-                                <p className='battle-result-text'>{escape.message}</p>
-                                {!escape.dead &&
-                                    <div className='navigation-button-container battle-actions'>
-                                        <button onClick={() => handleChoice({ to: currentPage.escape })}>Continue</button>
-                                    </div>
-                                }
-                            </>
-                        }
-                    </div>
-                </div>
-            }
+            {escapeUI}
 
             <div className='navigation-button-container'>
-                {!round && !battleOver && !escape &&
+                {!round && !battleOver && !fleeing &&
                     <>
                         <button onClick={handleAttack}>Attack</button>
                         {escapeButton}

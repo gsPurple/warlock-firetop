@@ -10,6 +10,8 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 //       (optional escape: page id to flee to - adds an Escape button, the creature gets one wound on you;
 //       optional playerAttackMod: number added to (or, if negative, taken from) your Attack Strength every round of this fight),
 //       "stats" = initial stat roll (needs stat and base).
+// escape: page id to flee to. On any page type it adds an Escape button (confirmation, one wound on you, optional
+//       Luck test; see useEscape.jsx). On non-battle pages escapeFoe ("servant") names who wounds you as you go.
 // image + caption: the page opens on the full-size illustration (as in the book) and
 //       Next then reveals the text (or, on battle pages, the fight). Battle pages always
 //       show the sword decoration themselves, so it isn't set per page.
@@ -354,5 +356,13 @@ export const pages = {
         choices: [
             { label: "Leave the room", effects: [{ addItem: "Dragonfire Spell" }], to: 42 },
         ],
+    },
+    65: {
+        text: "As you spring at the Chieftain, his servant rises to his feet, picks up a hefty woodenstick and joins the melee. But to your disappointment he attacks you!\n\n_Ungrateful wretch!_\n\nSeeing this, you may _Escape_ through the door down the corridor or continue the fight.\n\nIf you choose to _Escape_, you suffer normal escaping penalties.",
+        choices: [
+            { label: "Continue the fight", to: 372 },
+        ],
+        escape: 293,
+        escapeFoe: "servant",
     },
 };

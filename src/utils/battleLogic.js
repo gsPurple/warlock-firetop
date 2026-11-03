@@ -27,3 +27,8 @@ export function getDamage(woundedEnemy, luckUsed, lucky) {
     }
     return lucky ? 1 : 3;
 }
+
+// The wound taken when fleeing; lucky is the result of a Luck test on it, or null if none was taken
+export function getEscapeDamage(lucky = null) {
+    return getDamage(false, lucky !== null, lucky);
+}

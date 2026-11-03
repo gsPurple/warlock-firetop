@@ -11,6 +11,7 @@ import DeathPage from './DeathPage';
 import rollDie from '../utils/rollDie';
 import testLuck from '../utils/testLuck';
 import testSkill from '../utils/testSkill';
+import { getEscapeDamage } from '../utils/battleLogic';
 
 const STACKABLE_ITEMS = [constants.SKILLPOTION, constants.STRPOTION, constants.FORTPOTION];
 
@@ -103,6 +104,15 @@ const playerStateReducer = (state, action) => {
       else if (left === 1) inventory[index] = baseName;
       else inventory.splice(index, 1);
       return { ...state, ...changes, inventory };
+    }
+    case 'FLEE': {
+      // The wound taken when escaping; lucky is the result of a Luck test on it (costs 1 Luck), or null if none was taken
+      const luck = parseInt(state.currentLuck);
+      return {
+        ...state,
+        currentSta: Math.max(parseInt(state.currentSta) - getEscapeDamage(action.lucky), 0),
+        currentLuck: action.lucky === null ? luck : Math.max(luck - 1, 0),
+      };
     }
     case 'ADD_ITEM':
       return {
@@ -342,6 +352,7 @@ function PageContainer() {
           testYourLuck={testYourLuck}
           testYourSkill={testYourSkill}
           pendingTest={pendingTest}
+          onPlayerDeath={() => setDying(true)}
         />
       );
     default:
