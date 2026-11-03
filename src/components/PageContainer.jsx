@@ -1,7 +1,8 @@
-import React, { useReducer, useState } from 'react';
-import { infoPages } from '../utils/infoPagesObj';
+import { useEffect, useReducer, useState } from 'react';
+import { pages } from '../utils/infoPagesObj';
 import * as constants from '../utils/constantsfile';
 import '../styles/page-container.css';
+import '../styles/death-transition.css';
 import GameMenu from './GameMenu';
 import AdventurePage from './AdventurePage';
 import BattlePage from './BattlePage';
@@ -9,6 +10,29 @@ import MenuPage from './MenuPage';
 import DeathPage from './DeathPage';
 import rollDie from '../utils/rollDie';
 import testLuck from '../utils/testLuck';
+import testSkill from '../utils/testSkill';
+import { getEscapeDamage } from '../utils/battleLogic';
+
+const STACKABLE_ITEMS = [constants.SKILLPOTION, constants.STRPOTION, constants.FORTPOTION];
+
+// Adds an item to the inventory. Potions stack ("Potion of Skill" + "Potion of Skill x2" = "Potion of Skill x3");
+// any other item can only be held once, so a second one is ignored.
+const addToInventory = (inventory, item) => {
+  const parse = (name) => {
+    const match = name.match(/^(.+?)\s+x(\d+)$/);
+    return match ? { baseName: match[1], count: parseInt(match[2]) } : { baseName: name, count: 1 };
+  };
+  const added = parse(item);
+  if (!STACKABLE_ITEMS.includes(added.baseName)) {
+    return inventory.includes(item) ? inventory : [...inventory, item];
+  }
+  const index = inventory.findIndex((held) => parse(held).baseName === added.baseName);
+  if (index === -1) return [...inventory, item];
+  const count = parse(inventory[index]).count + added.count;
+  const stacked = [...inventory];
+  stacked[index] = `${added.baseName} x${count}`;
+  return stacked;
+};
 
 const playerStateReducer = (state, action) => {
   switch (action.type) {
@@ -23,10 +47,85 @@ const playerStateReducer = (state, action) => {
           [`init${action.stat}`]: action.value,
           [`current${action.stat}`]: action.value, // Update currentStat as well
         };
+    case 'CHANGE_STAT': {
+      // stat is 'Sta', 'Skill' or 'Luck' (never below 0, gains never pass the initial value)
+      // or 'Gold' / 'Provisions' (never below 0, no upper limit)
+      if (action.stat === 'Gold') {
+        return { ...state, gold: Math.max(parseInt(state.gold) + action.change, 0) };
+      }
+      if (action.stat === 'Provisions') {
+        return { ...state, provisions: Math.max(parseInt(state.provisions) + action.change, 0) };
+      }
+      const current = parseInt(state[`current${action.stat}`]);
+      const initial = parseInt(state[`init${action.stat}`]);
+      const changed = action.change > 0 ? Math.min(current + action.change, Math.max(initial, current)) : Math.max(current + action.change, 0);
+      return {
+        ...state,
+        [`current${action.stat}`]: changed,
+      };
+    }
+    case 'EAT': {
+      // One meal: -1 Provisions, +MEAL_STAMINA Stamina (never past the initial value)
+      // and only one meal per page (ateOnPage is cleared by goTo)
+      if (parseInt(state.provisions) <= 0 || state.ateOnPage) return state;
+      const current = parseInt(state.currentSta);
+      return {
+        ...state,
+        provisions: parseInt(state.provisions) - 1,
+        ateOnPage: true,
+        currentSta: Math.min(current + constants.MEAL_STAMINA, Math.max(parseInt(state.initSta), current)),
+      };
+    }
+    case 'USE_ITEM': {
+      // A potion ("Potion of Skill x2"): restore its stat, then lower the count / remove it
+      const index = state.inventory.indexOf(action.item);
+      if (index === -1) return state;
+      const match = action.item.match(/^(.+?)\s+x(\d+)$/);
+      const baseName = match ? match[1] : action.item;
+      let changes;
+      switch (baseName) {
+        case constants.SKILLPOTION:
+          changes = { currentSkill: Math.max(parseInt(state.currentSkill), parseInt(state.initSkill)) };
+          break;
+        case constants.STRPOTION:
+          changes = { currentSta: Math.max(parseInt(state.currentSta), parseInt(state.initSta)) };
+          break;
+        case constants.FORTPOTION: {
+          const initLuck = parseInt(state.initLuck) + 1;
+          changes = { initLuck, currentLuck: Math.max(parseInt(state.currentLuck), initLuck) };
+          break;
+        }
+        default:
+          return state;
+      }
+      const inventory = [...state.inventory];
+      const left = match ? parseInt(match[2]) - 1 : 0;
+      if (left > 1) inventory[index] = `${baseName} x${left}`;
+      else if (left === 1) inventory[index] = baseName;
+      else inventory.splice(index, 1);
+      return { ...state, ...changes, inventory };
+    }
+    case 'FLEE': {
+      // The wound taken when escaping; lucky is the result of a Luck test on it (costs 1 Luck), or null if none was taken
+      const luck = parseInt(state.currentLuck);
+      return {
+        ...state,
+        currentSta: Math.max(parseInt(state.currentSta) - getEscapeDamage(action.lucky), 0),
+        currentLuck: action.lucky === null ? luck : Math.max(luck - 1, 0),
+      };
+    }
     case 'ADD_ITEM':
       return {
         ...state,
-        inventory: [...state.inventory, action.item],
+        inventory: addToInventory(state.inventory, action.item),
+      };
+    case 'TAKE_ITEM':
+      // A page's pickable item: each can be taken once per visit (takenOnPage is cleared by goTo)
+      if (state.takenOnPage.includes(action.item)) return state;
+      return {
+        ...state,
+        inventory: addToInventory(state.inventory, action.item),
+        takenOnPage: [...state.takenOnPage, action.item],
       };
     default:
       return state;
@@ -42,123 +141,158 @@ const initialState = {
   initLuck: '00',
   currentLuck: '00',
   gold: '0',
-  provisions: '00',
+  provisions: '10',
+  ateOnPage: false, // a meal was already eaten on the current page
+  takenOnPage: [], // items already taken from the current page
   inventory: ['Sword', 'Shield', 'Leather Armour', 'Lantern'],
 };
 
+// Death transition timings in ms, measured from the killing blow. The red flash starts
+// immediately (see death-transition.css); the death screen takes over after a pause.
+const DEATH_SWITCH = 1500;
+const DEATH_END = 1600;
+
 function PageContainer() {
-  const [currentPageIndex, setCurrentPageIndex] = useState(null);
+  const [currentPageId, setCurrentPageId] = useState(null);
   const [currentMode, setCurrentMode] = useState(null);
   const [dieOne, setDieOne] = useState(null);
   const [dieTwo, setDieTwo] = useState(null);
+  const [pendingTest, setPendingTest] = useState(null); // luck/skill roll waiting for the player to continue
+  const [dying, setDying] = useState(false); // killing blow landed, transition to the death screen running
+
+  useEffect(() => {
+    if (!dying) return;
+
+    const toDeathScreen = setTimeout(() => setCurrentMode(constants.DEATHMODE), DEATH_SWITCH);
+    const end = setTimeout(() => setDying(false), DEATH_END);
+
+    return () => {
+      clearTimeout(toDeathScreen);
+      clearTimeout(end);
+    };
+  }, [dying]);
 
   const [state, dispatch] = useReducer(playerStateReducer, initialState);
 
-  const currentPage = infoPages[currentPageIndex];
+  const currentPage = pages[currentPageId] && { title: String(currentPageId), ...pages[currentPageId] };
+
+  // Applies a page's onEnter or a choice's effects: { addItem } or { stat, change }
+  const applyEffects = (effects = []) => {
+    let stamina = parseInt(state.currentSta);
+
+    effects.forEach((effect) => {
+      if (effect.addItem) {
+        dispatch({ type: 'ADD_ITEM', item: effect.addItem });
+      }
+      if (effect.stat) {
+        dispatch({ type: 'CHANGE_STAT', stat: effect.stat, change: effect.change });
+        if (effect.stat === 'Sta') {
+          stamina = Math.max(stamina + effect.change, 0);
+        }
+      }
+    });
+
+    // Losing the last STAMINA outside a battle is a death too
+    if (stamina <= 0 && parseInt(state.currentSta) > 0) {
+      setDying(true);
+    }
+  };
+
+  // Dice only matter on the page they were rolled on, so they are cleared on every move.
+  // A page's onEnter effects are applied here, once per arrival
+  const goTo = (pageId) => {
+    setDieOne(null);
+    setDieTwo(null);
+    setPendingTest(null);
+    dispatch({ type: 'SET_PLAYER_STATE', payload: { ateOnPage: false, takenOnPage: [] } });
+    setCurrentPageId(pageId);
+    applyEffects(pages[pageId]?.onEnter);
+  };
 
   const handleChoice = (choice) => {
-    console.log("Handle choice: " + choice);
-    let choiceIndex;
+    console.log("Handle choice: " + (choice.action || choice.to));
 
-    switch (choice) {
+    applyEffects(choice.effects);
+
+    switch (choice.action) {
       case "DEV":
         dispatch({
           type: 'SET_PLAYER_STATE',
           payload: {
             initSta: '15',
-            currentSta: '12',
+            currentSta: '2',
             initSkill: '12',
             currentSkill: '6',
             initLuck: '10',
-            currentLuck: '3',
+            currentLuck: '4',
             gold: '15',
             provisions: '5',
             inventory: ['Debug','Sword', 'Shield', 'Leather Armour','Lantern', 'Potion of Skill x2', 'Potion of Fortune', 'Potion of Strength x2'],
           },
         });
         setCurrentMode(constants.ADVENTUREMODE);
-        choiceIndex = 17;
+        goTo(constants.DEVPAGE);
         break;
       case constants.BACKTOMENU:
-        choiceIndex = null;
+        setCurrentMode(null);
+        goTo(null);
         break;
       case constants.STARTADV:
+        dispatch({ type: 'SET_PLAYER_STATE', payload: initialState });
         setCurrentMode(constants.ADVENTUREMODE);
-        choiceIndex = constants.ADVSTARTPAGE;
+        goTo(constants.ADVSTARTPAGE);
         break;
-      case constants.ROLLSTA:
-      case constants.ROLLSKI:
-      case constants.ROLLLUK:
-        let d1 = rollDie();
-        let d2 = rollDie();
+      case constants.ROLLSTAT: {
+        const d1 = rollDie();
+        const d2 = rollDie();
         setDieOne(d1);
         setDieTwo(d2);
 
-        let statValue = d1 + d2 + parseInt(currentPage.pageContent.match(/\d+/g));
-
         dispatch({
           type: 'ROLL_STAT',
-          stat: choice === constants.ROLLSTA ? 'Sta' : (choice === constants.ROLLSKI ? 'Skill' : 'Luck'),
-          value: statValue,
+          stat: currentPage.stat,
+          value: d1 + d2 + currentPage.base,
         });
-
-        choiceIndex = "";
-        currentPage.next = currentPage.current + 1;
-        currentPage.choices = 0;
         break;
-      case constants.SKILLPOTION:
-        dispatch({
-          type: 'ADD_ITEM',
-          item: constants.SKILLPOTION + " x2",
-        });
-        choiceIndex = 10;
-        break;
-      case constants.STRPOTION:
-        dispatch({
-          type: 'ADD_ITEM',
-          item: constants.STRPOTION + " x2",
-        });
-        choiceIndex = 10;
-        break;
-      case constants.FORTPOTION:
-        dispatch({
-          type: 'ADD_ITEM',
-          item: constants.FORTPOTION + " x2",
-        });
-        choiceIndex = 10;
-        break;
+      }
       default:
-        if (choice > 1) {
-          if (currentPage.stats) {
-            setDieOne(null);
-            setDieTwo(null);
-          }
+        if (choice.to !== undefined) {
+          goTo(choice.to);
         }
-
-        choiceIndex = choice;
-    }
-
-    if (typeof choiceIndex !== 'string') {
-      setCurrentPageIndex(choiceIndex);
     }
   };
 
-  if (currentPageIndex === null) {
+  if (currentPageId === null) {
     return <GameMenu onSelectOption={handleChoice} />;
   }
 
-  const pageContentParagraphs = currentPage.pageContent.split('\n');
+  if (!currentPage) {
+    return (
+      <div className="page-container border">
+        <h1 className="title">{currentPageId}</h1>
+        <p className="text-content">This page hasn't been written yet.</p>
+        <button onClick={() => handleChoice({ action: constants.BACKTOMENU })}>Back to Menu</button>
+      </div>
+    );
+  }
+
+  const pageContentParagraphs = currentPage.text.split('\n');
 
   const testYourLuck = () => {
-    const { result, lucky } = testLuck(state.currentLuck);
+    const { dieOne, dieTwo, result, lucky } = testLuck(state.currentLuck);
 
-    if (lucky) {
-      console.log("LUCK TEST VALUE ---> Lucky");
-      setCurrentPageIndex(currentPage.lucky);
-    } else {
-      console.log("LUCK TEST VALUE ---> Unlucky");
-      setCurrentPageIndex(currentPage.unlucky);
-    }
+    console.log("LUCK TEST VALUE ---> " + (lucky ? "Lucky" : "Unlucky"));
+    setPendingTest({
+      stat: 'LUCK',
+      target: parseInt(state.currentLuck),
+      dieOne,
+      dieTwo,
+      result,
+      passed: lucky,
+      passText: 'You were Lucky!',
+      failText: 'You were Unlucky!',
+      to: lucky ? currentPage.lucky : currentPage.unlucky,
+    });
 
     if (parseInt(state.currentLuck) > 0) {
       dispatch({
@@ -170,12 +304,31 @@ function PageContainer() {
     console.log("Roll result: " + result + " current luck: " + state.currentLuck);
   };
 
+  const testYourSkill = () => {
+    const { dieOne, dieTwo, result, success } = testSkill(state.currentSkill);
+
+    console.log("SKILL TEST VALUE ---> " + (success ? "Success" : "Failure") + " (rolled " + result + " vs skill " + state.currentSkill + ")");
+    setPendingTest({
+      stat: 'SKILL',
+      target: parseInt(state.currentSkill),
+      dieOne,
+      dieTwo,
+      result,
+      passed: success,
+      passText: 'Success!',
+      failText: 'Failure!',
+      to: success ? currentPage.success : currentPage.fail,
+    });
+  };
+
+  const renderScreen = () => {
   switch (currentMode) {
     case constants.DEATHMODE:
       return <DeathPage handleChoice={handleChoice} />;
     case constants.ADVENTUREMODE:
-      return currentPage.battle ? (
+      return currentPage.type === 'battle' ? (
         <BattlePage
+          key={currentPageId}
           playerState={state}
           setPlayerState={dispatch}
           currentPage={currentPage}
@@ -184,10 +337,11 @@ function PageContainer() {
           dieTwo={dieTwo}
           handleChoice={handleChoice}
           testYourLuck={testYourLuck}
-          onPlayerDeath={() => setCurrentMode(constants.DEATHMODE)}
+          onPlayerDeath={() => setDying(true)}
         />
       ) : (
-        <AdventurePage 
+        <AdventurePage
+          key={currentPageId}
           playerState={state}
           setPlayerState={dispatch}
           currentPage={currentPage}
@@ -196,11 +350,14 @@ function PageContainer() {
           dieTwo={dieTwo}
           handleChoice={handleChoice}
           testYourLuck={testYourLuck}
+          testYourSkill={testYourSkill}
+          pendingTest={pendingTest}
+          onPlayerDeath={() => setDying(true)}
         />
       );
     default:
       return (
-        <MenuPage 
+        <MenuPage
           playerState={state}
           currentPage={currentPage}
           pageContentParagraphs={pageContentParagraphs}
@@ -208,6 +365,14 @@ function PageContainer() {
         />
       );
   }
+  };
+
+  return (
+    <>
+      {renderScreen()}
+      {dying && <div className='death-flash' />}
+    </>
+  );
 }
 
 export default PageContainer;

@@ -1,22 +1,93 @@
-import React from 'react';
+import { useState } from 'react';
 import Header from './Header';
 import ChoiceReader from '../utils/ChoiceReader';
+import DiceRoll from './DiceRoll';
+import useEscape from './useEscape';
+import IllustrationPage from './IllustrationPage';
+import parseFormattedText, { paragraphClassName } from '../utils/parseFormattedText';
+import goldSVG from '../images/icons/gold_icon.svg';
+import cloverSVG from '../images/icons/clover_icon.svg';
+import heartSVG from '../images/icons/heart_Icon.svg';
+
+const STAT_NAMES = { Sta: 'STAMINA', Skill: 'SKILL', Luck: 'LUCK', Gold: 'GOLD' };
+const STAT_ICONS = { Sta: heartSVG, Luck: cloverSVG, Gold: goldSVG };
 
 
-const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, pageContentParagraphs }) => {
+const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, testYourSkill, pendingTest, pageContentParagraphs, onPlayerDeath }) => {
 
     console.log(playerState)
-    
+
+    // A page with `escape` offers a way to flee; escapeFoe names who wounds you as you go
+    const { fleeing, escapeButton, escapeUI } = useEscape({
+        foeName: currentPage.escapeFoe,
+        to: currentPage.escape,
+        canEscape: currentPage.escape !== undefined && !pendingTest,
+        playerState,
+        setPlayerState,
+        handleChoice,
+        onPlayerDeath,
+    });
+
+    // Pages with an image open on the full-size illustration, like the book; Next reveals the text
+    const [showText, setShowText] = useState(currentPage.image === undefined);
+
+    if (!showText) {
+      return (
+        <IllustrationPage
+            header={<Header playerState={playerState} setPlayerState={setPlayerState} className='left-col'/>}
+            currentPage={currentPage}
+            handleChoice={handleChoice}
+            onNext={() => setShowText(true)}
+        />
+      );
+    }
+
     return (
         <div className='ui-container'>
           <Header playerState={playerState} setPlayerState={setPlayerState} className='left-col'/>
           <div className="page-container border">
             <h1 className='title'>{currentPage.title}</h1>
             {pageContentParagraphs.map((paragraph, index) => (
-              <p className='text-content' key={index}>{paragraph}</p>
+              <p className={paragraphClassName(paragraph)} key={index}>{parseFormattedText(paragraph)}</p>
             ))}
 
-            {currentPage.stats &&
+            {(currentPage.onEnter || [])
+              .filter((effect) => effect.stat)
+              .map((effect, index) => {
+                const gain = effect.change > 0;
+                const arrow = gain ? '▲' : '▼';
+                const colorClass = !gain ? 'red' : effect.stat === 'Gold' ? 'gold' : 'green';
+
+                return (
+                  <p key={index} className={`stat-change bold ${colorClass}`}>
+                    {STAT_ICONS[effect.stat] &&
+                      <span className='stat-change-icon'>
+                        <img src={STAT_ICONS[effect.stat]} alt='' />
+                        <span className={`stat-badge ${gain ? 'green' : 'red'}`} aria-hidden='true'>{arrow}</span>
+                      </span>
+                    }
+                    {gain ? '+' : '−'}{Math.abs(effect.change)} {STAT_NAMES[effect.stat]}
+                    {!STAT_ICONS[effect.stat] &&
+                      <span className={`stat-arrow ${gain ? 'green' : 'red'}`} aria-hidden='true'>{arrow}</span>
+                    }
+                  </p>
+                );
+              })}
+
+            {currentPage.items &&
+              <div className='take-item-container'>
+                {currentPage.items.map((item) => {
+                  const taken = playerState.takenOnPage.includes(item);
+                  return (
+                    <button key={item} disabled={taken} onClick={() => setPlayerState({ type: 'TAKE_ITEM', item })}>
+                      {taken ? `${item} taken` : `Take ${item}`}
+                    </button>
+                  );
+                })}
+              </div>
+            }
+
+            {currentPage.type === 'stats' &&
             <div>
               {<div>Die One: {dieOne !== null ? <span className="red bold"> {dieOne} </span> : 'Not rolled yet'}</div>}
               {<div>Die Two: {dieTwo !== null ? <span className="green bold"> {dieTwo} </span> : 'Not rolled yet'}</div>}
@@ -24,29 +95,27 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
               {
                 <div>TOTAL:&nbsp;<span className="red bold">{dieOne !== null ? dieOne : '0'}</span> + 
                            &nbsp;<span className="green bold">{dieTwo !== null ? dieTwo : '0'}</span> +
-                           &nbsp;<span className="blue bold">{currentPage.pageContent.match(/\d+/g)}</span> = 
-                           &nbsp;{dieOne + dieTwo + parseInt(currentPage.pageContent.match(/\d+/g))}</div>}
+                           &nbsp;<span className="blue bold">{currentPage.base}</span> =
+                           &nbsp;{dieOne + dieTwo + currentPage.base}</div>}
                 </div>
             }
 
-            {(currentPage.image !== undefined) && (
-                <div id="imageContainer">
-                    <img 
-                        id="image" 
-                        src={`/src/images/ilustrations/${currentPage.image}`} 
-                        alt={currentPage.image} 
-                    />
-                </div>
-            )}
-            
-            <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} testYourLuck={testYourLuck}/>            
+            {pendingTest
+              ? <DiceRoll test={pendingTest} onContinue={() => handleChoice({ to: pendingTest.to })} />
+              : !fleeing && <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} testYourLuck={testYourLuck} testYourSkill={testYourSkill} rolled={dieOne !== null}>
+                  {escapeButton}
+                </ChoiceReader>
+            }
+
+            {escapeUI}
 
             <div>
-                {currentPage.previous !== undefined && <button id='button-back' onClick={() => handleChoice(currentPage.previous)}>
+                {!pendingTest && !fleeing && (currentPage.image !== undefined || currentPage.previous !== undefined) && <button id='button-back' onClick={() => currentPage.image !== undefined ? setShowText(false) : handleChoice({ to: currentPage.previous })}>
                   Back
                 </button>}
-    
-                {currentPage.next !== undefined && <button id='button-next' onClick={() => handleChoice(currentPage.next)}>Next</button>}
+
+                {currentPage.next !== undefined && (currentPage.type !== 'stats' || dieOne !== null) &&
+                  <button id='button-next' onClick={() => handleChoice({ to: currentPage.next })}>Next</button>}
             </div>
           </div>
         </div>

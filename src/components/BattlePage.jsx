@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Header from './Header';
 import EnemyList from './EnemyList';
+import BattleRound from './BattleRound';
+import { QuickRoll } from './DiceRoll';
+import useEscape from './useEscape';
 import testLuck from '../utils/testLuck';
 import { resolveRound, getDamage } from '../utils/battleLogic';
+import parseFormattedText, { paragraphClassName } from '../utils/parseFormattedText';
+import IllustrationPage from './IllustrationPage';
+import swordImg from '../images/decor/wofmsword.png';
 
 const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParagraphs, handleChoice, onPlayerDeath }) => {
 
@@ -16,8 +22,13 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
     const [currentEnemyIndex, setCurrentEnemyIndex] = useState(0);
     const [enemyStaminas, setEnemyStaminas] = useState(parsedEnemies.map((enemy) => enemy.initSta));
     const [roundMessage, setRoundMessage] = useState(null);
+    const [round, setRound] = useState(null); // the last attack round, shown until the next Attack
+    const [roundNumber, setRoundNumber] = useState(0);
+    const [luckRoll, setLuckRoll] = useState(null); // Luck test in progress while its dice are on screen
     const [pendingWound, setPendingWound] = useState(null); // 'enemy' | 'player' | null
     const [enemyExpanded, setEnemyExpanded] = useState(false);
+    // Pages with an image open on the full-size illustration, like adventure pages; Next reveals the battle
+    const [showBattle, setShowBattle] = useState(currentPage.image === undefined);
 
     const enemy = parsedEnemies[currentEnemyIndex];
     const enemySta = enemyStaminas[currentEnemyIndex];
@@ -68,15 +79,14 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
     };
 
     const handleAttack = () => {
-        const round = resolveRound(playerState.currentSkill, enemy.skill);
+        const playerAttackMod = currentPage.playerAttackMod || 0;
+        const result = resolveRound(playerState.currentSkill, enemy.skill, playerAttackMod);
 
-        if (round.outcome === 'miss') {
-            setRoundMessage(`Both attacks miss (You: ${round.playerAttack}, ${enemy.name}: ${round.enemyAttack}).`);
-            return;
-        }
-
-        setRoundMessage(`(You: ${round.playerAttack}, ${enemy.name}: ${round.enemyAttack})`);
-        setPendingWound(round.outcome === 'playerWins' ? 'enemy' : 'player');
+        // Names and skills are copied in because the enemy can change before the panel is dismissed
+        setRound({ ...result, enemyName: enemy.name, enemySkill: enemy.skill, playerSkill: parseInt(playerState.currentSkill), playerAttackMod });
+        setRoundNumber(roundNumber + 1);
+        setRoundMessage(null);
+        setPendingWound(result.outcome === 'miss' ? null : result.outcome === 'playerWins' ? 'enemy' : 'player');
     };
 
     const enemyDisplayData = parsedEnemies.map((parsedEnemy, index) => ({
@@ -85,19 +95,49 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
         stamina: enemyStaminas[index],
     }));
 
-    const resolveWound = (useLuck) => {
-        let damage = 2;
-        let luckMessage = '';
+    // What a Luck test would do to the pending wound, shown before the player chooses
+    const luckHint = pendingWound === 'enemy'
+        ? `Lucky: ${getDamage(true, true, true)} damage to the ${enemy.name}. Unlucky: only ${getDamage(true, true, false)}.`
+        : `Lucky: you take only ${getDamage(false, true, true)} damage. Unlucky: you take ${getDamage(false, true, false)}.`;
 
-        if (useLuck) {
-            const { lucky } = testLuck(playerState.currentLuck);
-            decrementLuck();
-            damage = getDamage(pendingWound === 'enemy', true, lucky);
-            luckMessage = lucky ? ' You were lucky!' : ' You were unlucky!';
-        }
-
-        applyDamage(pendingWound, damage, luckMessage);
+    // The Luck test is rolled now but only applied once its dice have been shown
+    const startLuckTest = () => {
+        const { dieOne, dieTwo, lucky } = testLuck(playerState.currentLuck);
+        setLuckRoll({ dice: [dieOne, dieTwo], lucky });
     };
+
+    const finishLuckTest = () => {
+        decrementLuck();
+        applyDamage(
+            pendingWound,
+            getDamage(pendingWound === 'enemy', true, luckRoll.lucky),
+            luckRoll.lucky ? ' You were lucky!' : ' You were unlucky!'
+        );
+        setLuckRoll(null);
+    };
+
+    const resolveWound = () => applyDamage(pendingWound, 2);
+
+    const { fleeing, escapeButton, escapeUI } = useEscape({
+        foeName: enemy.name,
+        to: currentPage.escape,
+        canEscape: currentPage.escape !== undefined && !battleOver && !pendingWound,
+        playerState,
+        setPlayerState,
+        handleChoice,
+        onPlayerDeath,
+    });
+
+    if (!showBattle) {
+        return (
+            <IllustrationPage
+                header={<Header playerState={playerState} setPlayerState={setPlayerState} className='left-col'/>}
+                currentPage={currentPage}
+                handleChoice={handleChoice}
+                onNext={() => setShowBattle(true)}
+            />
+        );
+    }
 
     return (
         <div className='ui-container'>
@@ -105,6 +145,7 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
               playerState={playerState}
               setPlayerState={setPlayerState}
               enemies={enemyDisplayData}
+              inBattle
               enemyExpanded={enemyExpanded}
               onEnemyToggle={() => setEnemyExpanded(!enemyExpanded)}
               className='left-col'
@@ -112,19 +153,12 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
           <div className="page-container border">
             <h1 className='title'>{currentPage.title}</h1>
             {pageContentParagraphs.map((paragraph, index) => (
-              <p className='text-content' key={index}>{paragraph}</p>
+              <p className={paragraphClassName(paragraph)} key={index}>{parseFormattedText(paragraph)}</p>
             ))}
 
-            {(currentPage.image !== null && currentPage.image !== undefined) &&
-                <div id="swordImgContainer">
-                    <img
-                        id="image"
-                        src={`/src/images/decor/${currentPage.image}`}
-                        alt={currentPage.image}
-                    />
-                </div>
-
-            }
+            <div id="swordImgContainer">
+                <img id="image" src={swordImg} alt="" />
+            </div>
 
             <hr />
 
@@ -132,22 +166,43 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
             <div>Skill: {enemy.skill}</div>
             <div>Stamina: {enemySta}</div>
 
-            {roundMessage && <p>{roundMessage}</p>}
+            {round && !fleeing &&
+                <BattleRound key={roundNumber} round={round} roundMessage={roundMessage}>
+                    {pendingWound && luckRoll &&
+                        <QuickRoll dice={luckRoll.dice} colorClass='green' onDone={finishLuckTest} />
+                    }
+
+                    {pendingWound && !luckRoll &&
+                        <>
+                            <p className='battle-luck-hint'>{luckHint}</p>
+                            <button onClick={startLuckTest}>Test your Luck</button>
+                            <button onClick={resolveWound}>
+                                {pendingWound === 'enemy' ? 'Deal 2 damage' : 'Take 2 damage'}
+                            </button>
+                        </>
+                    }
+
+                    {!pendingWound && !battleOver &&
+                        <>
+                            <button onClick={handleAttack}>Attack</button>
+                            {escapeButton}
+                        </>
+                    }
+                </BattleRound>
+            }
+
+            {escapeUI}
 
             <div className='navigation-button-container'>
-                {!battleOver && !pendingWound &&
-                    <button onClick={handleAttack}>Attack</button>
-                }
-
-                {pendingWound &&
+                {!round && !battleOver && !fleeing &&
                     <>
-                        <button onClick={() => resolveWound(true)}>Test your Luck</button>
-                        <button onClick={() => resolveWound(false)}>Continue to Next Turn</button>
+                        <button onClick={handleAttack}>Attack</button>
+                        {escapeButton}
                     </>
                 }
 
                 {isLastEnemy && enemySta <= 0 && currentPage.next !== undefined &&
-                    <button id='button-next' onClick={() => handleChoice(currentPage.next)}>Continue</button>
+                    <button id='button-next' onClick={() => handleChoice({ to: currentPage.next })}>Continue</button>
                 }
             </div>
           </div>

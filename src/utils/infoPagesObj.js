@@ -1,158 +1,368 @@
-const pages = [
-    {
-        current: 0,
+import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './constantsfile';
+
+// Pages are keyed by id: the book's section number for adventure pages, a slug for
+// the rules/intro pages. Every link to another page (next, previous, lucky, unlucky,
+// choice.to) is one of these ids.
+//
+// type: omitted = plain story page, "luck" = shows a Test your Luck button
+//       (needs lucky/unlucky), "skill" = shows a Test your Skill button (roll two dice,
+//       success if <= current SKILL; needs success/fail), "battle" = needs enemies ("Name-skill-stamina") and next
+//       (optional escape: page id to flee to - adds an Escape button, the creature gets one wound on you;
+//       optional playerAttackMod: number added to (or, if negative, taken from) your Attack Strength every round of this fight),
+//       "stats" = initial stat roll (needs stat and base).
+// escape: page id to flee to. On any page type it adds an Escape button (confirmation, one wound on you, optional
+//       Luck test; see useEscape.jsx). On non-battle pages escapeFoe ("servant") names who wounds you as you go.
+// image + caption: the page opens on the full-size illustration (as in the book) and
+//       Next then reveals the text (or, on battle pages, the fight). Battle pages always
+//       show the sword decoration themselves, so it isn't set per page.
+// A page's title defaults to its id.
+// choices: [{ label, to }] navigates; { label, action } runs an action;
+//          effects: [{ addItem }] or [{ stat, change }] are applied before moving on.
+// items: ["Item name"] shows a Take button per item on the page; taking is optional and once per visit.
+// onEnter: [{ stat: "Sta" | "Skill" | "Luck" | "Gold" | "Provisions", change }] is applied once when the player
+//          arrives on the page, and shown on it as a +/- notice.
+export const pages = {
+    hints: {
         title: "HINTS ON PLAY",
-        pageContent: "There is one true way through the Warlock's dungeon and it will take you several attempts to find it. Make notes and draw a map as you explore - this map will be invaluable in future adventures and enable you to progress rapidly through to unexplored sections.\n\nNot all rooms contain treasure; many merely contain traps and creatures which you will no doubt fall foul of. There are many 'wild goose chase' passages and whilst you may indeed progress through the dungeon, you will not take the Warlock's treasure unless you have picked up certain specific items on the way.\n\nSeveral keys will be found in dungeon rooms. Only by arriving at the Warlock's treasure with the correct keys to open his chest will you get to his treasure. You can expect many frustrations in Firetop Mountain.\nThe one true way involves a minimum of risk and any player, no matter how weak on initial rolls, should be able to get through very easily.\n\nMay the luck of the gods go with you on the adventure ahead!",
-        choices: ["Back to Menu"],
-        choice0: "Back to Menu"
+        text: "There is one true way through the Warlock's dungeon and it will take you several attempts to find it. Make notes and draw a map as you explore - this map will be invaluable in future adventures and enable you to progress rapidly through to unexplored sections.\n\nNot all rooms contain treasure; many merely contain traps and creatures which you will no doubt fall foul of. There are many 'wild goose chase' passages and whilst you may indeed progress through the dungeon, you will not take the Warlock's treasure unless you have picked up certain specific items on the way.\n\nSeveral keys will be found in dungeon rooms. Only by arriving at the Warlock's treasure with the correct keys to open his chest will you get to his treasure. You can expect many frustrations in Firetop Mountain.\nThe 'one true way' involves a minimum of risk and any player, no matter how weak on initial rolls, should be able to get through fairly easily.\n\n**May the luck of the gods go with you on the adventure ahead!**",
+        choices: [{ label: BACKTOMENU, action: BACKTOMENU }],
     },
-    {
-        current: 1,
+    intro: {
         title: "INTRO",
-        pageContent: "The Warlock of the Firetop Mountain is a different kind of book. You will embark on a perilous quest to find the Warlock's hidden treasure. The treasure is hidden deep within a dungeon which you must explore, populated with a multitude of underworld monsters which you must fight and kill - or be killed in the attempt.\n\nPart novel, with its exciting story, and part game, with its elaborate combat system, this book holds many adventures in store for you. Each page presents different challenges, and the choices you make will send you on different paths and into different battles. You may get lost in the maze, have your strength sapped by a hideous Wight, die in a battle with Orcs, or fall to any one of the dozens of creatures guarding the Warlock's treasure-vaults. Or, with courage, determination and a fair amount of luck, you may survive through all traps and battles to the innermost chambers of the Warlock's domain where the treasure is hidden.\n\nMagic and monsters are as real as life in this sword and sorcery treasure hunt which will keep you spellbound for hours on end!",
-        choices: ["Back to Menu"],
-        choice0: "Back to Menu",
-        next: 2
+        text: "The Warlock of the Firetop Mountain is a different kind of book. You will embark on a perilous quest to find the Warlock's hidden treasure. The treasure is hidden deep within a dungeon which you must explore, populated with a multitude of underworld monsters which you must fight and kill - or be killed in the attempt.\n\nPart novel, with its exciting story, and part game, with its elaborate combat system, this book holds many adventures in store for you. Each page presents different challenges, and the choices you make will send you on different paths and into different battles. You may get lost in the maze, have your strength sapped by a hideous Wight, die in a battle with Orcs, or fall to any one of the dozens of creatures guarding the Warlock's treasure-vaults. Or, with courage, determination and a fair amount of luck, you may survive through all traps and battles to the innermost chambers of the Warlock's domain where the treasure is hidden.\n\nMagic and monsters are as real as life in this sword and sorcery treasure hunt which will keep you spellbound for hours on end!",
+        choices: [{ label: BACKTOMENU, action: BACKTOMENU }],
+        next: "fight",
     },
-    {
-        current: 2,
+    fight: {
         title: "HOW TO FIGHT CREATURES OF THE UNDERWORLD",
-        pageContent: "Before embarking on your adventure, you must first determine your own strengths and weaknesses. You have in your possession a sword and a shield together with a rucksack containing provisions (food and drink) for the trip. You have been preparing for your quest by training yourself in swordplay and exercising vigorously to build up your stamina.\n\nTo see how effective your preparations have been, we will use a random roll to determine your initial SKILL and STAMINA scores.",
-        choices: 0,
-        previous: 1,
-        next: 3
+        text: "Before embarking on your adventure, you must first determine your own strengths and weaknesses. You have in your possession a sword and a shield together with a rucksack containing provisions (food and drink) for the trip. You have been preparing for your quest by training yourself in swordplay and exercising vigorously to build up your stamina.\n\nTo see how effective your preparations have been, we will use a random roll to determine your initial _SKILL_, _STAMINA_ and _LUCK_ scores.",
+        previous: "intro",
+        next: "skill-stamina-luck",
     },
-    {
-        current: 3,
-        title: "SKILL AND STAMINA",
-        pageContent: "Your SKILL score reflects your swordsmanship and general fighting expertise - the higher the better. Your STAMINA score reflects your general constitution, your will to survive, your determination and overall fitness - the higher your STAMINA score, the longer you will be able to survive. Your LUCK score indicates how naturally lucky you are. Luck - and magic - are facts of life in the fantasy kingdom you are about to explore.\n\nBATTLES:\nYou will often come across battles against a creature of some sort. An option to flee may be given, but if not - or if you choose to attack the creature anyway - you must resolve the battle until you or the creature die (STAMINA reaches 0).\n\nESCAPING:\nWhen you run away from a battle the creature automatically gets in one wound on you (you lose 2 STAMINA) as you flee. Such is the price of cowardice. Note that the option to escape isn't always given to you.",
-        choices: 0,
-        previous: 2,
-        next: 4
+    "skill-stamina-luck": {
+        title: "SKILL, STAMINA AND LUCK",
+        text: "Your _SKILL_ score reflects your swordsmanship and general fighting expertise - the higher the better. Your _STAMINA_ score reflects your general constitution, your will to survive, your determination and overall fitness - the higher your _STAMINA_ score, the longer you will be able to survive. Your _LUCK_ score indicates how naturally lucky you are. Luck - and magic - are facts of life in the fantasy kingdom you are about to explore.\n\n_SKILL, STAMINA and LUCK_ scores change constantly during an adventure. Although you may receive additional _SKILL, STAMINA, and LUCK_ points, these totals may never exceed your _Initial_ scores except on very rare occasions, when instructed on a particular page.",
+        previous: "fight",
+        next: "battles",
     },
-    {
-        current: 4,
+    "battles": {
+        title: "BATTLES",
+        text: "You will often come across battles against a creature of some sort. An option to flee may be given, but if not - or if you choose to attack the creature anyway - you must resolve the battle until you or the creature die.\n\n**The sequence of combat is then:**\n\n**1.** Roll the two dice for the creature. Add its _SKILL_ score. This total is **its** _Attack Strength_\n\n**2.** Roll the two dice for yourself. Add your current _SKILL_. This total is **your** _Attack Strength_.\n\n**3.** Whose _Attack Strength_ is higher? If your _Attack Strength_ is higher, you have wounded the creature. If the creature's _Attack Strength_  is higher, it has wounded you. (If both are the same, you have both missed - the next _Attack Round_ starts from step 1 above.)\n\n**4.** If you wounded the creature, subtract 2 points from **its** _STAMINA_ score. You may use _LUCK_ here to do additional damage (see 'Using Luck in Battles' in the next pages).\n\n**5.** If the creature wounded you, subtract 2 points from **your** _STAMINA_ score. You may use _LUCK_ to minimize the damage.\n\n**6.** Make the appropriate changes to either the creature's or your own _STAMINA_ scores (and your _LUCK_ score if you used _LUCK_) and begin the next _Attack Round_ (repeat steps 1-6).\n\n**7.** This continues until the _STAMINA_ score of either you or the creature you are fighting has been reduced to zero (death).",
+        previous: "skill-stamina-luck",
+        next: "escaping-battles",
+    },
+    "escaping-battles": {
+        title: "ESCAPING FROM BATTLES",
+        text: "On some pages you will be given the option of _Escaping from the battle_. _You may only Escape_ if it is offered to you on the page.\n\nIf you do run away, the creature automatically scores one wound on you (subtract 2 _STAMINA_ points) as you flee. Such is the price of cowardice. You can use _LUCK_ on this wound in the normal way (see 'Using Luck in Battles' on the next pages).",
+        previous: "battles",
+        next: "luck-rules"
+    },
+    "luck-rules": {
         title: "LUCK",
-        pageContent: "At various times during your adventure, either in battles or when you come across situations in which you could either be lucky or unlucky, you may call on your luck to make the outcome more favourable. But beware! Using luck is a risky business and if you are unlucky, the results could be disastrous.\n\nTo use luck we will roll two dice. If the number rolled is equal to or less than your current LUCK score, you have been lucky and the result will go in your favour. If not, you have been unlucky and you will be penalized.\nThis procedure is known as Testing your Luck. Each time you do it, one point will be subtracted from your current LUCK score. Thus you will soon realize that the more you rely on your luck, the more risky this will become.\n\nWhen in battle, if you have just wounded the creature, you may test your Luck and, if you are lucky, you will do an extra 2 points of damage. However, if you are unlucky, you will only take 1 point from the creature's STAMINA.\nYou can also use luck to minimize the damage a creature does to you when you get wounded, but if you're unlucky you will suffer 3 points of damage, instead of the normal 2.",
-        choices: 0,
-        previous: 3,
-        next: 5
+        text: "Sometimes you will be told to _Test your Luck_. As you will discover, using Luck is a risky business. The way you _Test your Luck_ is as follows:\n\n**Two dice will be rolled**. If the number rolled is _equal to_ or _less than_ your current _LUCK_ score, you have been _lucky_. If the number rolled is _higher_ than your current _LUCK_ score, you have been _unlucky_.\n\nThe consequences of being _lucky_ or _unlucky_ will be found on the page. Each time you _Test your Luck_, you must subtract one point from your current _LUCK_ score. So the more you rely on luck, the more risky this becomes.",
+        previous: "escaping-battles",
+        next: "luck-in-battle",
     },
-    {
-        current: 5,
+    "luck-in-battle": {
+        title: "USING LUCK IN BATTLES",
+        text: "In battles, you always have the option of using your luck either to score a more serious wound on a creature, or to minimize the effects of a wound the creature has just scored on you.\n\n**IF YOU HAVE JUST WOUNDED THE CREATURE:** you may _Test your Luck_ as described above. If you are _lucky_, subtract an _extra 2_ points from the creature's _STAMINA_ score (i.e. 4 instead of 2 normally). But if you are _unlucky_, you must restore 1 point to the creature's _STAMINA_ (so instead of scoring the normal 2 points of damage, you have now scored only 1).\n\n**IF THE CREATURE HAS JUST WOUNDED YOU:** you can _Test your Luck_ to try to minimize the wound. If you are _lucky_ restore 1 point of your _STAMINA_ (i.e. instead of doing 2 points of damage, it has done only 1). If you are _unlucky_ subtract _1 extra STAMINA_ point.\n\nDon't forget to subtract 1 point from your _LUCK_ score each time you _Test your Luck_.",
+        previous: "luck-rules",
+        next: "restoring"
+    },
+    "restoring": {
         title: "RESTORING SKILL, STAMINA AND LUCK",
-        pageContent: "Your stat scores can never exceed their initial value unless specifically instructed.\n\nSKILL - A Magic Weapon may increase your SKILL score, but remember that you can only use one weapon at a time!\n\nSTAMINA - This stat will change a lot during your adventure. As you near your goal, your STAMINA level may be dangerously low and battles may be particularly risky, so be careful!\nProvisions will restore 4 points of STAMINA, but you can only eat one at a time and only in certain occasions. Remember that you have a long way to go, so use your Provisions wisely!\n\nLUCK - When you are particularly lucky your LUCK score may increase.\n\nYou can also come across Potions that will restore your stat scores to their initial state. These can be used at any time.",
-        choices: ["Back to Menu"],
-        choice0: "Back to Menu",
-        previous: 4
+        text: "Occasionally, a page may give instructions to alter your _SKILL_ score. A Magic Weapon may increase your _SKILL_, but remember that only one weapon can be used at a time! You cannot claim 2 _SKILL_ bonuses for carrying two Magic Swords. Your _SKILL_ score can never exceed its _Initial_ value unless specifically instructed.\n\nDrinking the Potion of Skill will restore your _SKILL_ to its _Initial_ level at any time.",
+        previous: "luck-in-battle",
+        next: "stamina-and-provisions"
     },
-    {
-        current: 6,
+    "stamina-and-provisions":{
+        title: "STAMINA AND PROVISIONS",
+        text: "Your _STAMINA_ score will change a lot during the adventure. As you near your goal, your _STAMINA_ level may be dangerously low and battles may be particularly risky, so be careful!\n\nYou start the game with enough Provisions for ten meals. You may eat **only one** meal at a time. When you eat a meal, add 4 points to your _STAMINA_ score and deduct 1 point from your _Provisions_. Remember that you have a long way to go, so use your Provisions wisely!\n\nDon't forget that your _STAMINA_ score may never exceed its _Initial_ value unless specifically instructed on a page.\n\nDrinking a Potion of Strength will restore your _STAMINA_ to its _Initial_ level at any time.",
+        previous: "restoring",
+        next: "restore-luck"
+    },
+    "restore-luck":{
+        title: "RESTORING LUCK",
+        text: "You will find additions to your _LUCK_ score awarded when you have been particularly lucky. Remember that, as with _SKILL_ and _STAMINA_, your _LUCK_ score may never exceed its _Initial_ value unless specifically instructed on a page.\n\nDrinking a Potion of Fortune will restore your _LUCK_ to its _Initial_ level at any time, and increase your _Initial LUCK_ by 1 point.",
+        choices: [{ label: BACKTOMENU, action: BACKTOMENU }],
+        previous: "stamina-and-provisions",
+    },
+    "roll-stamina": {
         title: "YOUR STATS - STAMINA",
-        pageContent: "Click the ROLL button to roll the dice and get your STAMINA value.\n\nYour initial STAMINA will be the sum of the numbers rolled on both dice plus the base STAMINA value (12).",
-        choices: ["Roll Stamina"],
-        choice0: "Roll Stamina",
-        stats: true,
+        type: "stats",
+        stat: "Sta",
+        base: 12,
+        text: "Click the ROLL button to roll the dice and get your _STAMINA_ value.\n\nYour initial _STAMINA_ will be the sum of the numbers rolled on both dice plus the base _STAMINA_ value (12).",
+        choices: [{ label: "Roll Stamina", action: ROLLSTAT }],
+        next: "roll-luck",
     },
-    {
-        current: 7,
+    "roll-luck": {
         title: "YOUR STATS - LUCK",
-        pageContent: "Click the ROLL button on the left panel to roll the dice and get your LUCK value.\n\nYour initial LUCK will be the number rolled on the die plus the base LUCK value (6).",
-        choices: ["Roll Luck"],
-        choice0: "Roll Luck",
-        stats: true,
+        type: "stats",
+        stat: "Luck",
+        base: 6,
+        text: "Click the ROLL button on the left panel to roll the dice and get your _LUCK_ value.\n\nYour initial _LUCK_ will be the number rolled on the die plus the base _LUCK_ value (6).",
+        choices: [{ label: "Roll Luck", action: ROLLSTAT }],
+        next: "roll-skill",
     },
-    {
-        current: 8,
+    "roll-skill": {
         title: "YOUR STATS - SKILL",
-        pageContent: "Click the ROLL button on the left panel to roll the dice and get your SKILL value.\n\nYour initial SKILL will be the number rolled on the die plus the base SKILL value (6).",
-        choices: ["Roll Skill"],
-        choice0: "Roll Skill",
-        stats: true,
+        type: "stats",
+        stat: "Skill",
+        base: 6,
+        text: "Click the ROLL button on the left panel to roll the dice and get your _SKILL_ value.\n\nYour initial _SKILL_ will be the number rolled on the die plus the base _SKILL_ value (6).",
+        choices: [{ label: "Roll Skill", action: ROLLSTAT }],
+        next: "equipment",
     },
-    {
-        current: 9,
+    equipment: {
         title: "EQUIPMENT & POTIONS",
-        pageContent: "You will start your adventure with a bare minimum of equipment, but you may find other items during your travels. You are armed with a sword and are dressed in leather armour. You have a rucksack (haversack, backpack) on your back to hold your Provisions and any treasures you may come across. You also carry a lantern which lights your way.\n\nIn addition, you may take one bottle of a magical potion which will aid you on your quest. You may choose to take a bottle of any of the following:\n\nPotion of Skill - restores SKILL points\nPotion of Strength - restores STAMINA points\nPotion of Fortune - Restores LUCK points and adds 1 to initial LUCK\n\nThese potions may be taken at any time during your adventure. Each bottle of potion contains enough for two measures i.e. the characteristics may be restored twice during an adventure.\n\nRemember also that you may only choose one of the three potions to take on your trip, so choose wisely!",
-        choices: ["Potion of Skill", "Potion of Strength", "Potion of Fortune"],
-        choice0: "Potion of Skill",
-        choice1: "Potion of Strength",
-        choice2: "Potion of Fortune"
+        text: "You will start your adventure with a bare minimum of equipment, but you may find other items during your travels. You are armed with a sword and are dressed in leather armour. You have a rucksack (haversack, backpack) on your back to hold your Provisions and any treasures you may come across. You also carry a lantern which lights your way.\n\nIn addition, you may take one bottle of a magical potion which will aid you on your quest. You may choose to take a bottle of any of the following:\n\nPotion of Skill - restores _SKILL_ points\nPotion of Strength - restores _STAMINA_ points\nPotion of Fortune - Restores _LUCK_ points and adds 1 to initial _LUCK_\n\nThese potions may be taken at any time during your adventure. Each bottle of potion contains enough for two measures i.e. the characteristics may be restored twice during an adventure.\n\nRemember also that you may only choose one of the three potions to take on your trip, so choose wisely!",
+        choices: [
+            { label: SKILLPOTION, effects: [{ addItem: `${SKILLPOTION} x2` }], to: "rumours-1" },
+            { label: STRPOTION, effects: [{ addItem: `${STRPOTION} x2` }], to: "rumours-1" },
+            { label: FORTPOTION, effects: [{ addItem: `${FORTPOTION} x2` }], to: "rumours-1" },
+        ],
     },
-    {
-        current: 10,
+    "rumours-1": {
         title: "RUMOURS",
-        pageContent: "Only a foolhardy adventurer would embark upon such a perilous quest without first finding out as much as possible about the mountain and its treasures. Before your arrival at the foot of Firetop Mountain, you spent several days with the townsfolk of a local village some two days' journey from the base. Being a likeable sort of person, you found it easy to get on with the local peasants. Although they told many stories about the mysterious Warlock's sanctuary, you could not feel sure that all - or indeed any - of these were based on fact. The villagers had seen many adventurers pass through on their way to the mountain, but very few ever returned. The journey ahead was extremely dangerous, that you knew for certain. Of those who returned to the village, none contemplated going back to Firetop Mountain.\n\nThere seemed to be some truth in the rumour that the Warlock's treasure was stored in a magnificent chest with two locks, and the keys to these locks were guarded by various creatures within the dungeons. The Warlock himself was a sorcerer of great power. Some described him as old, others as young. Some said his power came from an enchanted deck of cards, others from the silky black gloves that he wore.",
-        choices: 0,
-        next: 11
+        text: "Only a foolhardy adventurer would embark upon such a perilous quest without first finding out as much as possible about the mountain and its treasures. Before your arrival at the foot of Firetop Mountain, you spent several days with the townsfolk of a local village some two days' journey from the base. Being a likeable sort of person, you found it easy to get on with the local peasants. Although they told many stories about the mysterious Warlock's sanctuary, you could not feel sure that all - or indeed any - of these were based on fact. The villagers had seen many adventurers pass through on their way to the mountain, but very few ever returned. The journey ahead was extremely dangerous, that you knew for certain. Of those who returned to the village, none contemplated going back to Firetop Mountain.\n\nThere seemed to be some truth in the rumour that the Warlock's treasure was stored in a magnificent chest with two locks, and the keys to these locks were guarded by various creatures within the dungeons. The Warlock himself was a sorcerer of great power. Some described him as old, others as young. Some said his power came from an enchanted deck of cards, others from the silky black gloves that he wore.",
+        next: "rumours-2",
     },
-    {
-        current: 11,
+    "rumours-2": {
         title: "RUMOURS",
-        pageContent: "The entrance to the mountain was guarded by a pack of warty-faced Goblins, stupid creatures, fond of their food and drink. Towards the inner chambers, the creatures became more fearsome. To reach the inner chambers you would have to cross a river. The ferry service was regular, but the ferryman enjoyed a good barter, so you should save a Gold Piece for the trip. The locals also encouraged you to keep a good map of your wanderings, for without a map you would end up hopelessly lost within the mountain.\n\nWhen it finally came to your day of leaving, the whole village turned out to wish you a safe journey. Tears came to the eyes of many of the women, young and old alike. You couldn't help wondering whether they were tears of sorrow shed by eyes which would never see you alive again . . .",
-        choices: 0,
-        previous: 10,
-        next: 12
+        text: "The entrance to the mountain was guarded by a pack of warty-faced Goblins, stupid creatures, fond of their food and drink. Towards the inner chambers, the creatures became more fearsome. To reach the inner chambers you would have to cross a river. The ferry service was regular, but the ferryman enjoyed a good barter, so you should save a Gold Piece for the trip. The locals also encouraged you to keep a good map of your wanderings, for without a map you would end up hopelessly lost within the mountain.\n\nWhen it finally came to your day of leaving, the whole village turned out to wish you a safe journey. Tears came to the eyes of many of the women, young and old alike. You couldn't help wondering whether they were tears of sorrow shed by eyes which would never see you alive again . . .",
+        previous: "rumours-1",
+        next: 1,
     },
-    {
-        current: 12,
-        title: "1",
-        image: 'wofm001.png',
-        pageContent: "The steep face in front of you looks to have been savaged by the claws of some gargantuan beast...",
-        choices: 0,
-        next: 13
+    1: {
+        image: "wofm001.png",
+        caption: "The steep face in front of you looks to have been savaged by the claws of some gargantuan beast...",
+        text: "At last your two-day hike is over. You unsheathe your sword, lay it on the ground and sigh with relief as you lower yourself down on to the mossy rocks to sit for a moment's rest. You stretch, rub your eyes and finally look up at Firetop Mountain.\nThe very mountain itself looks menacing. The steep face in front of you looks to have been savaged by the claws of some gargantuan beast. Sharp rocky crags jut out at unnatural angles. At the top of the mountain you can see the eerie red colouring - probably some strange vegetation - which has given the mountain its name. Perhaps no one will ever know exactly what grows up there, as climbing the peak must surely be impossible.\n\nYour quest lies ahead of you. Across the clearing is a dark cave entrance. You pick up your sword, get to your feet and consider what dangers may lie ahead of you. But with determination, you thrust the sword home into its scabbard and approach the cave.\n\nYou peer into the gloom to see dark, slimy walls with pools of water on the stone floor in front of you. The air is cold and dank. You light your lantern and step warily into the blackness. Cobwebs brush your face and you hear the scurrying of tiny feet: rats, most likely. You set off into the cave. After a few yards you arrive at a junction.",
+        choices: [
+            { label: "Turn West", to: 71 },
+            { label: "Turn East", to: 278 },
+        ],
+        previous: "rumours-2",
     },
-    {
-        current: 13,
-        title: "1",
-        pageContent: "At last your two-day hike is over. You unsheathe your sword, lay it on the ground and sigh with relief as you lower yourself down on to the mossy rocks to sit for a moment's rest. You stretch, rub your eyes and finally look up at Firetop Mountain.\nThe very mountain itself looks menacing. The steep face in front of you looks to have been savaged by the claws of some gargantuan beast. Sharp rocky crags jut out at unnatural angles. At the top of the mountain you can see the eerie red colouring - probably some strange vegetation - which has given the mountain its name. Perhaps no one will ever know exactly what grows up there, as climbing the peak must surely be impossible.\n\nYour quest lies ahead of you. Across the clearing is a dark cave entrance. You pick up your sword, get to your feet and consider what dangers may lie ahead of you. But with determination, you thrust the sword home into its scabbard and approach the cave.\n\nYou peer into the gloom to see dark, slimy walls with pools of water on the stone floor in front of you. The air is cold and dank. You light your lantern and step warily into the blackness. Cobwebs brush your face and you hear the scurrying of tiny feet: rats, most likely. You set off into the cave. After a few yards you arrive at a junction.",
-        choices: ["Turn West - 71", "Turn East - 278"],
-        previous: 12,
-        choice0: 14,
-        choice1: 18
+    71: {
+        type: "luck",
+        image: "wofm071.png",
+        caption: "As you look in, you can see a strange Goblin-like creature in leather armor asleep at his post.",
+        text: "There is a right-hand turn to the north in the passage. Cautiously you approach a sentry post on the corner and, as you look in, you can see a strange Goblin-like creature in leather armour asleep at his post. You try to tiptoe past him.\nIf you're lucky, he will not wake up and remain snoring loudly - turn to 301.\nIf not turn to 248.",
+        lucky: 301,
+        unlucky: 248,
     },
-    {
-        current: 14,
-        title: "71",
-        image: 'wofm071.png',
-        pageContent: "As you look in, you can see a strange Goblin-like creature in leather armor asleep at his post.",
-        choices: 0,
-        next: 15
+    301: {
+        text: "To your left, on the west face of the passage, there is a rough-cut wooden door. You listen at the door and can hear a rasping sound which may be some sort of creature snoring.",
+        choices: [
+            { label: "Open the door", to: 82 },
+            { label: "Press on northwards", to: 208 },
+        ],
     },
-    {
-        current: 15,
-        title: "71",
-        pageContent: "There is a right-hand turn to the north in the passage. Cautiously you approach a sentry post on the corner and, as you look in, you can see a strange Goblin-like creature in leather armour asleep at his post. You try to tiptoe past him.\nIf you're lucky, he will not wake up and remain snoring loudly - turn to 301.\nIf not turn to 248.",
-        choices: [],
-        canTestLuck: true,
-        lucky: 16,
-        unlucky: 17,
-    },
-    {
-        current: 16,
-        title: "301",
-        pageContent: "To your left, on the west face of the passage, there is a rough-cut wooden door. You listen at the door and can hear a rasping sound which may be some sort of creature snoring.",
-        choices: ["Open the door - 82", "Press on northwards - 208"],
-        choice0: 13,
-        choice1: 14
-    },
-    {
-        current: 17,
-        title: "248",
-        image: 'wofmsword.png',
-        pageContent: "You step with a crunch on some loose ground and his eyes flick open.\n\nThe creature that has just awakened is an ORC! He scrambles to his feet and turns to grasp at a rope which is probably the alarm bell. You must attack him quickly!",
-        choices: [],
-        battle: true,
+    248: {
+        type: "battle",
+        text: "You step with a crunch on some loose ground and his eyes flick open.\n\nThe creature that has just awakened is an ORC! He scrambles to his feet and turns to grasp at a rope which is probably the alarm bell. You must attack him quickly!",
         enemies: ["Orc-6-5"],
-        next: 7
+        next: 301,
     },
-    {
-        current: 18,
-        title: "278",
-        pageContent: "The passageway soon comes to an end at a locked wooden door. You listen at the door but hear nothing.\n\nWill you try to charge the door down or would you rather turn round and go back to the junction?",
-        choices: ["Charge door - 156","Turn back - 92"],
-        choice0: 10,
-        choice1: 11
+    278: {
+        text: "The passageway soon comes to an end at a locked wooden door. You listen at the door but hear nothing.\n\nWill you try to charge the door down or would you rather turn round and go back to the junction?",
+        choices: [
+            { label: "Charge door", to: 156 },
+            { label: "Turn back", to: 92 },
+        ],
     },
-];
-export const infoPages = pages;
+    82: {
+        type: "luck",
+        text: "The door opens to reveal a small, smelly room. In the centre of the room is a rickety wooden table on which stands a lit candle. Underneath the table is a **small wooden box**. Asleep on a straw mattress in the far corner of the room is a short, stocky creature with an ugly, warty face; the same sort of creature that you found asleep at the sentry post. He must be the guard for the night watch.\n\nYou may either return to the corridor and press on northwards or creep into the room and try to take the box without waking the creature.\n\nIf you want to try to steal the box, **Test your Luck**. If you are [[green:Lucky]], he does not wake up - turn to 147. If you are [[red:Unlucky]], turn to 33.",
+        choices: [{ label: "Return to corridor", to: 208 }],
+        lucky: 147,
+        unlucky: 33,
+    },
+    208: {
+        text: "Further up the passage along the west wall you see another door. You listen at it but hear nothing.\n\nYou can try to open the door or continue northwards.",
+        choices: [
+            { label: "Open door", to: 397 },
+            { label: "Continue northwards", to: 363 },
+        ],
+    },
+    92: {
+        text: "You arrive back at the junction in the passage. You look left to see the cave entrance in the dim distance but walk straight on.",
+        choices: [
+            { label: "Walk straight", to: 71 },
+        ],
+    },
+    156: {
+        type: "skill",
+        text: "You charge the door with your shoulder.\n\nRoll two dice.\n\nIf the number rolled is less than or equal to your _SKILL_ score, you succeed.\n\nIf the number rolled is greater than your _SKILL_, you rub your bruised shoulder and decide against trying again. You will have to return to the junction.",
+        choices: [
+            
+        ],
+        success: 343,
+        fail: 92,
+    },
+    343: {
+        text: "The door bursts open and you fall headlong into a room. But your heart jumps as you realize you are not landing on the floor, but plunging down a pit of some kind!\n\nLuckily the pit is not particularly deep and you land in a heap less than two metres down.\n\nLose 1 _STAMINA_ point for your bruises, climb out of the pit into the room and leave through the door, heading westwards.",
+        onEnter: [{ stat: "Sta", change: -1 }],
+        choices: [
+            { label: "Head westwards", to: 92 },
+        ],
+    },
+    147: {
+        text: "You leave the room and open the box in the passage.\n\nInside you find a single Piece of Gold and a small mouse, which must have been the creature's pet. You keep the coin and release the mouse, which scurries off down the passageway. Gain 2 _LUCK_ points.",
+        onEnter: [
+            { stat: "Gold", change: 1 },
+            { stat: "Luck", change: 2 },
+        ],
+        choices: [
+            { label: "Press on northwards", to: 208 },
+        ],
+    },
+    33: {
+        type: "battle",
+        text: "The sleeping creature awakens startled. He jumps up and rushes at you, unarmed. With your sword you should be able to defeat him, but his sharp teeth look rather vicious.\n\nYou may _Escape_ through the door or stand and fight the Orc who is attacking you.",
+        enemies: ["Orc-6-4"],
+        escape: 320,
+        next: 147,
+    },
+    363: {
+        text: "Further up the passage, on the west wall, you see another similar door. You listen at the door and grimace to hear the worst singing you have ever heard in your life!\n\nDo you want to go into the room to investigate this hideous din or walk on up the passageway?",
+        choices: [
+            { label: "Investigate the hideous din", to: 370 },
+            { label: "Continue up the passageway", to: 42 },
+        ],
+    },
+    397: {
+        text: "The door opens to reveal a small room with a stone floor and dirty walls. There is a stale smell in the air. In the centre of the room is a makeshift wooden table on which is standing a lit candle.\n\nUnder the table is a small box. In the far corner of the room is a small mattress.\n\nYou may either open the box or leave the room.",
+        choices: [
+            { label: "Open the box", to: 240 },
+            { label: "Leave the room", to: 363 },
+        ],
+    },
+    320: {
+        text: "You run out of the room and slam the door shut behind you.\n\nYou turn northwards up the passageway passing a similar-looking door further up.",
+        choices: [
+            { label: "Turn northwards", to: 363 },
+        ],
+    },
+    240: {
+        type: "battle",
+        text: "The box is light, but something rattles within. You open the lid and a small _SNAKE_ darts out to bite at your wrist.\n\nYou must fight the Snake.",
+        image: "wofm240.png",
+        caption: "You open the lid and a small Snake darts out to bite at your wrist!",
+        enemies: ["Snake-5-2"],
+        next: 145,
+    },
+    42: {
+        text: "You eventually arrive at the end of the passage, at a three-way junction. You may turn either to the west or to the east.",
+        choices: [
+            { label: "Turn west", to: 257 },
+            { label: "Turn east", to: 113 },
+        ],
+    },
+    370: {
+        text: "The door opens to reveal a small room. The room is dirty and unkempt. A straw mattress lies in one corner. In the centre of the room is a wooden table upon which a candle burns, lighting the room with its flickering flame.\n\nA small box rests under the table. Seated around the table are two small creatures with warty skin, dressed in leather armour. They are drinking some sort of grog and, by the way they stagger to their feet on your arrival, you assume they are very drunk.\n\nYou may either draw your sword and leap forward at them or slam the door quickly and run on up the passage.",
+        image: "wofm370.png",
+        caption: "Seated around the table, are two small creatures with warty skin, dressed in leather armour.",
+        choices: [
+            { label: "Draw your sword", to: 116 },
+            { label: "Slam the door and run", to: 42 },
+        ],
+    },
+    145: {
+        text: "The box has fallen to the ground during your fight with the Snake and out of it has fallen a bronze-coloured key with the number _99_ carved into it.\n\nYou may take this key with you and leave the room. You gain 1 _LUCK_ point.",
+        onEnter: [{ stat: "Luck", change: 1 }],
+        items: ["Bronze Key 99"],
+        choices: [
+            { label: "Move on", to: 363 },
+        ],
+    },
+    116: {
+        type: "battle",
+        text: "The two drunken _ORCS_ you now face are obviously startled at your entrance and, as quickly as they are able, they fumble around for the weapons.\n\nYou must attack each one in turn.\n\nTheir drunkenness allows you to add 1 point to your dice roll when rolling to work out your _Attack Strength_, during each _Attack Round_.",
+        enemies: ["Orc-5-4", "Orc-5-5"],
+        next: 378,
+        escape: 42,
+        playerAttackMod: 1,
+    },
+    113: {
+        text: "You arrive at another junction in the passage.\n\nYou may either go northwards or continue eastwards.",
+        choices: [
+            { label: "Go northwards", to: 285 },
+            { label: "Continue eastwards", to: 78 },
+        ],
+    },
+    257: {
+        text: "The passageway runs straight for several metres and then ends at a wooden door.\n\nYou listen at the door and hear angry shouting coming from within.\n\nWill you investigate, or turn back?",
+        choices: [
+            { label: "Investigate", to: 168 },
+            { label: "Turn back", to: 293 },
+        ],
+    },
+    293: {
+        text: "You arrive back at the junction in the passage and walk straight on eastwards.",
+        choices: [
+            { label: "Walk eastwards", to: 113 },
+        ],
+    },
+    378: {
+        text: "You wipe your bloodied sword on the mattress. The green blood leaves a slimy stain on the straw.\n\nStepping over the bodies towards the table you flinch at the foul stench of the creatures. You pick up the box from under the table and examine it. It is a small wooden box with crude hinges. The name _'Farrigo Di Maggio'_ is inscribed on a brass nameplate on its lid.\n\nDo you open the box, or do you decide to leave it behind and leave the room?",
+        choices: [
+            { label: "Open the box", to: 296 },
+            { label: "Leave the room", to: 42 },
+        ],
+    },
+    78: {
+        text: "The passage ends at a solid wooden door with metal hinges.\n\nListening at the door, you hear strange mutterings and the clatter of what could be pots and pans. Whatever is in there, there are several of them.\n\nDo you want to go through the door or turn back?",
+        choices: [
+            { label: "Go through door", to: 159 },
+            { label: "Turn back", to: 237 },
+        ],
+    },
+    168: {
+        text: "You open the door to a large room. A large chair behind a solid-looking table suggests to you that someone, or _something_, of rank uses this room.\n\nA chest in the centre catches your eye. In a corner of the room stands a man-sized creature with a warty face, standing over a smaller creature of similar race. With the whip in his hand, the _ORC CHIEFTAIN_ has been beating his servant, who is whimpering, beneath him.\n\nWill you:\n• Attack them both?\n• Spring at the Chieftain in the hope that his servant will aid you?\n• Leave the room and head back for the junction?",
+        image: "wofm168.png",
+        caption: "With the whip in his hand, the Orc Chieftain has been beating his servant, who is whimpering beneath him.",
+        choices: [
+            { label: "Attack them both", to: 372 },
+            { label: "Spring at the Chieftain", to: 65 },
+            { label: "Leave the room", to: 293 },
+        ],
+    },
+    285: {
+        text: "You see a well-used door on the right-hand (east) side of the passageway. With your ear to the keyhole, you listen and hear a man screaming for help from inside.\n\nWill you open the door or walk on?",
+        choices: [
+            { label: "Open the door", to: 213 },
+            { label: "Walk on", to: 314 },
+        ],
+    },
+    237: {
+        text: "You move swiftly down the passage and arrive back at the junction.\n\nTurn northwards this time.",
+        choices: [
+            { label: "Turn northwards", to: 285 },
+        ],
+    },
+    296: {
+        text: "The box contains a small leather-bound book entitled _The Making and Casting of Dragonfire_. You open the pages and begin to read. Fortunately it is written in your own language and so was probably not understood by the Orcs - otherwise this treasure would certainly not be as loosely guarded as it was.\n\nThe book is written in tiny handwriting by _Farrigo Di Maggio_. In it he tells the story of his life's work; the creation of the Dragonfire spell with which to fight evil Dragons.\n\nYou read how, in his last years, Farrigo finally perfected his spell but by then was too old to make use of it. So he completed his book, locked it in a chest and hid it in the depths of Firetop Mountain, afraid that it might fall into the wrong hands. The last page reads...",
+        choices: [
+            { label: "Read the last page", to: "dragon-fire-spell-note" },
+        ],
+    },
+    "dragon-fire-spell-note": {
+        title: "296",
+        image: "wofm_spell_note.png",
+        previous: 296,
+        text: "You say these words slowly and softly. Suddenly the pages seem to glow and as this glow disappears, so do the words on the pages of the book. You repeat the spell to yourself to memorize it and leave the room.",
+        choices: [
+            { label: "Leave the room", effects: [{ addItem: "Dragonfire Spell" }], to: 42 },
+        ],
+    },
+    65: {
+        text: "As you spring at the Chieftain, his servant rises to his feet, picks up a hefty woodenstick and joins the melee. But to your disappointment he attacks you!\n\n_Ungrateful wretch!_\n\nSeeing this, you may _Escape_ through the door down the corridor or continue the fight.\n\nIf you choose to _Escape_, you suffer normal escaping penalties.",
+        choices: [
+            { label: "Continue the fight", to: 372 },
+        ],
+        escape: 293,
+        escapeFoe: "servant",
+    },
+};

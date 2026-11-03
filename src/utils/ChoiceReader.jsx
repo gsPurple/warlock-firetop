@@ -1,25 +1,31 @@
-import React from 'react';
 
-function ChoiceReader({ currentPage, handleChoice, testYourLuck}) {
+// children: extra buttons shown after the page's own (e.g. Escape)
+function ChoiceReader({ currentPage, handleChoice, testYourLuck, testYourSkill, rolled, children }) {
+  // A stat page's roll button disappears once the dice have been rolled
+  const showChoices = !(currentPage.type === 'stats' && rolled);
+
   return (
     <div className='navigation-button-container'>
-      {Array.isArray(currentPage.choices) &&
-        currentPage.choices.map((choice, index) => {
+      {showChoices && currentPage.choices &&
+        currentPage.choices.map((choice, index) => (
+          <button key={index} onClick={() => handleChoice(choice)}>
+            {typeof choice.to === 'number' ? `${choice.label} - ${choice.to}` : choice.label}
+          </button>
+        ))}
 
-          let choiceNum = 'choice' + index;
+      {currentPage.type === 'skill' &&
+        <button onClick={() => testYourSkill()}>
+          Test your Skill
+        </button>
+      }
 
-          return (
-            <button key={index} onClick={() => handleChoice(currentPage[choiceNum])}>
-              {choice}
-            </button>
-          );
-        })}
-      
-      {(currentPage.canTestLuck) && 
+      {currentPage.type === 'luck' &&
         <button onClick={() => testYourLuck()}>
           Test your Luck
         </button>
       }
+
+      {children}
     </div>
   );
 }

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import provisionsSVG from '../images/icons/provisions_icon.svg';
 import tooltipText from '../utils/tooltipText';
 import * as constants from '../utils/constantsfile';
 import '../styles/tooltips.css'
 import Modal from '../utils/Modal';
 
-const Inventory = ({ playerState, setPlayerState, dataVisible, isLargeScreen}) => {
+const Inventory = ({ playerState, setPlayerState, dataVisible, isLargeScreen, inBattle = false}) => {
     const [isModalOpen, setModalOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [modalData, setModalData] = useState({ item: '', effect: '' });
@@ -18,32 +18,6 @@ const Inventory = ({ playerState, setPlayerState, dataVisible, isLargeScreen}) =
         return consumableItems.includes(baseName);
     };
 
-    const deleteItem = (item) => {
-        setPlayerState((prevState) => {
-            const inventory = [...prevState.inventory]; // Create a new inventory array
-            const itemIndex = inventory.indexOf(item);
-
-            if (itemIndex !== -1) {
-                // Check if the item has a quantity suffix (e.g., "Health Potion x2")
-                const match = item.match(/(.+?)\s+x(\d+)$/);
-                if (match) {
-                    const [, baseName, count] = match;
-                    const newCount = parseInt(count) - 1;
-                    if (newCount > 0) {
-                        inventory[itemIndex] = `${baseName} x${newCount}`; // Update the item with a new count
-                    } else {
-                        inventory.splice(itemIndex, 1); // Remove the item if the count reaches 0
-                    }
-                } else {
-                    // If no quantity, just remove the item
-                    inventory.splice(itemIndex, 1);
-                }
-            }
-
-            return { ...prevState, inventory }; // Update playerState
-        });
-    }
-
     const openModal = (item, effect) => {
         setModalData({ item, effect });
         setModalOpen(true);
@@ -53,6 +27,17 @@ const Inventory = ({ playerState, setPlayerState, dataVisible, isLargeScreen}) =
         setModalData({ item: '', effect: '' });
         setModalOpen(false);
         setSelectedItem(null);
+    };
+
+    const missingSta = Number(playerState.initSta) - Number(playerState.currentSta);
+    const eatBlocker = playerState.ateOnPage ? "You already ate on this page"
+        : Number(playerState.provisions) <= 0 ? "You have no Provisions left"
+        : missingSta <= 0 ? "Your Stamina is already full"
+        : null;
+
+    const handleEatClick = () => {
+        setSelectedItem(constants.PROVISIONS);
+        openModal(constants.PROVISIONS, `eat a meal and recover ${Math.min(constants.MEAL_STAMINA, missingSta)} points of Stamina`);
     };
 
     const handleItemClick = (item) => {
@@ -94,55 +79,6 @@ const Inventory = ({ playerState, setPlayerState, dataVisible, isLargeScreen}) =
         }
     };
 
-    const confirmItemUsage = (item) => {
-        // Extract the base name from the item
-        const match = item.match(/(.+?)\s+x\d+$/);
-        const baseName = match ? match[1] : item;
-    
-        let newState = {};
-    
-        switch (baseName) {
-            case constants.SKILLPOTION:
-                if (Number(playerState.currentSkill) < Number(playerState.initSkill)) {
-                    newState = {
-                        currentSkill: playerState.initSkill,
-                    };
-                }
-                break;
-    
-            case constants.STRPOTION:
-                if (Number(playerState.currentSta) < Number(playerState.initSta)) {
-                    newState = {
-                        currentSta: playerState.initSta,
-                    };
-                }
-                break;
-    
-            case constants.FORTPOTION:
-                if (Number(playerState.currentLuck) <= Number(playerState.initLuck)) {
-                    const newInitLuck = Number(playerState.initLuck) + 1;
-                    newState = {
-                        initLuck: newInitLuck,
-                        currentLuck: newInitLuck,
-                    };
-                }
-                break;
-    
-            default:
-                console.warn("Item not recognized or not usable.");
-                break;
-        }
-    
-        if (Object.keys(newState).length > 0) {
-            setPlayerState((prevState) => ({
-                ...prevState,
-                ...newState,
-            }));
-        }
-
-        deleteItem(item);
-    };
-
     return (
         <div>
             <Modal showModal={isModalOpen}
@@ -151,18 +87,21 @@ const Inventory = ({ playerState, setPlayerState, dataVisible, isLargeScreen}) =
                 onClose={() => closeModal()}
                 onConfirm={() => {
                     console.log(`Using ${modalData.item} to ${modalData.effect}`);
-                    confirmItemUsage(selectedItem)
+                    setPlayerState(selectedItem === constants.PROVISIONS ? { type: 'EAT' } : { type: 'USE_ITEM', item: selectedItem });
                     setModalOpen(false);
                 }}
             />
             <div id='primary-nav' data-visible={dataVisible} className='header-nav-bttns primary-nav'>            
                 {!isLargeScreen && <h3>Backpack</h3>}
             
-                <div className='stat-container stat-border'>
-                    <div className="stat-content">
-                        <object className='icon' data={provisionsSVG} type="image/svg+xml" aria-label="Provisions Icon"/>
-                        <div>{playerState.provisions}</div>
+                <div className='provisions-row'>
+                    <div className='stat-container stat-border'>
+                        <div className="stat-content">
+                            <object className='icon' data={provisionsSVG} type="image/svg+xml" aria-label="Provisions Icon"/>
+                            <div>{playerState.provisions}</div>
+                        </div>
                     </div>
+                    {!inBattle && <button className='eat-button' onClick={handleEatClick} disabled={eatBlocker !== null} title={eatBlocker ?? 'Eat a meal'}>Eat</button>}
                 </div>
 
                 <div className='equipment-border'>

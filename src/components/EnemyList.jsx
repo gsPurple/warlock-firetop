@@ -1,4 +1,3 @@
-import React from 'react';
 import heartSVG from '../images/icons/heart_Icon.svg';
 import skillSVG from '../images/icons/skill_icon.svg';
 //import '../styles/enemyList.css'; // optional, reuse header.css if desired

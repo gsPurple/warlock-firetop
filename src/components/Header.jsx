@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Inventory from './Inventory';
 import '../styles/header.css';
 import heartSVG from '../images/icons/heart_Icon.svg';
@@ -6,7 +6,8 @@ import skillSVG from '../images/icons/skill_icon.svg';
 import cloverSVG from '../images/icons/clover_icon.svg';
 import goldSVG from '../images/icons/gold_icon.svg';
 
-const Header = ({ playerState, setPlayerState, enemies = [], enemyExpanded = false, onEnemyToggle = () => {}, className }) => {
+const Header = ({ playerState, setPlayerState, enemies = [], inBattle = false, enemyExpanded = false, onEnemyToggle = () => {}, className }) => {
+    const aliveEnemies = enemies.filter((enemy) => parseInt(enemy.stamina) > 0).length;
     const [isLargeScreen, setIsLargeScreen] = useState(false);
     const [dataVisible, setDataVisible] = useState(false);
     const [ariaExpanded, setAriaExpanded] = useState(false);
@@ -30,9 +31,20 @@ const Header = ({ playerState, setPlayerState, enemies = [], enemyExpanded = fal
         };
     }, []);
 
+    // On mobile the inventory and enemy overlays are exclusive: opening one closes the other
     const clickNavToggle = () => {
-        setDataVisible(!dataVisible);
-        setAriaExpanded(!ariaExpanded);
+        const opening = !dataVisible;
+        setDataVisible(opening);
+        setAriaExpanded(opening);
+        if (opening && enemyExpanded) onEnemyToggle();
+    };
+
+    const clickEnemyToggle = () => {
+        if (!enemyExpanded && dataVisible && !isLargeScreen) {
+            setDataVisible(false);
+            setAriaExpanded(false);
+        }
+        onEnemyToggle();
     };
 
     return (
@@ -69,9 +81,9 @@ const Header = ({ playerState, setPlayerState, enemies = [], enemyExpanded = fal
                         </div>
 
                         {enemies.length > 0 &&
-                            <button onClick={() => onEnemyToggle()} className='mobile-enemy-toggle' aria-controls='enemy-nav' aria-expanded={enemyExpanded}>
+                            <button onClick={clickEnemyToggle} className='mobile-enemy-toggle' aria-controls='enemy-nav' aria-expanded={enemyExpanded}>
                                 <div className="enemy-icon-wrapper">
-                                    <span className="enemy-notification">{enemies.length}</span>
+                                    {aliveEnemies > 0 && <span className="enemy-notification">{aliveEnemies}</span>}
                                 </div>
                                 <span className='sr-only'>Enemies</span>
                             </button>
@@ -87,6 +99,7 @@ const Header = ({ playerState, setPlayerState, enemies = [], enemyExpanded = fal
                         setPlayerState={setPlayerState}
                         dataVisible={dataVisible}
                         isLargeScreen={isLargeScreen}
+                        inBattle={inBattle}
                         ariaExpanded={ariaExpanded}
                         clickNavToggle={clickNavToggle}
                     />

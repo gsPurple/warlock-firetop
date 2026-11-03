@@ -57,7 +57,7 @@
   position: fixed;
   flex-direction: column;
   inset: 0 0 0 0%;
-  background: hsla(0, 0%, 0%, 0.8);
+  background: hsla(0, 0%, 0%, 0.95);
   padding: 1.3rem 1rem;
 
   transform: translateX(100%);
@@ -72,7 +72,7 @@
   position: fixed;
   flex-direction: column;
   inset: 0 0 0 0%;
-  background: hsla(0, 0%, 0%, 0.8);
+  background: hsla(0, 0%, 0%, 0.95);
   padding: 1.3rem 1rem;
 
   transform: translateX(-100%);
@@ -282,4 +282,51 @@
     min-width: 7vw;
   }
 
+}
+/* Provisions box with the Eat button beside it, vertically centered on it */
+.provisions-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* On mobile the stat boxes have no border, so drop their uneven padding to keep the row centered */
+@media screen and (max-width: 767px) {
+  .provisions-row .stat-container {
+    padding: 0;
+  }
+
+  .equipment-border {
+    margin-top: 1rem;
+  }
+}
+
+.provisions-row .stat-border {
+  margin-bottom: 0;
+}
+
+.eat-button {
+  margin: 0; /* overrides the global button margin-bottom */
+  padding: 0.2rem 0.6rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: 1;
+  border: 2px solid var(--border);
+  cursor: pointer;
+}
+
+.eat-button:hover:not(:disabled) {
+  background: var(--border);
+}
+
+.eat-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media screen and (min-width: 768px) {
+  .provisions-row {
+    margin-bottom: 0.2rem; /* same gap the stat boxes have */
+  }
 }
