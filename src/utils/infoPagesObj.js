@@ -6,7 +6,8 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 //
 // type: omitted = plain story page, "luck" = shows a Test your Luck button
 //       (needs lucky/unlucky), "skill" = shows a Test your Skill button (roll two dice,
-//       success if <= current SKILL; needs success/fail), "battle" = needs enemies ("Name-skill-stamina") and next
+//       success if <= current SKILL; needs success/fail; optional failEffects: same format as choice effects,
+//       applied when the test fails), "battle" = needs enemies ("Name-skill-stamina") and next
 //       (optional escape: page id to flee to - adds an Escape button, the creature gets one wound on you;
 //       optional playerAttackMod: number added to (or, if negative, taken from) your Attack Strength every round of this fight),
 //       "stats" = initial stat roll (needs stat and base).
@@ -363,6 +364,75 @@ export const pages = {
             { label: "Continue the fight", to: 372 },
         ],
         escape: 293,
-        escapeFoe: "servant",
+        escapeFoe: "Chieftain",
+    },
+    372: {
+        type: "battle",
+        text: "The battle commences! Fight them one at a time.",
+        enemies: ["Orc Chieftain-7-6", "Servant-5-3"],
+        next: 21,
+    },
+    159: {
+        type: "luck",
+        lucky: 237,
+        unlucky: 365,
+        text: "You open the door into a large room which can only be the dining room of the same warty-faced creatures you now recognize.\n\nSitting round a large table are five _ORCS_ busily drinking and dribbling their bowls of rat-gizzard soup. All are involved in a rowdy argument as to who will get to chew the rat bones left in the large soup cauldron, so they do not see you enter.\n\nYou may be bold and prepare to attack them, or you may not relish the prospect of taking on five of these creatures and try to escape.\n\nIf you wish to leave the room, _Test your Luck_. If you are _Lucky_, you get out without them noticing - there is no penalty for escaping. If you are _Unlucky_, they notice you.",
+        choices: [
+            { label: "Prepare to attack", to: 365 },
+        ],
+    },
+    213: {
+        type: "skill",
+        success: 36,
+        fail: 314,
+        failEffects: [{ stat: "Sta", change: -1 }],
+        text: "The door is locked. You may try to charge it down by rolling two dice.\n\nIf the number rolled is equal to or less than your _SKILL_ score, the door bursts open.\n\nIf the number is greater than your _SKILL_ score, the door remains locked, you lose 1 _STAMINA_ point for your bruised shoulder and you must progress up the passage.",
+        choices: [
+            { label: "Walk away", to: 314 },
+        ],
+    },
+    314: {
+        text: "Further up the passage you see a door in the east wall. You listen hard, but can hear no sound.\n\nDo you want to open the door to investigate, or do you want to walk further up the passage?",
+        choices: [
+            { label: "Open the door", to: 223 },
+            { label: "Walk up the passage", to: 300 },
+        ],
+    },
+    365: {
+        type: "battle",
+        text: "The Orcs attack you one at a time. You may try to _Escape_ this battle!",
+        enemies: ["Orc-6-4", "Orc-5-3", "Orc-6-4", "Orc-5-2", "Orc-4-4"],
+        next: 183,
+        escape: 237,
+    },
+    21: {
+        text: "The green blood of the dead Orcs smells foul as it seeps from their bodies. You step around the corpses and investigate the chest.\n\nIt is a sturdy affair, made of strong oak and iron, and it is firmly locked.\n\nYou may try to smash the lock with your sword or leave it alone and go through the open door.",
+        choices: [
+            { label: "Smash the lock", to: 339 },
+            { label: "Go through the door", to: 293 },
+        ],
+    },
+    36: {
+        text: "The locked door bursts open and a nauseating stench hits your nostrils.\n\nInside the room the floor is covered with bones, rotting vegetation and slime. A wild-haired old man, clothed in rags, rushes at you screaming. His beard is long and grey, and he is waving an old wooden chair-leg.\n\nIs he simply insane as he appears, or has this been some kind of trap?\n\nYou may either shout at him to try to calm him down or draw your sword and attack him.",
+        image: "wofm36.png",
+        caption: "Inside the room the floor is covered with bones, rotting vegetation and slime.",
+        choices: [
+            { label: "Shout at him", to: 263 },
+            { label: "Attack him", to: 353 },
+        ],
+    },
+    223: {
+        text: "The door is firmly locked.\n\nYou may try to force it open, or you may continue along the corridor.",
+        choices: [
+            { label: "Force it open", to: 53 },
+            { label: "Continue along the corridor", to: 300 },
+        ],
+    },
+    300: {
+        text: "On the east wall of the passage you see another door, this time made of solid metal. Listening at the door you hear the sound of tortured screams coming from within.\n\nDo you wish to try opening the door, or do you decide to ignore this room and continue up the corridor?",
+        choices: [
+            { label: "Try opening the door", to: 102 },
+            { label: "Continue up the corridor", to: 303 },
+        ],
     },
 };

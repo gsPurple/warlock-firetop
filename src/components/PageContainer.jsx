@@ -220,7 +220,7 @@ function PageContainer() {
           type: 'SET_PLAYER_STATE',
           payload: {
             initSta: '15',
-            currentSta: '2',
+            currentSta: '1',
             initSkill: '12',
             currentSkill: '6',
             initLuck: '10',
@@ -318,6 +318,7 @@ function PageContainer() {
       passText: 'Success!',
       failText: 'Failure!',
       to: success ? currentPage.success : currentPage.fail,
+      effects: success ? undefined : currentPage.failEffects,
     });
   };
 

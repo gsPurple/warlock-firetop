@@ -101,7 +101,7 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
             }
 
             {pendingTest
-              ? <DiceRoll test={pendingTest} onContinue={() => handleChoice({ to: pendingTest.to })} />
+              ? <DiceRoll test={pendingTest} onContinue={() => handleChoice({ to: pendingTest.to, effects: pendingTest.effects })} />
               : !fleeing && <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} testYourLuck={testYourLuck} testYourSkill={testYourSkill} rolled={dieOne !== null}>
                   {escapeButton}
                 </ChoiceReader>
