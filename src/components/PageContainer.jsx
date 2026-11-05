@@ -158,6 +158,7 @@ function PageContainer() {
   const [dieOne, setDieOne] = useState(null);
   const [dieTwo, setDieTwo] = useState(null);
   const [pendingTest, setPendingTest] = useState(null); // luck/skill roll waiting for the player to continue
+  const [pendingRoll, setPendingRoll] = useState(null); // a page's rollEffect die: { die, stat, change }, once per visit
   const [dying, setDying] = useState(false); // killing blow landed, transition to the death screen running
 
   useEffect(() => {
@@ -204,6 +205,7 @@ function PageContainer() {
     setDieOne(null);
     setDieTwo(null);
     setPendingTest(null);
+    setPendingRoll(null);
     dispatch({ type: 'SET_PLAYER_STATE', payload: { ateOnPage: false, takenOnPage: [] } });
     setCurrentPageId(pageId);
     applyEffects(pages[pageId]?.onEnter);
@@ -322,6 +324,14 @@ function PageContainer() {
     });
   };
 
+  // A page's rollEffect: roll one die, the stat changes by that much (sign: -1 loses, 1 gains).
+  // The change itself is applied when the die lands (see SingleRoll)
+  const rollPageEffect = () => {
+    const { stat, sign } = currentPage.rollEffect;
+    const die = rollDie();
+    setPendingRoll({ die, stat, change: sign * die });
+  };
+
   const renderScreen = () => {
   switch (currentMode) {
     case constants.DEATHMODE:
@@ -353,6 +363,9 @@ function PageContainer() {
           testYourLuck={testYourLuck}
           testYourSkill={testYourSkill}
           pendingTest={pendingTest}
+          pendingRoll={pendingRoll}
+          rollPageEffect={rollPageEffect}
+          applyEffects={applyEffects}
           onPlayerDeath={() => setDying(true)}
         />
       );

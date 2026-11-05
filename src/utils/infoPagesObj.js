@@ -22,6 +22,9 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 // items: ["Item name"] shows a Take button per item on the page; taking is optional and once per visit.
 // onEnter: [{ stat: "Sta" | "Skill" | "Luck" | "Gold" | "Provisions", change }] is applied once when the player
 //          arrives on the page, and shown on it as a +/- notice.
+// rollEffect: { stat, sign } + then: page id. Adds a "Roll the die" button; one die is rolled (once per visit) and
+//          the stat changes by that amount (sign -1 loses, 1 gains), applied when the die lands. Continue then goes to
+//          `then`, so the page needs no choices.
 export const pages = {
     hints: {
         title: "HINTS ON PLAY",
@@ -433,6 +436,59 @@ export const pages = {
         choices: [
             { label: "Try opening the door", to: 102 },
             { label: "Continue up the corridor", to: 303 },
+        ],
+    },
+    263: {
+        text: "You shout: _'You are freed, old man!'_ at the top of your voice. Instantly, his rantings cease. He stops dead in his tracks and sinks to the floor, weeping loudly.\n\nAs he gradually composes himself, he thanks you many times. You talk with him in the hope of discovering some of the secrets of the mountain and he begins to tell his story.\n\nMany years ago he was an adventurer like you in search of the Warlock's treasure. He was captured by the Orcs and thrown into his solitary cell as a sort of pet for the creatures. You ask whether he would like to acompany you into the mountain, but he simply wants to leave and see the world again.\n\nYou ask him for advice, but he says he knows little. He advises you to pay your respects to the boatman. He tells you that you must pull the right-hand lever on the wall ahead to open the iron gate at the end of the passage.\n\nHe has also learned that the keys to the Boat House are guarded by a man and his dog.\n\nYou shake hands, leave the room and go your separate ways. You gain 1 _LUCK_ point.",
+        onEnter: [{ stat: "Luck", change: 1 }],
+        choices: [
+            { label: "Leave the room", to: 314 },
+        ],
+    },
+    353: {
+        text: "You lunge at the old man as he leaps towards you with outstretched arms - and run him through the chest with your sword.\n\nYou curse as you realize that he was making no attempt to attack you; his wild excitement must merely have been relief after having been imprisoned for what had apparently been a very long time.\n\nYou will now get no information out of him on the perils of the adventure ahead. You leave the room and progress up the passageway.",
+        choices: [
+            { label: "Progress up the passageway", to: 314 },
+        ],
+    },
+    53: {
+        type: "skill",
+        success: 155,
+        fail: 300,
+        failEffects: [{ stat: "Sta", change: -1 }],
+        text: "You charge the door, hitting it squarely with your shoulder _Roll 2 dice_.\n\nIf the number rolled is equal to or less than your _SKILL_ score, the door opens.\n\nIf the number exceeds your _SKILL_ score, the door shudders but does not budge, and you wince in pain as you hit the door - lose 1 _STAMINA_ point and continue up the corridor.",
+    },
+    183: {
+        text: "You search the bodies of the dead Orcs but find only a few teeth, nails, bones and knives in their pockets.\n\nYou search the cupboards around the room but find only crude bowls, plates and spoons. But under the serving hatch you find a thin leather case half a metre long. You may open the case or you may leave it behind and walk out of the door.\n\nYou are proud of your victory and may add 1 _SKILL_ and 5 _STAMINA_ points.",
+        choices: [
+            { label: "Open the case", to: 266 },
+            { label: "Walk out", to: 237 },
+        ],
+        onEnter: [
+            { stat: "Skill", change: 1 },
+            { stat: "Sta", change: 5 }
+        ],
+    },
+    339: {
+        text: "The lock was obviously inadequate; it flies off and lands on the floor several metres away. You lift up the heavy lid and your eyes widen as you see the gold sheen coming from within.\n\nA fair number of Gold Pieces are inside. In one corner lies a small black bottle with a tight glass stopper, containing a liquid of some kind. Also in the chest is a silky black glove. But as you are admiring this treasure you hear a soft click and wince in pain as a small dart shoots forward into your stomach.\n\nRoll one die and subtract this number of points from your _STAMINA_ to determine the effect of the poison on the dart tip.\n\nIf you are alive, continue.",
+        rollEffect: { stat: "Sta", sign: -1 },
+        then: 201,
+    },
+    303: {
+        text: "You arrive at the end of the passage, where it meets another going east-west. But an iron portcullis blocks your way and no amount of charging is going to budge it.\n\nOn the wall to your right are two levers and it seems likely that these levers have something to do with raising the portcullis.\n\nDo you wish to pull the right lever, or the left lever?",
+        image: "wofm303.png",
+        caption: "An iron portcullis blocks your way and no amount of charging is going to budge it.",
+        choices: [
+            { label: "Right", to: 128 },
+            { label: "Left", to: 243 },
+        ],
+    },
+    102: {
+        text: "The door is not locked and opens. The room in front of you seems to be a small torture chamber, with various torture devices around the walls.\n\nIn the centre of the room, two small, hunchbacked creatures are having their fiendish way with a Dwarf, who is tied to a hook in the ceiling by his wrists. The two hunchbacks are poking and cutting him viciously with their swords.\n\nThe Dwarf lets out a final scream and falls silent, eyes closed. His captors make disappointed noises and look round angrily at you as if it were your fault that the Dwarf has collapsed.\n\nYou must act quickly. Will you:\n• Close the door quickly and continue up the corridor?\n• Draw your sword and try to fight the creatures?\n• Stride over to the Dwarf, give him a jab with your sword and put on an evil laugh for the torturers?",
+        choices: [
+            { label: "Close the door", to: 303 },
+            { label: "Fight the creatures", to: 19 },
+            { label: "Jab the Dwarf", to: 68 },
         ],
     },
 };

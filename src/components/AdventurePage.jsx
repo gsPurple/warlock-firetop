@@ -1,19 +1,20 @@
 import { useState } from 'react';
 import Header from './Header';
 import ChoiceReader from '../utils/ChoiceReader';
-import DiceRoll from './DiceRoll';
+import DiceRoll, { SingleRoll } from './DiceRoll';
 import useEscape from './useEscape';
 import IllustrationPage from './IllustrationPage';
 import parseFormattedText, { paragraphClassName } from '../utils/parseFormattedText';
 import goldSVG from '../images/icons/gold_icon.svg';
 import cloverSVG from '../images/icons/clover_icon.svg';
 import heartSVG from '../images/icons/heart_Icon.svg';
+import skillSVG from '../images/icons/skill_icon.svg';
 
 const STAT_NAMES = { Sta: 'STAMINA', Skill: 'SKILL', Luck: 'LUCK', Gold: 'GOLD' };
-const STAT_ICONS = { Sta: heartSVG, Luck: cloverSVG, Gold: goldSVG };
+const STAT_ICONS = { Sta: heartSVG, Skill: skillSVG, Luck: cloverSVG, Gold: goldSVG };
 
 
-const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, testYourSkill, pendingTest, pageContentParagraphs, onPlayerDeath }) => {
+const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, testYourSkill, pendingTest, pendingRoll, rollPageEffect, applyEffects, pageContentParagraphs, onPlayerDeath }) => {
 
     console.log(playerState)
 
@@ -102,7 +103,17 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
 
             {pendingTest
               ? <DiceRoll test={pendingTest} onContinue={() => handleChoice({ to: pendingTest.to, effects: pendingTest.effects })} />
-              : !fleeing && <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} testYourLuck={testYourLuck} testYourSkill={testYourSkill} rolled={dieOne !== null}>
+              : pendingRoll
+              ? <SingleRoll
+                  die={pendingRoll.die}
+                  onLanded={() => applyEffects([{ stat: pendingRoll.stat, change: pendingRoll.change }])}
+                  onContinue={() => handleChoice({ to: currentPage.then })}
+                >
+                  <p className={`stat-change bold ${pendingRoll.change > 0 ? 'green' : 'red'}`}>
+                    {pendingRoll.change > 0 ? '+' : '−'}{Math.abs(pendingRoll.change)} {STAT_NAMES[pendingRoll.stat]}
+                  </p>
+                </SingleRoll>
+              : !fleeing && <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} testYourLuck={testYourLuck} testYourSkill={testYourSkill} rollPageEffect={rollPageEffect} rolled={dieOne !== null}>
                   {escapeButton}
                 </ChoiceReader>
             }

@@ -18,6 +18,7 @@ A React + Vite web adaptation of the Fighting Fantasy gamebook. Commands: `npm r
 - Enemies are `"Name-skill-stamina"` strings, e.g. `"Orc-6-5"`.
 - Battle pages can set `escape: <page id>` to offer an Escape button (confirmation modal, one wound on the player, optional Luck test). Escaping is only allowed when a page offers it.
 - Battle pages can set `playerAttackMod: <number>` for a fight-long modifier to the player's Attack Strength (not a stat change, so nothing to undo on exit).
+- Pages can set `rollEffect: { stat, sign }` + `then: <page id>` for an effect whose size is a die roll (e.g. poison dart: lose 1 die of Stamina). The roll is `pendingRoll` state in `PageContainer` (cleared by `goTo`), shown by `SingleRoll` in `DiceRoll.jsx`; the stat change goes through `applyEffects` when the die lands, so death works as usual.
 - Reducer actions in `PageContainer`: `SET_PLAYER_STATE`, `ROLL_STAT`, `CHANGE_STAT`, `EAT` (one meal per page), `USE_ITEM` (potions), `ADD_ITEM`, `TAKE_ITEM` (a page's optional `items`, once per visit).
 - Game rules follow the book; the rules pages in `infoPagesObj.js` are the source of truth for mechanics.
 

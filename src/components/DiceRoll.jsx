@@ -68,6 +68,35 @@ export const QuickRoll = ({ dice, colorClass, onDone }) => {
   );
 };
 
+// One die for a page's rollEffect: it tumbles and lands on `die`, calls onLanded once (the caller applies
+// the effect then, so the number is seen before any death), then shows `children` (the effect) and Continue
+export const SingleRoll = ({ die, onLanded, onContinue, children }) => {
+  const { rolling, faces } = useTumble(1);
+
+  useEffect(() => {
+    if (rolling) return;
+
+    // a timeout (cleared on cleanup) so a dev-mode double effect cannot apply the effect twice
+    const timeout = setTimeout(onLanded, 0);
+    return () => clearTimeout(timeout);
+  }, [rolling]);
+
+  return (
+    <div className='dice-roll'>
+      <div className='dice-tray'>
+        <DieFace value={rolling ? faces[0] : die} rolling={rolling} colorClass='red' />
+      </div>
+
+      {!rolling &&
+        <div className='dice-result'>
+          {children}
+          <button onClick={onContinue}>Continue</button>
+        </div>
+      }
+    </div>
+  );
+};
+
 // Shows a stat test (luck/skill): the dice tumble through random faces, land on the
 // real roll, then the result and a Continue button appear
 const DiceRoll = ({ test, onContinue }) => {

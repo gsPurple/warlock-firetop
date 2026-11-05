@@ -1,6 +1,6 @@
 
 // children: extra buttons shown after the page's own (e.g. Escape)
-function ChoiceReader({ currentPage, handleChoice, testYourLuck, testYourSkill, rolled, children }) {
+function ChoiceReader({ currentPage, handleChoice, testYourLuck, testYourSkill, rollPageEffect, rolled, children }) {
   // A stat page's roll button disappears once the dice have been rolled
   const showChoices = !(currentPage.type === 'stats' && rolled);
 
@@ -22,6 +22,12 @@ function ChoiceReader({ currentPage, handleChoice, testYourLuck, testYourSkill, 
       {currentPage.type === 'luck' &&
         <button onClick={() => testYourLuck()}>
           Test your Luck
+        </button>
+      }
+
+      {currentPage.rollEffect &&
+        <button onClick={() => rollPageEffect()}>
+          Roll the die
         </button>
       }
 
