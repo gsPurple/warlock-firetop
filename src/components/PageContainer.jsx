@@ -11,7 +11,6 @@ import DeathPage from './DeathPage';
 import rollDie from '../utils/rollDie';
 import testLuck from '../utils/testLuck';
 import testSkill from '../utils/testSkill';
-import { getEscapeDamage } from '../utils/battleLogic';
 
 const STACKABLE_ITEMS = [constants.SKILLPOTION, constants.STRPOTION, constants.FORTPOTION];
 
@@ -34,7 +33,20 @@ const addToInventory = (inventory, item) => {
   return stacked;
 };
 
-const playerStateReducer = (state, action) => {
+// Removes one unit of an item (a stack like "Potion of Skill x3" loses one)
+const removeOneFromInventory = (inventory, item) => {
+  const index = inventory.indexOf(item);
+  if (index === -1) return inventory;
+  const match = item.match(/^(.+?)\s+x(\d+)$/);
+  const left = match ? parseInt(match[2]) - 1 : 0;
+  const updated = [...inventory];
+  if (left > 1) updated[index] = `${match[1]} x${left}`;
+  else if (left === 1) updated[index] = match[1];
+  else updated.splice(index, 1);
+  return updated;
+};
+
+const playerStateReducer =(state, action) => {
   switch (action.type) {
     case 'SET_PLAYER_STATE':
       return {
@@ -106,11 +118,11 @@ const playerStateReducer = (state, action) => {
       return { ...state, ...changes, inventory };
     }
     case 'FLEE': {
-      // The wound taken when escaping; lucky is the result of a Luck test on it (costs 1 Luck), or null if none was taken
+      // The wound taken when escaping (damage, already reduced by a shield if any); lucky is the result of a Luck test on it (costs 1 Luck), or null if none was taken
       const luck = parseInt(state.currentLuck);
       return {
         ...state,
-        currentSta: Math.max(parseInt(state.currentSta) - getEscapeDamage(action.lucky), 0),
+        currentSta: Math.max(parseInt(state.currentSta) - action.damage, 0),
         currentLuck: action.lucky === null ? luck : Math.max(luck - 1, 0),
       };
     }
@@ -127,6 +139,15 @@ const playerStateReducer = (state, action) => {
         inventory: addToInventory(state.inventory, action.item),
         takenOnPage: [...state.takenOnPage, action.item],
       };
+    case 'SWAP_ITEM': {
+      // A page's pickable item that needs room: drop one item from the inventory to take it (once per visit)
+      if (state.takenOnPage.includes(action.item) || !state.inventory.includes(action.drop)) return state;
+      return {
+        ...state,
+        inventory: addToInventory(removeOneFromInventory(state.inventory, action.drop), action.item),
+        takenOnPage: [...state.takenOnPage, action.item],
+      };
+    }
     default:
       return state;
   }

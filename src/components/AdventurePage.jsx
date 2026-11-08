@@ -4,6 +4,7 @@ import ChoiceReader from '../utils/ChoiceReader';
 import DiceRoll, { SingleRoll } from './DiceRoll';
 import useEscape from './useEscape';
 import IllustrationPage from './IllustrationPage';
+import DropItemModal from './DropItemModal';
 import parseFormattedText, { paragraphClassName } from '../utils/parseFormattedText';
 import goldSVG from '../images/icons/gold_icon.svg';
 import cloverSVG from '../images/icons/clover_icon.svg';
@@ -28,6 +29,8 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
         handleChoice,
         onPlayerDeath,
     });
+
+    const [itemToTake, setItemToTake] = useState(null); // item waiting for the player to pick what to drop for it (dropToTake pages)
 
     // Pages with an image open on the full-size illustration, like the book; Next reveals the text
     const [showText, setShowText] = useState(currentPage.image === undefined);
@@ -79,14 +82,27 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
               <div className='take-item-container'>
                 {currentPage.items.map((item) => {
                   const taken = playerState.takenOnPage.includes(item);
+                  const held = currentPage.dropToTake && playerState.inventory.includes(item);
+                  const take = () => currentPage.dropToTake ? setItemToTake(item) : setPlayerState({ type: 'TAKE_ITEM', item });
                   return (
-                    <button key={item} disabled={taken} onClick={() => setPlayerState({ type: 'TAKE_ITEM', item })}>
+                    <button key={item} disabled={taken || held} onClick={take}>
                       {taken ? `${item} taken` : `Take ${item}`}
                     </button>
                   );
                 })}
               </div>
             }
+
+            <DropItemModal
+              key={itemToTake}
+              item={itemToTake}
+              inventory={playerState.inventory}
+              onCancel={() => setItemToTake(null)}
+              onDrop={(drop) => {
+                setPlayerState({ type: 'SWAP_ITEM', item: itemToTake, drop });
+                setItemToTake(null);
+              }}
+            />
 
             {currentPage.type === 'stats' &&
             <div>

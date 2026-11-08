@@ -28,6 +28,18 @@ export function getDamage(woundedEnemy, luckUsed, lucky) {
     return lucky ? 1 : 3;
 }
 
+// Golden Crescent shield (page 155): when a creature wounds you, a die roll of 6 takes 1 point off the damage
+// (never below 0). Used for battle wounds and the wound taken when fleeing.
+export function applyShield(damage, roll) {
+    return roll === 6 ? Math.max(damage - 1, 0) : damage;
+}
+
+export function shieldNote(roll) {
+    return roll === 6
+        ? ' Your Golden Crescent shield deflects part of the blow (you rolled a 6)!'
+        : ` Your Golden Crescent shield doesn't help (you rolled a ${roll}).`;
+}
+
 // The wound taken when fleeing; lucky is the result of a Luck test on it, or null if none was taken
 export function getEscapeDamage(lucky = null) {
     return getDamage(false, lucky !== null, lucky);

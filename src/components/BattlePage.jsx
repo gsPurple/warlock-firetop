@@ -5,7 +5,9 @@ import BattleRound from './BattleRound';
 import { QuickRoll } from './DiceRoll';
 import useEscape from './useEscape';
 import testLuck from '../utils/testLuck';
-import { resolveRound, getDamage } from '../utils/battleLogic';
+import { resolveRound, getDamage, applyShield, shieldNote } from '../utils/battleLogic';
+import rollDie from '../utils/rollDie';
+import { GOLDENCRESCENT } from '../utils/constantsfile';
 import parseFormattedText, { paragraphClassName } from '../utils/parseFormattedText';
 import IllustrationPage from './IllustrationPage';
 import swordImg from '../images/decor/wofmsword.png';
@@ -65,12 +67,19 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
                 );
             }
         } else {
-            const newSta = Math.max(playerSta - amount, 0);
+            let damage = amount;
+            let shieldMessage = '';
+            if (playerState.inventory.includes(GOLDENCRESCENT)) {
+                const shieldRoll = rollDie();
+                damage = applyShield(amount, shieldRoll);
+                shieldMessage = shieldNote(shieldRoll);
+            }
+            const newSta = Math.max(playerSta - damage, 0);
             setPlayerState({
                 type: 'SET_PLAYER_STATE',
                 payload: { currentSta: newSta },
             });
-            setRoundMessage(`The ${enemy.name} wounds you for ${amount} damage.${luckMessage}`);
+            setRoundMessage(`${damage > 0 ? `The ${enemy.name} wounds you for ${damage} damage.` : `The ${enemy.name} wounds you, but your shield absorbs it all.`}${luckMessage}${shieldMessage}`);
             if (newSta === 0) {
                 onPlayerDeath();
             }

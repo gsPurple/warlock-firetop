@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { QuickRoll } from './DiceRoll';
 import Modal from '../utils/Modal';
 import testLuck from '../utils/testLuck';
-import { getEscapeDamage } from '../utils/battleLogic';
+import { getEscapeDamage, applyShield, shieldNote } from '../utils/battleLogic';
+import rollDie from '../utils/rollDie';
+import { GOLDENCRESCENT } from '../utils/constantsfile';
 
 // Escaping, shared by battle pages and plain pages that offer it (a page's `escape: <page id>`):
 // the creature gets one wound on you as you flee, and you may Test your Luck on it.
@@ -18,15 +20,21 @@ const useEscape = ({ foeName, to, canEscape = true, playerState, setPlayerState,
 
     // lucky: result of a Luck test on the wound, or null if none was taken
     const flee = (lucky = null) => {
-        const damage = getEscapeDamage(lucky);
+        let damage = getEscapeDamage(lucky);
+        let shieldMessage = '';
+        if (playerState.inventory.includes(GOLDENCRESCENT)) {
+            const shieldRoll = rollDie();
+            damage = applyShield(damage, shieldRoll);
+            shieldMessage = shieldNote(shieldRoll);
+        }
         const newSta = Math.max(parseInt(playerState.currentSta) - damage, 0);
         const luckMessage = lucky === null ? '' : lucky ? ' You were lucky!' : ' You were unlucky!';
 
-        setPlayerState({ type: 'FLEE', lucky });
+        setPlayerState({ type: 'FLEE', lucky, damage });
         setEscape({
             stage: 'done',
             dead: newSta === 0,
-            message: `You flee, but the ${foeName} wounds you for ${damage} damage as you go.${luckMessage}`,
+            message: `${damage > 0 ? `You flee, but the ${foeName} wounds you for ${damage} damage as you go.` : `You flee, and the ${foeName}'s blow is absorbed by your shield.`}${luckMessage}${shieldMessage}`,
         });
         if (newSta === 0) {
             onPlayerDeath();

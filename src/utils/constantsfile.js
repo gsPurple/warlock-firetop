@@ -10,5 +10,6 @@ export const SKILLPOTION = "Potion of Skill";
 export const STRPOTION = "Potion of Strength";
 export const FORTPOTION = "Potion of Fortune";
 export const PROVISIONS = "Provisions";
+export const GOLDENCRESCENT = "Golden Crescent"; // the shield from page 155
 export const MEAL_STAMINA = 4;
 export const DEVPAGE = 343; // page the DEV menu action jumps to; local only, never commit changes to it

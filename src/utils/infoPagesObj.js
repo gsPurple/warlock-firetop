@@ -20,6 +20,7 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 // choices: [{ label, to }] navigates; { label, action } runs an action;
 //          effects: [{ addItem }] or [{ stat, change }] are applied before moving on.
 // items: ["Item name"] shows a Take button per item on the page; taking is optional and once per visit.
+// dropToTake: true makes taking the page's items ask which item to leave behind (SWAP_ITEM), since you can't carry more.
 // onEnter: [{ stat: "Sta" | "Skill" | "Luck" | "Gold" | "Provisions", change }] is applied once when the player
 //          arrives on the page, and shown on it as a +/- notice.
 // rollEffect: { stat, sign } + then: page id. Adds a "Roll the die" button; one die is rolled (once per visit) and
@@ -489,6 +490,22 @@ export const pages = {
             { label: "Close the door", to: 303 },
             { label: "Fight the creatures", to: 19 },
             { label: "Jab the Dwarf", to: 68 },
+        ],
+    },
+    68: {
+        text: "The two _GOBLIN_ torturers look at each other amazed, then look at you. They chatter to themselves and then indicate for you to wait while they go off and get another Dwarf to give them some more fun.\n\nThey disappear out of the room and you cut down the Dwarf who is, as you guessed, quite dead.\n\nYou decide it best to leave and press on northwards up the corridor.",
+        choices: [
+            { label: "Press on northwards", to: 303 },
+        ],
+    },
+    155: {
+        text: "The door splits along its length and you can wrench the timbers apart to let yourself in.\n\nA torch hangs from one wall lighting up a small armoury room stocked with swords, shields, helmets, daggers, breastplates and the like. You examine the weaponry and find nothing appearing superior to your own sword. However, a circular iron shield with a golden crescent at its centre catches your eye.\n\nYou pick it up and feel its weight on your arm.\n\nIf you wish to take this shield it will aid you in battles by helping to fend off wound damage inflicted by a creature on you. If, in future during a battle in which you are using this shield, a creature wounds you, you may throw one die. **If you throw a 6, the creature inflicts only 1 point of damage** instead of the normal 2.\n\nIf, for some reason, the creature would normally only inflict 1 point of damage, then a successful roll of 6 would mean that no damage is done.\n\nHowever, the shield is heavy and you will have to leave behind one item of equipment to be able to carry it.\n\nYou now leave the room and continue up the corridor.",
+        items: ["Golden Crescent"],
+        dropToTake: true,
+        image: "wofm155.png",
+        caption: "A torch hangs from one wall lighting up a small armoury room stocked with swords, shields, helmets, daggers and the like.",
+        choices: [
+            { label: "Continue up the corridor", to: 300 },
         ],
     },
 };
