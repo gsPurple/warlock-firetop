@@ -9,7 +9,7 @@ const tooltips = {
     PotionofFortune: <div className='tooltiptext'>A potion that restores your Luck points and adds 1 to Initial Luck</div>,
     Key99: <div className='tooltiptext'>A bronze coloured key with the number 99 carved into it</div>,
     Provisions: <div className='tooltiptext'>Each provision restores 4 STAMINA points</div>,
-    SilkyBlackGlove: <div className='tooltiptext'>A mysterious glove</div>,
+    SilkyBlackGlove: <div className='tooltiptext'>A mysterious silky black glove</div>,
     GoldenCrescent: <div className='tooltiptext'>An iron shield with a golden crescent. When a creature wounds you, roll a die: on a 6 the wound does 1 less damage</div>,
     BowArrow: <div className='tooltiptext'>A magnificent bow and a silver arrow</div>,
     Cheese: <div className='tooltiptext'>A large piece of sweet-smelling Cheese</div>,
@@ -50,13 +50,13 @@ function tooltipText(item) {
         case "Provisions":
             result = tooltips.Provisions;
             break;
-        case "Silky Black Glove":
+        case "Black Glove":
             result = tooltips.SilkyBlackGlove;
             break;
         case "Golden Crescent":
             result = tooltips.GoldenCrescent;
             break;
-        case "Bow & Arrow":
+        case "Bow & Silver Arrow":
             result = tooltips.BowArrow;
             break;
         case "Cheese":

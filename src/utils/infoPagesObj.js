@@ -508,4 +508,21 @@ export const pages = {
             { label: "Continue up the corridor", to: 300 },
         ],
     },
+    201: {
+        text: "You sink to the floor. You pull the dart out and decide to bandage the wound.\n\nThis gives some relief, but you still feel weak. You decide to take it easy and examine the contents of the chest, but if you wish you may eat some Provisions here.\n\nThere are 25 _Gold Pieces_ and the label on the bottle shows it to be a _Potion of Invisibility_, good for one dose.\n\nThe glove is a mystery. You may put any or all of these into your haversack and leave the room.",
+        onEnter: [{ stat: "Gold", change: 25 }],
+        items: ["Potion of Invisibility", "Black Glove"],
+        choices: [
+            { label: "Leave the room", to: 293 },
+        ],
+    },
+    266: {
+        text: "The case opens easily and inside you find a magnificent bow and one silver arrow.\n\nAn inscription on the case says: _'The giver of sleep to those who never can'_.\n\nYou put the bow, arrow and case in your pack and leave the room, but you may eat Provisions first - and you gain 1 _LUCK_ point.",
+        image: "wofm266.png",
+        caption: "The case opens easily and inside you find a magnificient bow and one silver arrow.",
+        onEnter: [{ stat: "Luck", change: 1 }, { addItem: "Bow & Silver Arrow" }],
+        choices: [
+            { label: "Leave the room", to: 237 },
+        ],
+    },
 };
