@@ -70,10 +70,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
     margin-top: 1rem;
     text-align: center;
     animation: dice-fade-in 0.4s ease-out;
+}
+
+/* Several lines (note, stat changes) stack tightly; the container's gap spaces them */
+.dice-result p {
+    margin: 0;
 }
 
 .dice-verdict {

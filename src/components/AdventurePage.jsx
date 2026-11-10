@@ -5,6 +5,7 @@ import DiceRoll, { SingleRoll } from './DiceRoll';
 import useEscape from './useEscape';
 import IllustrationPage from './IllustrationPage';
 import DropItemModal from './DropItemModal';
+import Modal from '../utils/Modal';
 import parseFormattedText, { paragraphClassName } from '../utils/parseFormattedText';
 import goldSVG from '../images/icons/gold_icon.svg';
 import cloverSVG from '../images/icons/clover_icon.svg';
@@ -13,6 +14,31 @@ import skillSVG from '../images/icons/skill_icon.svg';
 
 const STAT_NAMES = { Sta: 'STAMINA', Skill: 'SKILL', Luck: 'LUCK', Gold: 'GOLD' };
 const STAT_ICONS = { Sta: heartSVG, Skill: skillSVG, Luck: cloverSVG, Gold: goldSVG };
+
+// One +/- notice per stat effect (effects without a stat, e.g. addItem, are skipped)
+const statNotices = (effects = []) =>
+  effects
+    .filter((effect) => effect.stat)
+    .map((effect, index) => {
+      const gain = effect.change > 0;
+      const arrow = gain ? '▲' : '▼';
+      const colorClass = !gain ? 'red' : effect.stat === 'Gold' ? 'gold' : 'green';
+
+      return (
+        <p key={index} className={`stat-change bold ${colorClass}`}>
+          {STAT_ICONS[effect.stat] &&
+            <span className='stat-change-icon'>
+              <img src={STAT_ICONS[effect.stat]} alt='' />
+              <span className={`stat-badge ${gain ? 'green' : 'red'}`} aria-hidden='true'>{arrow}</span>
+            </span>
+          }
+          {gain ? '+' : '−'}{Math.abs(effect.change)} {STAT_NAMES[effect.stat]}
+          {!STAT_ICONS[effect.stat] &&
+            <span className={`stat-arrow ${gain ? 'green' : 'red'}`} aria-hidden='true'>{arrow}</span>
+          }
+        </p>
+      );
+    });
 
 
 const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPage, handleChoice, testYourLuck, testYourSkill, pendingTest, pendingRoll, rollPageEffect, applyEffects, pageContentParagraphs, onPlayerDeath }) => {
@@ -31,6 +57,9 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
     });
 
     const [itemToTake, setItemToTake] = useState(null); // item waiting for the player to pick what to drop for it (dropToTake pages)
+
+    const [choiceToConfirm, setChoiceToConfirm] = useState(null); // choice with a `confirm` question waiting for a Yes
+    const chooseConfirmed = (choice) => choice.confirm ? setChoiceToConfirm(choice) : handleChoice(choice);
 
     // Pages with an image open on the full-size illustration, like the book; Next reveals the text
     const [showText, setShowText] = useState(currentPage.image === undefined);
@@ -55,28 +84,7 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
               <p className={paragraphClassName(paragraph)} key={index}>{parseFormattedText(paragraph)}</p>
             ))}
 
-            {(currentPage.onEnter || [])
-              .filter((effect) => effect.stat)
-              .map((effect, index) => {
-                const gain = effect.change > 0;
-                const arrow = gain ? '▲' : '▼';
-                const colorClass = !gain ? 'red' : effect.stat === 'Gold' ? 'gold' : 'green';
-
-                return (
-                  <p key={index} className={`stat-change bold ${colorClass}`}>
-                    {STAT_ICONS[effect.stat] &&
-                      <span className='stat-change-icon'>
-                        <img src={STAT_ICONS[effect.stat]} alt='' />
-                        <span className={`stat-badge ${gain ? 'green' : 'red'}`} aria-hidden='true'>{arrow}</span>
-                      </span>
-                    }
-                    {gain ? '+' : '−'}{Math.abs(effect.change)} {STAT_NAMES[effect.stat]}
-                    {!STAT_ICONS[effect.stat] &&
-                      <span className={`stat-arrow ${gain ? 'green' : 'red'}`} aria-hidden='true'>{arrow}</span>
-                    }
-                  </p>
-                );
-              })}
+            {statNotices(currentPage.onEnter)}
 
             {currentPage.items &&
               <div className='take-item-container'>
@@ -122,19 +130,29 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
               : pendingRoll
               ? <SingleRoll
                   die={pendingRoll.die}
-                  onLanded={() => applyEffects([{ stat: pendingRoll.stat, change: pendingRoll.change }])}
+                  onLanded={() => applyEffects(pendingRoll.effects)}
                   onContinue={() => handleChoice({ to: currentPage.then })}
                 >
-                  <p className={`stat-change bold ${pendingRoll.change > 0 ? 'green' : 'red'}`}>
-                    {pendingRoll.change > 0 ? '+' : '−'}{Math.abs(pendingRoll.change)} {STAT_NAMES[pendingRoll.stat]}
-                  </p>
+                  {pendingRoll.note && <p className='bold'>{pendingRoll.note}</p>}
+                  {statNotices(pendingRoll.effects)}
                 </SingleRoll>
-              : !fleeing && <ChoiceReader currentPage={currentPage} handleChoice={handleChoice} testYourLuck={testYourLuck} testYourSkill={testYourSkill} rollPageEffect={rollPageEffect} rolled={dieOne !== null}>
+              : !fleeing && <ChoiceReader currentPage={currentPage} handleChoice={chooseConfirmed}testYourLuck={testYourLuck} testYourSkill={testYourSkill} rollPageEffect={rollPageEffect} rolled={dieOne !== null}>
                   {escapeButton}
                 </ChoiceReader>
             }
 
             {escapeUI}
+
+            <Modal
+              showModal={choiceToConfirm !== null}
+              message={choiceToConfirm?.confirm}
+              onClose={() => setChoiceToConfirm(null)}
+              onConfirm={() => {
+                const choice = choiceToConfirm;
+                setChoiceToConfirm(null);
+                handleChoice(choice);
+              }}
+            />
 
             <div>
                 {!pendingTest && !fleeing && (currentPage.image !== undefined || currentPage.previous !== undefined) && <button id='button-back' onClick={() => currentPage.image !== undefined ? setShowText(false) : handleChoice({ to: currentPage.previous })}>

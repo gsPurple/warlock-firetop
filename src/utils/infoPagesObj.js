@@ -26,6 +26,9 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 // rollEffect: { stat, sign } + then: page id. Adds a "Roll the die" button; one die is rolled (once per visit) and
 //          the stat changes by that amount (sign -1 loses, 1 gains), applied when the die lands. Continue then goes to
 //          `then`, so the page needs no choices.
+//          Instead of { stat, sign }, { odd: { note, effects }, even: { note, effects } } applies those effects
+//          (same format as choice effects) depending on whether the die is odd or even; note is shown with the result.
+// choices[].confirm: "question" asks for confirmation in a modal before the choice runs (e.g. giving up).
 export const pages = {
     hints: {
         title: "HINTS ON PLAY",
@@ -523,6 +526,42 @@ export const pages = {
         onEnter: [{ stat: "Luck", change: 1 }, { addItem: "Bow & Silver Arrow" }],
         choices: [
             { label: "Leave the room", to: 237 },
+        ],
+    },
+    19: {
+        type: "battle",
+        text: "These two evil creatures are _GOBLINS_.\n\nThey attack you one at a time.",
+        enemies: ["Goblin-5-5", "Goblin-5-6"],
+        next: 317,
+    },
+    243: {
+        text: "To your horror, you realize that this dummy lever was a trap! Although it looked like a handle it was in fact a wax-coated sword blade and it has now cut your hand badly.\n\n_Did you use your right or your left hand?_\n\nRoll one die. If the number you **roll is odd**, this was your sword hand and **your fighting prowess has been severely hampered**. Lose 3 _SKILL_ points and 1 _STAMINA_.\n\nIf you rolled an **even number**, you used your other hand, and so the **injury is not quite so important**. Lose 1 _SKILL_ point and 2 _STAMINA_.",
+        rollEffect: {
+            odd: { note: "Your sword hand! Your fighting prowess is severely hampered.", effects: [{ stat: "Skill", change: -3 }, { stat: "Sta", change: -1 }] },
+            even: { note: "Your other hand. The injury is not so important.", effects: [{ stat: "Skill", change: -1 }, { stat: "Sta", change: -2 }] },
+        },
+        then: "243b",
+    },
+    "243b": {
+        title: "243",
+        text: "If you now wish to pull the right lever, do it.\n\nIf you don't wish to pull the right lever, you won't be getting much further - and remember which hand you will use!",
+        choices: [
+            { label: "Pull the right lever", to: 128 },
+            { label: "Give up...", action: BACKTOMENU, confirm: "Give up? Your adventure ends here and you return to the menu." },
+        ],
+    },
+    128: {
+        text: "You hear a deep rumbling noise and the ground begins to shudder. Slowly and noisily the portcullis rises into the ceiling. You may now walk to the junction.\n\nWill you turn west or east?",
+        choices: [
+            { label: "Turn west", to: 210 },
+            { label: "Turn east", to: 58},
+        ],
+    },
+    317: {
+        text: "You cut down the Dwarf. He is, as you guessed, dead.\n\nGoing through the pockets of the two Goblins, you find a large piece of sweet-smelling Cheese. If you wish to take this with you, put it in your pack and leave the room northwards.",
+        items: ["Cheese"],
+        choices: [
+            { label: "Continue northwards", to: 303 },
         ],
     },
 };
