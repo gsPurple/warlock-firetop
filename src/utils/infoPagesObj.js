@@ -564,4 +564,34 @@ export const pages = {
             { label: "Continue northwards", to: 303 },
         ],
     },
+    58: {
+        text: "Cautiously you creep along the passageway. After a short time it turns sharply to the north.\n\nAt the corner there is a bench of solid wood and above the bench a sign reads _'Rest Ye Here Weary Traveller'_.\n\nHere you may stop and eat Provisions if you wish, or continue.",
+        image: "wofm58.png",
+        caption: "At the corner there is a bench of solid wood, where you may stop and eat Provisions if you wish.",
+        choices: [
+            { label: "Stop and eat", to: 15 },
+            { label: "Continue", to: 367 },
+        ],
+    },
+    210: {
+        text: "Shortly along the passage you arrive at another junction where you may go either straight ahead westwards or northwards.",
+        choices: [
+            { label: "Continue westwards", to: 225 },
+            { label: "Go northwards", to: 357 },
+        ],
+    },
+    15: {
+        text: "As you sit on the bench and eat your food, you begin to feel deeply relaxed and the aches from your body seem to be soothing themselves away.\n\nThis resting place is enchanted.\n\nYou may restore 2 additional _STAMINA_ points as well as the normal amount (but only if this does not exceed your _Initial STAMINA_ score) and restore 1 _SKILL_ point if any have been lost.\n\nWhen you are ready to continue, move along the passage.",
+        onEnter: [{ stat: "Sta", change: 2 }, { stat: "Skill", change: 1 }],
+        choices: [
+            { label: "Move along the passage", to: 367 },
+        ],
+    },
+    367: {
+        text: "You arrive at another junction in the passageway.\n\nYou may turn westwards, or decide to go east.",
+        choices: [
+            { label: "Turn westwards", to: 235 },
+            { label: "Go east", to: 323 },
+        ],
+    },
 };
