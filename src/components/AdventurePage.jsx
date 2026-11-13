@@ -58,6 +58,9 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
 
     const [itemToTake, setItemToTake] = useState(null); // item waiting for the player to pick what to drop for it (dropToTake pages)
 
+    const [throwing, setThrowing] = useState(false); // throw picker open (throwItem pages)
+    const nothingToThrow = playerState.inventory.length === 0 && parseInt(playerState.gold) <= 0;
+
     const [choiceToConfirm, setChoiceToConfirm] = useState(null); // choice with a `confirm` question waiting for a Yes
     const chooseConfirmed = (choice) => choice.confirm ? setChoiceToConfirm(choice) : handleChoice(choice);
 
@@ -100,6 +103,28 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
                 })}
               </div>
             }
+
+            {currentPage.throwItem &&
+              <div className='take-item-container'>
+                <button onClick={() => nothingToThrow ? handleChoice({ to: currentPage.then }) : setThrowing(true)}>
+                  {nothingToThrow ? 'Nothing to throw' : 'Throw an item'}
+                </button>
+              </div>
+            }
+
+            <DropItemModal
+              key={`throw-${throwing}`}
+              mode='throw'
+              item={throwing ? 'throw' : null}
+              inventory={playerState.inventory}
+              gold={parseInt(playerState.gold)}
+              onCancel={() => setThrowing(false)}
+              onDrop={(thrownItem) => {
+                setPlayerState({ type: 'THROW_ITEM', item: thrownItem });
+                setThrowing(false);
+                handleChoice({ to: currentPage.then });
+              }}
+            />
 
             <DropItemModal
               key={itemToTake}

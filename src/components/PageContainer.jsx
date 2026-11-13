@@ -11,6 +11,7 @@ import DeathPage from './DeathPage';
 import rollDie from '../utils/rollDie';
 import testLuck from '../utils/testLuck';
 import testSkill from '../utils/testSkill';
+import { GOLD_PIECE } from './DropItemModal';
 
 const STACKABLE_ITEMS = [constants.SKILLPOTION, constants.STRPOTION, constants.FORTPOTION];
 
@@ -146,6 +147,16 @@ const playerStateReducer =(state, action) => {
         ...state,
         inventory: addToInventory(removeOneFromInventory(state.inventory, action.drop), action.item),
         takenOnPage: [...state.takenOnPage, action.item],
+      };
+    }
+    case 'THROW_ITEM': {
+      // A throwItem page: throw one inventory item, or (item === GOLD_PIECE) one Gold Piece
+      const gold = action.item === GOLD_PIECE;
+      if (!gold && !state.inventory.includes(action.item)) return state;
+      return {
+        ...state,
+        inventory: gold ? state.inventory : removeOneFromInventory(state.inventory, action.item),
+        gold: gold ? Math.max(parseInt(state.gold) - 1, 0) : state.gold,
       };
     }
     default:

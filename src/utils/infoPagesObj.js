@@ -21,6 +21,8 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 //          effects: [{ addItem }] or [{ stat, change }] are applied before moving on.
 // items: ["Item name"] shows a Take button per item on the page; taking is optional and once per visit.
 // dropToTake: true makes taking the page's items ask which item to leave behind (SWAP_ITEM), since you can't carry more.
+// throwItem: true + then: page id. Adds a "Throw an item" button (THROW_ITEM): pick an equipment item, or a Gold Piece,
+//          to throw away, then go to `then` (the page needs no choices). With nothing at all to throw it just continues.
 // onEnter: [{ stat: "Sta" | "Skill" | "Luck" | "Gold" | "Provisions", change }] is applied once when the player
 //          arrives on the page, and shown on it as a +/- notice.
 // rollEffect: { stat, sign } + then: page id. Adds a "Roll the die" button; one die is rolled (once per visit) and
@@ -592,6 +594,80 @@ export const pages = {
         choices: [
             { label: "Turn westwards", to: 235 },
             { label: "Go east", to: 323 },
+        ],
+    },
+    225: {
+        text: "The passageway continues westwards and then turns due north.\n\nSome way up, you reach a junction where a narrow passage runs off to the west.\n\nWill you continue northwards, or take the west way?",
+        choices: [
+            { label: "Continue northwards", to: 77 },
+            { label: "Take the west way", to: 63 },
+        ],
+    },
+    357: {
+        text: "The passage runs for some distance northwards and then starts to open into a large cavern with rough walls.\n\nThere appears to be no way through.\n\nWill you return to the junction, or enter the cavern?",
+        choices: [
+            { label: "Return to the junction", to: 269 },
+            { label: "Enter the cavern", to: 57 },
+        ],
+    },
+    269: {
+        text: "You arrive back at the junction and turn westwards.",
+        choices: [
+            { label: "Turn westwards", to: 225 },
+        ],
+    },
+    63: {
+        text: "As you walk along the corridor, you can see ahead that it is getting narrower.\n\nAt one point you stoop, and as you do so, a deep, resonating laugh starts up around you.\n\nDo you wish to continue? If you prefer, you may also turn back.",
+        choices: [
+            { label: "Continue", to: 281 },
+            { label: "Turn back", to: 10 },
+        ],
+    },
+    77: {
+        text: "Several metres up the passageway you arrive at a junction where you may turn either west or east.\n\nSet in the rock on the north wall is a small recess where you may rest and eat Provisions without being seen. If you wish to take Provisions here, do so.\n\nAfterwards you may set off either eastwards or westwards.",
+        choices: [
+            { label: "Go eastwards", to: 345 },
+            { label: "Go westwards", to: 18 },
+        ],
+    },
+    235: {
+        text: "You follow the passage westwards, then it turns sharply to the north and, some metres further on, a passage runs off to the west.\n\nYou may go along the westwards passage, or you may carry on northwards up the passage.",
+        choices: [
+            { label: "Go westwards", to: 176 },
+            { label: "Carry on northwards", to: 5 },
+        ],
+    },
+    323: {
+        text: "After a few metres you reach another three-way junction.\n\nYou may go either northwards or eastwards.",
+        choices: [
+            { label: "Go northwards", to: 8 },
+            { label: "Go eastwards", to: 255 },
+        ],
+    },
+    57: {
+        text: "As you enter the cavern you hear loud footsteps behind you, crunching heavily on the rocky floor.\n\nYou crouch down beside the entrance in a small alcove in the rock.\n\nThe steps get louder and you see a great _OGRE_ enter the cavern! He stands over two metres tall and is dressed in ill-fitting garments made from some sort of hide. He carries a large wooden club.\n\nYou may:\n• Attack him as he enters\n• Try to creep out without him noticing you\n• Try to distract him by throwing something into a far corner of the cavern",
+        choices: [
+            { label: "Attack him", to: 16 },
+            { label: "Try to creep out", to: 2 },
+            { label: "Try to distract him", to: 119 },
+        ],
+    },
+    10: {
+        text: "You arrive back at the junction and turn northwards.",
+        choices: [
+            { label: "Turn northwards", to: 77 },
+        ],
+    },
+    119: {
+        text: "You open your pack and reach inside for something suitable to throw across the cavern.\n\nCheck your Equipment List, choose one item to throw and cross it off your List. If you have no Equipment you will have to throw a Gold Piece.",
+        throwItem: true,
+        then: "119b",
+    },
+    "119b": {
+        title: "119",
+        text: "You throw the object across the cavern, where it lands with a clatter. The Ogre looks towards the noise, and goes over to investigate.\n\nMeanwhile you creep out, down the passage and back to the junction.",
+        choices: [
+            { label: "Creep out", to: 269 },
         ],
     },
 };
