@@ -130,7 +130,7 @@ const BattlePage = ({ playerState, setPlayerState, currentPage, pageContentParag
     const { fleeing, escapeButton, escapeUI } = useEscape({
         foeName: enemy.name,
         to: currentPage.escape,
-        canEscape: currentPage.escape !== undefined && !battleOver && !pendingWound,
+        canEscape: currentPage.escape !== undefined && roundNumber >= (currentPage.escapeAfterRound ?? 0) && !battleOver && !pendingWound,
         playerState,
         setPlayerState,
         handleChoice,

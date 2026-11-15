@@ -9,6 +9,7 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 //       success if <= current SKILL; needs success/fail; optional failEffects: same format as choice effects,
 //       applied when the test fails), "battle" = needs enemies ("Name-skill-stamina") and next
 //       (optional escape: page id to flee to - adds an Escape button, the creature gets one wound on you;
+//       optional escapeAfterRound: number - the Escape button only appears once that many attack rounds have been fought,
 //       optional playerAttackMod: number added to (or, if negative, taken from) your Attack Strength every round of this fight),
 //       "stats" = initial stat roll (needs stat and base).
 // escape: page id to flee to. On any page type it adds an Escape button (confirmation, one wound on you, optional
@@ -171,7 +172,7 @@ export const pages = {
     },
     248: {
         type: "battle",
-        text: "You step with a crunch on some loose ground and his eyes flick open.\n\nThe creature that has just awakened is an ORC! He scrambles to his feet and turns to grasp at a rope which is probably the alarm bell. You must attack him quickly!",
+        text: "You step with a crunch on some loose ground and his eyes flick open.\n\nThe creature that has just awakened is an **ORC**! He scrambles to his feet and turns to grasp at a rope which is probably the alarm bell. You must attack him quickly!",
         enemies: ["Orc-6-5"],
         next: 301,
     },
@@ -257,7 +258,7 @@ export const pages = {
     },
     240: {
         type: "battle",
-        text: "The box is light, but something rattles within. You open the lid and a small _SNAKE_ darts out to bite at your wrist.\n\nYou must fight the Snake.",
+        text: "The box is light, but something rattles within. You open the lid and a small **SNAKE** darts out to bite at your wrist.\n\nYou must fight the Snake.",
         image: "wofm240.png",
         caption: "You open the lid and a small Snake darts out to bite at your wrist!",
         enemies: ["Snake-5-2"],
@@ -289,7 +290,7 @@ export const pages = {
     },
     116: {
         type: "battle",
-        text: "The two drunken _ORCS_ you now face are obviously startled at your entrance and, as quickly as they are able, they fumble around for the weapons.\n\nYou must attack each one in turn.\n\nTheir drunkenness allows you to add 1 point to your dice roll when rolling to work out your _Attack Strength_, during each _Attack Round_.",
+        text: "The two drunken **ORCS** you now face are obviously startled at your entrance and, as quickly as they are able, they fumble around for the weapons.\n\nYou must attack each one in turn.\n\nTheir drunkenness allows you to add 1 point to your dice roll when rolling to work out your _Attack Strength_, during each _Attack Round_.",
         enemies: ["Orc-5-4", "Orc-5-5"],
         next: 378,
         escape: 42,
@@ -330,7 +331,7 @@ export const pages = {
         ],
     },
     168: {
-        text: "You open the door to a large room. A large chair behind a solid-looking table suggests to you that someone, or _something_, of rank uses this room.\n\nA chest in the centre catches your eye. In a corner of the room stands a man-sized creature with a warty face, standing over a smaller creature of similar race. With the whip in his hand, the _ORC CHIEFTAIN_ has been beating his servant, who is whimpering, beneath him.\n\nWill you:\n• Attack them both?\n• Spring at the Chieftain in the hope that his servant will aid you?\n• Leave the room and head back for the junction?",
+        text: "You open the door to a large room. A large chair behind a solid-looking table suggests to you that someone, or _something_, of rank uses this room.\n\nA chest in the centre catches your eye. In a corner of the room stands a man-sized creature with a warty face, standing over a smaller creature of similar race. With the whip in his hand, the **ORC CHIEFTAIN** has been beating his servant, who is whimpering, beneath him.\n\nWill you:\n• Attack them both?\n• Spring at the Chieftain in the hope that his servant will aid you?\n• Leave the room and head back for the junction?",
         image: "wofm168.png",
         caption: "With the whip in his hand, the Orc Chieftain has been beating his servant, who is whimpering beneath him.",
         choices: [
@@ -385,7 +386,7 @@ export const pages = {
         type: "luck",
         lucky: 237,
         unlucky: 365,
-        text: "You open the door into a large room which can only be the dining room of the same warty-faced creatures you now recognize.\n\nSitting round a large table are five _ORCS_ busily drinking and dribbling their bowls of rat-gizzard soup. All are involved in a rowdy argument as to who will get to chew the rat bones left in the large soup cauldron, so they do not see you enter.\n\nYou may be bold and prepare to attack them, or you may not relish the prospect of taking on five of these creatures and try to escape.\n\nIf you wish to leave the room, _Test your Luck_. If you are _Lucky_, you get out without them noticing - there is no penalty for escaping. If you are _Unlucky_, they notice you.",
+        text: "You open the door into a large room which can only be the dining room of the same warty-faced creatures you now recognize.\n\nSitting round a large table are five **ORCS** busily drinking and dribbling their bowls of rat-gizzard soup. All are involved in a rowdy argument as to who will get to chew the rat bones left in the large soup cauldron, so they do not see you enter.\n\nYou may be bold and prepare to attack them, or you may not relish the prospect of taking on five of these creatures and try to escape.\n\nIf you wish to leave the room, _Test your Luck_. If you are _Lucky_, you get out without them noticing - there is no penalty for escaping. If you are _Unlucky_, they notice you.",
         choices: [
             { label: "Prepare to attack", to: 365 },
         ],
@@ -498,7 +499,7 @@ export const pages = {
         ],
     },
     68: {
-        text: "The two _GOBLIN_ torturers look at each other amazed, then look at you. They chatter to themselves and then indicate for you to wait while they go off and get another Dwarf to give them some more fun.\n\nThey disappear out of the room and you cut down the Dwarf who is, as you guessed, quite dead.\n\nYou decide it best to leave and press on northwards up the corridor.",
+        text: "The two **GOBLIN** torturers look at each other amazed, then look at you. They chatter to themselves and then indicate for you to wait while they go off and get another Dwarf to give them some more fun.\n\nThey disappear out of the room and you cut down the Dwarf who is, as you guessed, quite dead.\n\nYou decide it best to leave and press on northwards up the corridor.",
         choices: [
             { label: "Press on northwards", to: 303 },
         ],
@@ -532,7 +533,7 @@ export const pages = {
     },
     19: {
         type: "battle",
-        text: "These two evil creatures are _GOBLINS_.\n\nThey attack you one at a time.",
+        text: "These two evil creatures are **GOBLINS**.\n\nThey attack you one at a time.",
         enemies: ["Goblin-5-5", "Goblin-5-6"],
         next: 317,
     },
@@ -645,7 +646,7 @@ export const pages = {
         ],
     },
     57: {
-        text: "As you enter the cavern you hear loud footsteps behind you, crunching heavily on the rocky floor.\n\nYou crouch down beside the entrance in a small alcove in the rock.\n\nThe steps get louder and you see a great _OGRE_ enter the cavern! He stands over two metres tall and is dressed in ill-fitting garments made from some sort of hide. He carries a large wooden club.\n\nYou may:\n• Attack him as he enters\n• Try to creep out without him noticing you\n• Try to distract him by throwing something into a far corner of the cavern",
+        text: "As you enter the cavern you hear loud footsteps behind you, crunching heavily on the rocky floor.\n\nYou crouch down beside the entrance in a small alcove in the rock.\n\nThe steps get louder and you see a great **OGRE** enter the cavern! He stands over two metres tall and is dressed in ill-fitting garments made from some sort of hide. He carries a large wooden club.\n\nYou may:\n• Attack him as he enters\n• Try to creep out without him noticing you\n• Try to distract him by throwing something into a far corner of the cavern",
         choices: [
             { label: "Attack him", to: 16 },
             { label: "Try to creep out", to: 2 },
@@ -668,6 +669,107 @@ export const pages = {
         text: "You throw the object across the cavern, where it lands with a clatter. The Ogre looks towards the noise, and goes over to investigate.\n\nMeanwhile you creep out, down the passage and back to the junction.",
         choices: [
             { label: "Creep out", to: 269 },
+        ],
+    },
+    281: {
+        text: "The narrow passageway eventually becomes too small for you to walk along. You get down on your hands and knees, and crawl.\n\nEventually, you will get no further and there seems to be no way through, so you decide to return to the main passage.\n\nYou head for the junction.",
+        choices: [
+            { label: "Head for the junction", to: 10 },
+        ],
+    },
+    2: {
+        type: "luck",
+        lucky: 269,
+        unlucky: 16,
+        text:"_Test your Luck_.\n\nIf you are **Lucky**, you escape without attracting the Ogre's attention, and you creep down the corridor back to the crossroads.\n\nIf you are **Unlucky**, you curse as you kick a small stone which goes skidding across the cavern floor. You draw your sword in case the Ogre has heard it.",
+    },
+    16: {
+        type: "battle",
+        text: "You draw your sword, and as you do so the Ogre hears you and prepares to attack.\n\nAfter the second Attack Round, you may _Escape_ down the passage.",
+        enemies: ["Ogre-8-10"],
+        escape: 269,
+        escapeAfterRound: 2,
+        next: 50,
+    },
+    5: {
+        text: "A rough timber doorway is on the east wall of the passage. You listen at the door and can hear a jolly sort of humming sound.\n\nDo you want to knock on the door and go in, or will you continue northwards?",
+        choices: [
+            { label: "Knock on the door and go in", to: 97 },
+            { label: "Continue northwards", to: 292 },
+        ],
+    },
+    8: {
+        type: "battle",
+        text: "The passage ahead ends at a sturdy door. You listen but hear nothing. You try the handle, it turns, and you enter the room.\n\nAs you look around you hear a loud cry from behind you and swing round to see a wild man leaping towards you wielding a large battle axe. He is a mad **BARBARIAN** and you must fight him!\n\nThere is a door in the north wall opposite, through which you may _Escape_.",
+        enemies: ["Barbarian-7-6"],
+        escape: 189,
+        next: 273,
+    },
+    18: {
+        type: "luck",
+        lucky: "18b",
+        unlucky: "18c",
+        text: "You walk westwards along the passageway. After fifty metres or so, the way turns northwards.\n\nTwo or three paces up the passage, you hear a crumbling beneath your feet and you try to leap back as the ground gives way.\n\n_Test your Luck_.",
+    },
+    "18b": {
+        title: "18",
+        text: "You manage to leap quickly backwards before a pit opens.\n\nYou had better return to the junction.",
+        choices: [
+            { label: "Return to the junction", to: 261 },
+        ],
+    },
+    "18c": {
+        title: "18",
+        text: "You are too slow and you fall over two metres down into a pit.\n\nLose 1 _STAMINA_ point.",
+        onEnter: [{ stat: "Sta", change: -1 }],
+        choices: [
+            { label: "Continue", to: 348 },
+        ],
+    },
+    176: {
+        text: "As you walk up the passage, it visibly widens and eventually you find yourself standing at the mouth of a rough cavern, a natural cave in the rock. As you look into the darkness, the cavern appears to be about 30 metres deep, with no visible exit.\n\nDo you want to go into the cavern, or go back to the junction?",
+        choices: [
+            { label: "Go into the cavern", to: 270 },
+            { label: "Go back to the junction", to: 375 },
+        ],
+    },
+    255: {
+        text: "The passageway ends in a sturdy wooden door.\n\nDo you want to try opening it, or go back to the junction and try another route?",
+        choices: [
+            { label: "Try opening the door", to: 193 },
+            { label: "Go back to the junction", to: 93 },
+        ],
+    },
+    345: {
+        text: "You follow the passage eastwards for several metres, then it turns to the north. Shortly you reach another junction where you may either go straight on, or turn right into an eastwards passage that soon turns north.",
+        choices: [
+            { label: "Go straight on", to: 381 },
+            { label: "Turn right", to: 311 },
+        ],
+    },
+    50: {
+        text: "The slain creature crashes to the ground. You go through his garments and find nothing, but a small pouch hangs around his neck. Inside this pouch is a small bronze key, with the number _66_ cast into it.\n\nYou may take this if you wish. Nothing else is of value in the cavern, so you leave and head back to the junction.",
+        items: ["Bronze Key 66"],
+        choices: [
+            { label: "Head back to the junction", to: 269 },
+        ],
+    },
+    93: {
+        text: "You arrive back at the junction and this time you turn northwards.",
+        choices: [
+            { label: "Turn northwards", to: 8 },
+        ],
+    },
+    261: {
+        text: "You reach the junction and continue eastwards.",
+        choices: [
+            { label: "Continue eastwards", to: 345 },
+        ],
+    },
+    375: {
+        text: "You arrive back at the junction and this time turn northwards.",
+        choices: [
+            { label: "Continue eastwards", to: 5 },
         ],
     },
 };
