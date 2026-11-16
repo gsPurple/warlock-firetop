@@ -161,7 +161,7 @@ const AdventurePage = ({ playerState, setPlayerState, dieOne, dieTwo, currentPag
                   {pendingRoll.note && <p className='bold'>{pendingRoll.note}</p>}
                   {statNotices(pendingRoll.effects)}
                 </SingleRoll>
-              : !fleeing && <ChoiceReader currentPage={currentPage} handleChoice={chooseConfirmed}testYourLuck={testYourLuck} testYourSkill={testYourSkill} rollPageEffect={rollPageEffect} rolled={dieOne !== null}>
+              : !fleeing && <ChoiceReader currentPage={currentPage} handleChoice={chooseConfirmed} inventory={playerState.inventory} testYourLuck={testYourLuck} testYourSkill={testYourSkill} rollPageEffect={rollPageEffect} rolled={dieOne !== null}>
                   {escapeButton}
                 </ChoiceReader>
             }

@@ -31,6 +31,8 @@ import { BACKTOMENU, ROLLSTAT, SKILLPOTION, STRPOTION, FORTPOTION } from './cons
 //          `then`, so the page needs no choices.
 //          Instead of { stat, sign }, { odd: { note, effects }, even: { note, effects } } applies those effects
 //          (same format as choice effects) depending on whether the die is odd or even; note is shown with the result.
+// choices[].requires: "Item name" shows the choice only if the player holds that item; choices[].unless: "Item name" only if they don't
+//          (together they route an "if you have X turn to A, if not turn to B" page automatically).
 // choices[].confirm: "question" asks for confirmation in a modal before the choice runs (e.g. giving up).
 export const pages = {
     hints: {
@@ -770,6 +772,46 @@ export const pages = {
         text: "You arrive back at the junction and this time turn northwards.",
         choices: [
             { label: "Continue eastwards", to: 5 },
+        ],
+    },
+    193: {
+        image: "wofm193.png",
+        caption: "Mosaics and marble inlays give this room a kind of beauty you have never seen before.",
+        text: "The door opens and you enter a small room. Your eyes widen as you look around to see that the walls of the room are covered in ornate stonework.\n\nMosaics and marble inlays give this room a kind of beauty you have never seen before. In a corner of the room is a large metal statue of a one-eyed creature. In its single eye is a sparkling jewel.\n\nAs there appear to be no other ways through the room, you will have to go back to the junction - but that large jewel is very tempting.",
+        choices: [
+            { label: "Go back to the junction", to: 93 },
+            { label: "Try to take the jewel", to: 338 },
+        ],
+    },
+    273: {
+        text: "A search of the room reveals nothing of any value, although an old box in the corner contains a wooden mallet and five short stumps of wood, sharpened at one end.\n\nYou may take these if you wish, and can now leave through the door in the north wall.",
+        items: ["Wooden Mallet", "Wooden Stakes"],
+        choices: [
+            { label: "Leave through the door", to: 189 },
+        ],
+    },
+    189: {
+        image: "wofm189.png",
+        caption: "This room is splendidly decorated, with a polished marble floor and rough walls painted white.",
+        text: "The door opens into a short corridor which ends several metres ahead at another door, similar to the one you have just come through. You listen and hear nothing. You try the handle and it turns, allowing you into another room of a similar size.\n\nBut this room is splendidly decorated, with a polished marble floor and rough walls painted white. On each of the four walls hangs a painting, and there is another door in the north wall.\n\nYou can either go straight through the room or you may stop to look at the paintings.",
+        choices: [
+            { label: "Go straight through the room", to: 90 },
+            { label: "Stop to look at the paintings", to: 25 },
+        ],
+    },
+    270: {
+        text: "You enter the cavern and look around to see dozens of beautifully coloured stalactites and stalagmites bordering the perimeter. Numerous drips can be heard, but the whole place seems like a magic grotto. Near the back of the cavern, you come across a pair of boots, which seem to have been made quite recently.\n\nWill you:\n• Continue investigating the cavern?\n• Try on the boots?\n• Leave the cavern and return to the junction?",
+        choices: [
+            { label: "Continue investigating the cavern", to: 61 },
+            { label: "Try on the boots", to: 394 },
+            { label: "Leave the cavern and return to the junction", to: 375 },
+        ],
+    },
+    292: {
+        text: "Northwards, the passageway ends at a solid wooden door. You listen at the door but can hear nothing. There appears to be no choice but to open the door and enter the room, which you do.\n\nIt's a large square room. You flash your lantern around the room and catch a quick glimpse of its emptiness - although there are murals on the wall - before your lantern suddenly goes out. You try to re-light it, but it will not catch.\n\nIn the blackness you hear a succession of frightful noises. Howls, screams, cries and wails are getting louder and louder until they reach the pitch where you must cover your ears.\n\nYour lantern is useless here. If only you had some other flame, a _candle_ perhaps, of the kind that magic has touched, to hold this darkness and its horror at bay.",
+        choices: [
+            { label: "Light the Blue Candle", to: 239, requires: "Blue Candle" },
+            { label: "Cover your ears and endure the noise", to: 40, unless: "Blue Candle" },
         ],
     },
 };

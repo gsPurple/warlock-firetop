@@ -8,6 +8,7 @@ const tooltips = {
     PotionofSkill: <div className='tooltiptext'>A potion that restores your Skill points</div>,
     PotionofFortune: <div className='tooltiptext'>A potion that restores your Luck points and adds 1 to Initial Luck</div>,
     Key99: <div className='tooltiptext'>A bronze coloured key with the number 99 carved into it</div>,
+    Key66: <div className='tooltiptext'>A bronze coloured key with the number 66 cast into it</div>,
     Provisions: <div className='tooltiptext'>Each provision restores 4 STAMINA points</div>,
     SilkyBlackGlove: <div className='tooltiptext'>A mysterious silky black glove</div>,
     GoldenCrescent: <div className='tooltiptext'>An iron shield with a golden crescent. When a creature wounds you, roll a die: on a 6 the wound does 1 less damage</div>,
@@ -18,6 +19,8 @@ const tooltips = {
     BoatHouseKey: <div className='tooltiptext'>A key that appears to belong to a boat house</div>,
     PotionofInvisibility: <div className='tooltiptext'>A potion that can turn you invisible in some situations</div>,
     DragonfireSpell: <div className='tooltiptext'>Ekil Erif<br />Ekam Erif<br />Erif Erif<br />'Di Maggio'</div>,
+    WoodenMallet: <div className='tooltiptext'>An old wooden mallet</div>,
+    WoodenStakes: <div className='tooltiptext'>Five short stumps of wood, sharpened at one end</div>,
 };
 
 
@@ -44,8 +47,11 @@ function tooltipText(item) {
         case "Shield":
             result = tooltips.Shield;
             break;
-        case "Key 99":
+        case "Bronze Key 99":
             result = tooltips.Key99;
+            break;
+        case "Bronze Key 66":
+            result = tooltips.Key66;
             break;
         case "Provisions":
             result = tooltips.Provisions;
@@ -76,6 +82,12 @@ function tooltipText(item) {
             break;
         case "Dragonfire Spell":
             result = tooltips.DragonfireSpell;
+            break;
+        case "Wooden Mallet":
+            result = tooltips.WoodenMallet;
+            break;
+        case "Wooden Stakes":
+            result = tooltips.WoodenStakes;
             break;
         default:
             result = null;

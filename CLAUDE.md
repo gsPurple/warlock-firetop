@@ -25,5 +25,5 @@ A React + Vite web adaptation of the Fighting Fantasy gamebook. Commands: `npm r
 ## Workflow
 
 - Work happens on `dev`; the user pushes manually.
-- The `DEV` menu action in `handleChoice` jumps to the test page `DEVPAGE` in `constantsfile.js` with preset stats. Never commit changes to `DEVPAGE`; when committing, stage `constantsfile.js` only if other constants changed, and then skip that line.
+- The `DEV` menu action in `handleChoice` jumps to the test page `DEVPAGE` in `constantsfile.js` with preset stats. Changes to `DEVPAGE` may be committed like any other change.
 - Ask before implementing a feature or logic change; discuss the approach first.
