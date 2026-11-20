@@ -814,4 +814,23 @@ export const pages = {
             { label: "Cover your ears and endure the noise", to: 40, unless: "Blue Candle" },
         ],
     },
+    97: {
+        image: "wofm97.png",
+        caption: "In the midst of all that clutter, you see a little old man in a grubby white gown swaying to and fro in a rocking chair.",
+        text: "A voice bids you 'Come in!' and you walk into a small room furnished with a table and chair, shelves, cupboards and the like, all of which have seen better days. Plates, bowls, cups and hundreds of old books line the shelves.\n\nIn the midst of all this clutter, you see a little old man in a grubby white gown swaying to and fro in a rocking chair, still humming happily to himself, his eyes fixed on you, but seeming at peace with the world. He bids you 'Good day.'\n\nDo you:\n• Start to make conversation with him?\n• Draw your sword and charge at him?\n• Decide not to waste time with him and leave, going northwards?",
+        choices: [
+            { label: "Make conversation with him", to: 334 },
+            { label: "Draw your sword and charge", to: 247 },
+            { label: "Leave, going northwards", to: 292 },
+        ],
+    },
+    348: {
+        image: "wofm348.png",
+        caption: "A large, ugly head pokes around the corner and a Troll emerges from its chamber.",
+        text: "You are in a pit, a little bruised but not too seriously hurt. You look around as you get back on your feet and can see two passageways: a short one to the south which opens into a small chamber, and another heading northwards.\n\nYou are a little worried about the crash your fall has made, and even more by the grunting you can hear coming from the chamber to the south.\n\nBefore you can collect your thoughts, a large, ugly head pokes around the corner and a **TROLL** emerges from its chamber. Your ankle is twisted and you cannot move quickly, but the Troll is ready for a fight. You will have to face the brute.\n\nIf you have a Potion of Invisibility, you may drink it now.",
+        choices: [
+            { label: "Face the Troll", to: 331 },
+            { label: "Drink the Potion of Invisibility", to: 51, requires: "Potion of Invisibility" },
+        ],
+    },
 };
