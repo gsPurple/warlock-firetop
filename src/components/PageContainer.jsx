@@ -261,7 +261,7 @@ function PageContainer() {
             currentLuck: '4',
             gold: '15',
             provisions: '5',
-            inventory: ['Debug','Sword', 'Shield', 'Leather Armour','Lantern', 'Potion of Skill x2', 'Potion of Fortune', 'Potion of Strength x2'],
+            inventory: ['Debug',"Potion of Invisibility",'Sword', 'Shield', 'Leather Armour','Lantern', 'Potion of Skill x2', 'Potion of Fortune', 'Potion of Strength x2'],
           },
         });
         setCurrentMode(constants.ADVENTUREMODE);
